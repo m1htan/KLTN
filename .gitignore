@@ -1,0 +1,39 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+!src/components/job_link_listener/frontend/build/
+*.pyo
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# === macOS ===
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# === VSCode ===
+.vscode/
+*.code-workspace
+
+# === Coverage Reports ===
+coverage/
+*.lcov
+
+# === Misc ===
+*.bak
+*.swp
+
+*.ini
+*.jsonl
+
+venv
+
+models
