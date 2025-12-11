@@ -1,0 +1,67 @@
+---
+title: Checklist kiểm tra DocsGPT end-to-end
+description: Các bước tự kiểm tra xem backend, worker Celery, frontend, auto-ingest và upload file đã hoạt động đúng hay chưa.
+---
+
+## 1) Chuẩn bị và khởi động
+
+* Đảm bảo Docker đang chạy và bạn đã cấu hình `.env` theo hướng dẫn `setup.sh`/`setup.ps1` (chọn LLM Gemini và embedding Alibaba gte-Qwen2-1.5B-instruct khi được hỏi).
+* Khởi động stack (nếu đã có `.env` sẵn):
+
+```bash
+docker compose -f deployment/docker-compose.yaml up -d
+```
+
+* Kiểm tra 5 container chính đều ở trạng thái `running`:
+
+```bash
+docker compose -f deployment/docker-compose.yaml ps
+```
+
+## 2) Kiểm tra backend
+
+* Lấy cấu hình backend để chắc chắn server phản hồi:
+
+```bash
+curl -s http://localhost:7091/api/config | jq
+```
+
+Trả về JSON có `auth_type` cho thấy backend đã sẵn sàng.
+
+## 3) Kiểm tra auto-ingest thư mục local
+
+* Đặt tối thiểu một file thử nghiệm vào `application/inputs/local` (được bind vào container tại `/app/application/inputs/local`).
+* Xem log worker Celery để thấy tác vụ định kỳ `auto_ingest_local` chạy mỗi 5 phút:
+
+```bash
+docker logs -f docsgpt-oss-worker-1 | grep AUTO-INGEST
+```
+
+* Sau khi tác vụ chạy, xác nhận chỉ mục đã tạo:
+
+```bash
+docker exec docsgpt-oss-backend-1 ls -lah /app/indexes/local-folder
+```
+
+Thư mục có tệp FAISS/metadata cho biết dữ liệu local đã được embed.
+
+## 4) Kiểm tra upload qua giao diện
+
+* Mở http://localhost:5173, đăng nhập/khởi tạo agent, dùng chức năng Upload để chọn file.
+* Theo dõi log worker để thấy quá trình chunking/embedding cho file vừa tải lên.
+* Kiểm tra thư mục `/app/indexes` trong container backend để thấy nguồn dữ liệu tương ứng được tạo.
+
+## 5) Thử truy vấn
+
+* Trong giao diện, chọn nguồn dữ liệu (local hoặc file vừa upload) và đặt câu hỏi; kết quả phải hiển thị trích dẫn nguồn.
+* Nếu dùng API, có thể gọi endpoint trả lời (ví dụ POST `/api/v1/answer` với `question` và `sourceId`) sau khi đã lấy token nếu `auth_type` yêu cầu.
+
+## 6) Dọn dẹp hoặc khởi động lại
+
+* Dừng toàn bộ stack khi cần:
+
+```bash
+docker compose -f deployment/docker-compose.yaml down
+```
+
+* Xóa dữ liệu thử nghiệm (nếu cần) bằng cách xóa thư mục con tương ứng trong `application/inputs/local` và `/application/indexes/<source>` rồi khởi động lại worker/backend.
