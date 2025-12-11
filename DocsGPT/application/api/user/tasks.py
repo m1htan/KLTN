@@ -1,6 +1,6 @@
 from datetime import timedelta
 from application.celery_init import celery
-from application.api.user.auto_ingest import auto_ingest_local
+from application.api.user.auto_ingest import auto_ingest_local_task
 
 from application.worker import (
     agent_webhook_worker,
@@ -116,6 +116,6 @@ def mcp_oauth_status_task(self, task_id):
 def setup_auto_ingest(sender, **kwargs):
     sender.add_periodic_task(
         300.0,
-        auto_ingest_local.s(),
+        auto_ingest_local_task.s(),
         name="auto_ingest_local_every_5_minutes",
     )
