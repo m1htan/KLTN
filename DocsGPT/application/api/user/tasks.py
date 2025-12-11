@@ -114,8 +114,10 @@ def mcp_oauth_status_task(self, task_id):
 
 @celery.on_after_configure.connect
 def setup_auto_ingest(sender, **kwargs):
+    # Use the registered task signature by name to avoid accidentally
+    # referencing a plain function before Celery finishes initialization.
     sender.add_periodic_task(
         300.0,
-        auto_ingest_local_task.s(),
+        celery.signature("auto_ingest_local"),
         name="auto_ingest_local_every_5_minutes",
     )
