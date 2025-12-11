@@ -1,0 +1,62 @@
+---
+title: "Windows setup with Gemini and GTE-Qwen2 embeddings"
+description: "Configure DocsGPT on Windows with Google Gemini as the LLM and Alibaba-NLP/gte-Qwen2-1.5B-instruct embeddings."
+---
+
+import { Steps, Callout } from 'nextra/components'
+
+# Windows setup with Gemini and GTE-Qwen2 embeddings
+
+This guide shows how to run DocsGPT on Windows using Google Gemini for answers and the `Alibaba-NLP/gte-Qwen2-1.5B-instruct` embedding model. It assumes you want to load your own documents and keep everything configurable through the `.env` file.
+
+## 1) Run the Windows setup script
+
+<Steps>
+### Step 1
+Open PowerShell in the project root and execute:
+```powershell
+PowerShell -ExecutionPolicy Bypass -File .\setup.ps1
+```
+The script prepares Docker services, prompts for your preferred deployment option, and writes the initial `.env` file for you.
+</Steps>
+
+<Callout type="info">If you prefer manual edits after the script, you can re-open `.env` and adjust the values below without re-running the installer.</Callout>
+
+## 2) Point DocsGPT to Google Gemini
+
+Update your `.env` to use Gemini as the chat model:
+
+```env
+LLM_PROVIDER=google
+LLM_NAME=gemini-3-pro-preview
+GOOGLE_API_KEY=<your Google API key>
+```
+
+- `LLM_PROVIDER` controls which backend is used for chat responses.
+- `LLM_NAME` accepts any Gemini ID from the built-in registry (e.g., `gemini-3-pro-preview`, `gemini-flash-latest`).
+- `GOOGLE_API_KEY` is picked up automatically for Gemini requests; if omitted, DocsGPT falls back to `API_KEY`.
+
+## 3) Configure the Alibaba GTE-Qwen2 embedding model
+
+Add the embedding model identifier and Hugging Face token (if the model is gated):
+
+```env
+EMBEDDINGS_NAME=Alibaba-NLP/gte-Qwen2-1.5B-instruct
+HUGGINGFACE_API_KEY=<your Hugging Face token>
+EMBEDDINGS_KEY=<same as HUGGINGFACE_API_KEY if required>
+```
+
+- `EMBEDDINGS_NAME` follows the Sentence Transformers format and can point to a local copy or download from Hugging Face.
+- DocsGPT supports Sentence Transformer embeddings out of the box; placing the model inside your project folder avoids repeated downloads.
+- `HUGGINGFACE_API_KEY` / `EMBEDDINGS_KEY` lets private models download and load correctly.
+
+## 4) Keep the default vector store unless you need otherwise
+
+By default, DocsGPT writes embeddings to a local FAISS index. You can keep `VECTOR_STORE=faiss` in `.env` for a quick single-machine setup. Change it only if you plan to use another backend such as Qdrant, Milvus, or LanceDB.
+
+## Checklist recap
+
+- Windows setup completed with `setup.ps1`.
+- `.env` updated for Gemini (`LLM_PROVIDER=google`, `LLM_NAME=gemini-3-pro-preview`, `GOOGLE_API_KEY=...`).
+- Embeddings set to `Alibaba-NLP/gte-Qwen2-1.5B-instruct` with Hugging Face credentials provided when necessary.
+- Vector store left at the default FAISS configuration for local runs.

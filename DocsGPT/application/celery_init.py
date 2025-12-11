@@ -1,6 +1,7 @@
 from celery import Celery
-from application.core.settings import settings
 from celery.signals import setup_logging
+
+from application.core.settings import settings
 
 
 def make_celery(app_name=__name__):
@@ -8,8 +9,11 @@ def make_celery(app_name=__name__):
         app_name,
         broker=settings.CELERY_BROKER_URL,
         backend=settings.CELERY_RESULT_BACKEND,
+        include=[
+            "application.api.user.auto_ingest",
+            "application.api.user.tasks",
+        ],
     )
-    import application.api.user.auto_ingest
     celery.conf.update(settings)
     return celery
 
@@ -20,8 +24,5 @@ def config_loggers(*args, **kwargs):
 
     setup_logging()
 
-import application.api.user.auto_ingest
 
 celery = make_celery()
-
-import application.api.user.auto_ingest
