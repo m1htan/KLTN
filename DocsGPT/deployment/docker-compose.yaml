@@ -36,7 +36,7 @@ services:
       - ../application/indexes:/app/indexes
       - ../application/inputs:/app/inputs
       - ../application/vectors:/app/vectors
-      - ./application/inputs/local:/app/application/inputs/local
+      - ../application/inputs/local:/app/application/inputs/local
     depends_on:
       - redis
       - mongo
@@ -67,7 +67,7 @@ services:
       - ../application/indexes:/app/indexes
       - ../application/inputs:/app/inputs
       - ../application/vectors:/app/vectors
-      - ./application/inputs/local:/app/application/inputs/local
+      - ../application/inputs/local:/app/application/inputs/local
     depends_on:
       - redis
       - mongo
