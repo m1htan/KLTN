@@ -17,6 +17,8 @@ services:
   backend:
     user: root
     build: ../application
+    command: >
+      gunicorn -w 1 --timeout 120 --bind 0.0.0.0:7091 application.app:app
     env_file:
       - .env
     environment:
@@ -33,10 +35,10 @@ services:
     ports:
       - "7091:7091"
     volumes:
-      - ../application/indexes:/app/indexes
-      - ../application/inputs:/app/inputs
-      - ../application/vectors:/app/vectors
-      - ../application/inputs/local:/app/application/inputs/local
+      - D:/Github/KLTN/DocsGPT/application/indexes:/app/indexes
+      - D:/Github/KLTN/DocsGPT/application/inputs:/app/inputs
+      - D:/Github/KLTN/DocsGPT/application/vectors:/app/vectors
+      - D:/Github/KLTN/DocsGPT/application/inputs/local:/app/application/inputs/local
     depends_on:
       - redis
       - mongo
@@ -64,10 +66,10 @@ services:
       - CACHE_REDIS_URL=redis://redis:6379/2
       - INTERNAL_KEY=${INTERNAL_KEY}
     volumes:
-      - ../application/indexes:/app/indexes
-      - ../application/inputs:/app/inputs
-      - ../application/vectors:/app/vectors
-      - ../application/inputs/local:/app/application/inputs/local
+      - D:/Github/KLTN/DocsGPT/application/indexes:/app/indexes
+      - D:/Github/KLTN/DocsGPT/application/inputs:/app/inputs
+      - D:/Github/KLTN/DocsGPT/application/vectors:/app/vectors
+      - D:/Github/KLTN/DocsGPT/application/inputs/local:/app/application/inputs/local
     depends_on:
       - redis
       - mongo

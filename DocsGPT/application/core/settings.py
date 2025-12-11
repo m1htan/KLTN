@@ -38,6 +38,7 @@ class Settings(BaseSettings):
     VECTOR_STORE: str = (
         "faiss"  #  "faiss" or "elasticsearch" or "qdrant" or "milvus" or "lancedb"
     )
+    USE_GPU: bool = False
     RETRIEVERS_ENABLED: list = ["classic_rag"]
     AGENT_NAME: str = "classic"
     FALLBACK_LLM_PROVIDER: Optional[str] = None  # provider for fallback llm
