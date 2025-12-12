@@ -1,79 +1,95 @@
-import logging
 import os
-import docx2txt
+import logging
+import gc
 
 from application.celery_init import celery
+from application.parser.file.bulk import load_files_bulk
 from application.parser.embedding_pipeline import embed_and_store_documents
+from application.vectorstore.vector_creator import get_vector_store
+from application.core.model_settings import get_embedding_model
 
-LOCAL_DATA_DIR = "/app/application/inputs/local"
+logger = logging.getLogger(__name__)
+
+LOCAL_DATA_DIR = os.getenv(
+    "LOCAL_DATA_DIR", "/app/application/inputs/local"
+)
 SOURCE_ID = "local-folder"
+BATCH_SIZE = int(os.getenv("LOCAL_INGEST_BATCH_SIZE", "20"))
 
 
-def load_docx(path):
-    try:
-        text = docx2txt.process(path)
-        return [{"text": text, "file_name": os.path.basename(path)}]
-    except Exception as e:
-        logging.error(f"[AUTO-INGEST] DOCX parse error {path}: {e}")
-        return []
+@celery.task(name="auto_ingest_local")
+def auto_ingest_local():
+    """
+    Auto ingest toàn bộ file trong thư mục LOCAL_DATA_DIR
+    - Support: PDF, DOCX, HTML, TXT, MD (theo parser có sẵn)
+    - Chạy theo batch
+    - Gắn vào source_id = local-folder
+    """
 
-
-def load_text_file(path):
-    try:
-        with open(path, "r", encoding="utf-8", errors="ignore") as f:
-            text = f.read()
-        return [{"text": text, "file_name": os.path.basename(path)}]
-    except Exception as e:
-        logging.error(f"[AUTO-INGEST] TEXT parse error {path}: {e}")
-        return []
-
-
-def auto_ingest_local(task):
     if not os.path.exists(LOCAL_DATA_DIR):
-        logging.warning(f"[AUTO-INGEST] Directory not found: {LOCAL_DATA_DIR}")
-        return {"success": False}
-
-    docs = []
-
-    # Manually walk the folder
-    for root, _, files in os.walk(LOCAL_DATA_DIR):
-        for fname in files:
-            full_path = os.path.join(root, fname)
-
-            if fname.lower().endswith(".docx"):
-                logging.info(f"[AUTO-INGEST] Loading DOCX: {full_path}")
-                docs.extend(load_docx(full_path))
-
-            elif fname.lower().endswith((".txt", ".md")):
-                logging.info(f"[AUTO-INGEST] Loading TEXT: {full_path}")
-                docs.extend(load_text_file(full_path))
-
-            else:
-                logging.info(f"[AUTO-INGEST] Ignoring unsupported file: {full_path}")
-
-    if not docs:
-        logging.info("[AUTO-INGEST] No documents found.")
-        return {"success": False}
-
-    logging.info(f"[AUTO-INGEST] Loaded {len(docs)} docs. Embedding...")
-
-    output_folder = f"/app/indexes/{SOURCE_ID}"
-
-    try:
-        embed_and_store_documents(
-            docs=docs,
-            folder_name=output_folder,
-            source_id=SOURCE_ID,
-            task_status=task,
+        logger.warning(
+            "[AUTO-INGEST] Folder not found: %s", LOCAL_DATA_DIR
         )
-        logging.info("[AUTO-INGEST] DONE.")
-        return {"success": True}
+        return "LOCAL_DATA_DIR not found"
 
-    except Exception as e:
-        logging.error(f"[AUTO-INGEST] ERROR: {e}", exc_info=True)
-        return {"success": False}
+    all_files = []
+    for root, _, files in os.walk(LOCAL_DATA_DIR):
+        for f in files:
+            if f.lower().endswith(
+                (".pdf", ".docx", ".html", ".htm", ".txt", ".md")
+            ):
+                all_files.append(os.path.join(root, f))
 
+    total = len(all_files)
+    logger.info("[AUTO-INGEST] Found %d files", total)
 
-@celery.task(bind=True, name="auto_ingest_local")
-def auto_ingest_local_task(self):
-    return auto_ingest_local(self)
+    if total == 0:
+        return "No files to ingest"
+
+    embedding_model = get_embedding_model()
+    vector_store = get_vector_store(source_id=SOURCE_ID)
+
+    batches = (total + BATCH_SIZE - 1) // BATCH_SIZE
+
+    for i in range(batches):
+        batch_files = all_files[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
+
+        logger.info(
+            "[AUTO-INGEST] Batch %d/%d (%d files)",
+            i + 1, batches, len(batch_files)
+        )
+
+        try:
+            documents = load_files_bulk(batch_files)
+            if not documents:
+                logger.warning(
+                    "[AUTO-INGEST] Batch %d: no documents parsed",
+                    i + 1
+                )
+                continue
+
+            embed_and_store_documents(
+                documents=documents,
+                source_id=SOURCE_ID,
+                metadata={"origin": "local-folder"},
+                embedding_model=embedding_model,
+                vector_store=vector_store,
+            )
+
+            logger.info(
+                "[AUTO-INGEST] Batch %d completed (%d docs)",
+                i + 1, len(documents)
+            )
+
+        except Exception as e:
+            logger.exception(
+                "[AUTO-INGEST] Batch %d failed: %s",
+                i + 1, e
+            )
+
+        finally:
+            documents = None
+            gc.collect()
+
+    logger.info("[AUTO-INGEST] DONE")
+    return "DONE"
