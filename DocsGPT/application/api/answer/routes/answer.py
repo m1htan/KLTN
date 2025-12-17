@@ -69,6 +69,9 @@ class AnswerResource(Resource, BaseAnswerResource):
     @api.doc(description="Provide a response based on the question and retriever")
     def post(self):
         data = request.get_json()
+
+        logger.info(f"[DEBUG PAYLOAD] isNoneDoc = {data.get('isNoneDoc')}, full payload = {data}")
+
         if error := self.validate_request(data):
             return error
         decoded_token = getattr(request, "decoded_token", None)

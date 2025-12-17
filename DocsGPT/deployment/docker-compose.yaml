@@ -56,7 +56,7 @@ services:
   worker:
     user: root
     build: ../application
-    command: celery -A application.app.celery worker -l INFO
+    command: celery -A application.celery_init.celery worker -l INFO -P solo --concurrency=1
     env_file:
       - .env
     environment:
@@ -74,11 +74,16 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - CUDA_VISIBLE_DEVICES=0
       - USE_GPU=true
+      - OMP_NUM_THREADS=1
+      - MKL_NUM_THREADS=1
+      - NUMEXPR_NUM_THREADS=1
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
     volumes:
       - D:/Github/KLTN/DocsGPT/application/indexes:/app/indexes
       - D:/Github/KLTN/DocsGPT/application/inputs:/app/inputs
       - D:/Github/KLTN/DocsGPT/application/vectors:/app/vectors
       - D:/Github/KLTN/DocsGPT/application/inputs/local:/app/application/inputs/local
+      - D:/Github/KLTN/DocsGPT/application:/app/application
     depends_on:
       - redis
       - mongo
@@ -105,9 +110,11 @@ services:
 
   beat:
     build: ../application
-    command: celery -A application.app.celery beat -l INFO
+    command: celery -A application.celery_init.celery beat -l INFO
     env_file:
       - .env
+    volumes:
+      - D:/Github/KLTN/DocsGPT/application:/app/application
     depends_on:
       - redis
       - mongo

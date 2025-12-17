@@ -314,38 +314,45 @@ class StreamProcessor:
         return data
 
     def _configure_source(self):
-        """Configure the source based on agent data"""
-        api_key = self.data.get("api_key") or self.agent_key
+        """
+        Configure active document sources for retrieval.
 
-        if api_key:
-            agent_data = self._get_data_from_api_key(api_key)
+        Rule:
+        - If user explicitly selects sources → use them
+        - If user selects nothing → default to full Vietnamese legal corpus (local-folder)
+        """
 
-            if agent_data.get("sources") and len(agent_data["sources"]) > 0:
-                source_ids = [
-                    source["id"] for source in agent_data["sources"] if source.get("id")
-                ]
-                if source_ids:
-                    self.source = {"active_docs": source_ids}
-                else:
-                    self.source = {}
-                self.all_sources = agent_data["sources"]
-            elif agent_data.get("source"):
-                self.source = {"active_docs": agent_data["source"]}
-                self.all_sources = [
-                    {
-                        "id": agent_data["source"],
-                        "retriever": agent_data.get("retriever", "classic"),
-                    }
-                ]
-            else:
-                self.source = {}
-                self.all_sources = []
+        active_docs = self.data.get("active_docs")
+
+        # Case 1: User explicitly selected sources (including uploaded files)
+        if active_docs:
+            if isinstance(active_docs, str):
+                active_docs = [active_docs]
+
+            self.source = {"active_docs": active_docs}
+            self.all_sources = [
+                {
+                    "id": doc_id,
+                    "retriever": "classic",
+                    "chunks": self.retriever_config.get("chunks", 2),
+                }
+                for doc_id in active_docs
+            ]
+            self.data["isNoneDoc"] = False
             return
-        if "active_docs" in self.data:
-            self.source = {"active_docs": self.data["active_docs"]}
-            return
-        self.source = {}
-        self.all_sources = []
+
+        # Case 2: No source selected → fallback to default legal corpus
+        default_legal_source = "local-folder"
+
+        self.source = {"active_docs": [default_legal_source]}
+        self.all_sources = [
+            {
+                "id": default_legal_source,
+                "retriever": "classic",
+                "chunks": self.retriever_config.get("chunks", 2),
+            }
+        ]
+        self.data["isNoneDoc"] = False
 
     def _configure_agent(self):
         """Configure the agent based on request data"""
@@ -433,8 +440,12 @@ class StreamProcessor:
         }
 
         api_key = self.data.get("api_key") or self.agent_key
-        if not api_key and "isNoneDoc" in self.data and self.data["isNoneDoc"]:
+
+        if self.data.get("isNoneDoc") is True and not self.source.get("active_docs"):
             self.retriever_config["chunks"] = 0
+        else:
+            if self.retriever_config["chunks"] <= 0:
+                self.retriever_config["chunks"] = 2
 
     def create_retriever(self):
         return RetrieverCreator.create_retriever(
@@ -451,6 +462,16 @@ class StreamProcessor:
 
     def pre_fetch_docs(self, question: str) -> tuple[Optional[str], Optional[list]]:
         """Pre-fetch documents for template rendering before agent creation"""
+
+        logger.info(
+            f"[DEBUG] isNoneDoc={self.data.get('isNoneDoc')} | active_docs={self.source.get('active_docs')}"
+        )
+
+        logger.info(
+            f"Request flags: isNoneDoc={self.data.get('isNoneDoc', None)} "
+            f"active_docs={self.source.get('active_docs') if isinstance(self.source, dict) else None}"
+        )
+
         if self.data.get("isNoneDoc", False):
             logger.info("Pre-fetch skipped: isNoneDoc=True")
             return None, None

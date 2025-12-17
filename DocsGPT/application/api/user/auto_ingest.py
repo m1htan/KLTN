@@ -1,95 +1,101 @@
-import os
 import logging
-import gc
+from pathlib import Path
+from celery import shared_task
 
-from application.celery_init import celery
-from application.parser.file.bulk import load_files_bulk
+from langchain.schema import Document as LCDocument
+from langchain_community.embeddings import HuggingFaceEmbeddings
+
+from application.parser.file.bulk import SimpleDirectoryReader
 from application.parser.embedding_pipeline import embed_and_store_documents
-from application.vectorstore.vector_creator import get_vector_store
-from application.core.model_settings import get_embedding_model
 
-logger = logging.getLogger(__name__)
-
-LOCAL_DATA_DIR = os.getenv(
-    "LOCAL_DATA_DIR", "/app/application/inputs/local"
-)
+# ===== CONFIG =====
+LOCAL_DATA_DIR = "/app/application/inputs/local"
+VECTOR_FOLDER = "/app/application/indexes/local-folder"
 SOURCE_ID = "local-folder"
-BATCH_SIZE = int(os.getenv("LOCAL_INGEST_BATCH_SIZE", "20"))
+BATCH_SIZE = 16
+# ==================
 
 
-@celery.task(name="auto_ingest_local")
-def auto_ingest_local():
+@shared_task(bind=True, name="auto_ingest_local")
+def auto_ingest_local(self):
     """
-    Auto ingest toàn bộ file trong thư mục LOCAL_DATA_DIR
-    - Support: PDF, DOCX, HTML, TXT, MD (theo parser có sẵn)
-    - Chạy theo batch
-    - Gắn vào source_id = local-folder
+    Auto ingest documents from local folder using SimpleDirectoryReader
+    and embed them in batches to avoid OOM.
     """
+    try:
+        logging.info("[AUTO-INGEST] Starting local auto ingest")
 
-    if not os.path.exists(LOCAL_DATA_DIR):
-        logger.warning(
-            "[AUTO-INGEST] Folder not found: %s", LOCAL_DATA_DIR
-        )
-        return "LOCAL_DATA_DIR not found"
-
-    all_files = []
-    for root, _, files in os.walk(LOCAL_DATA_DIR):
-        for f in files:
-            if f.lower().endswith(
-                (".pdf", ".docx", ".html", ".htm", ".txt", ".md")
-            ):
-                all_files.append(os.path.join(root, f))
-
-    total = len(all_files)
-    logger.info("[AUTO-INGEST] Found %d files", total)
-
-    if total == 0:
-        return "No files to ingest"
-
-    embedding_model = get_embedding_model()
-    vector_store = get_vector_store(source_id=SOURCE_ID)
-
-    batches = (total + BATCH_SIZE - 1) // BATCH_SIZE
-
-    for i in range(batches):
-        batch_files = all_files[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]
-
-        logger.info(
-            "[AUTO-INGEST] Batch %d/%d (%d files)",
-            i + 1, batches, len(batch_files)
+        # 1. Load documents bằng parser CHUẨN của hệ thống
+        reader = SimpleDirectoryReader(
+            input_dir=LOCAL_DATA_DIR,
+            recursive=True
         )
 
-        try:
-            documents = load_files_bulk(batch_files)
-            if not documents:
-                logger.warning(
-                    "[AUTO-INGEST] Batch %d: no documents parsed",
-                    i + 1
-                )
-                continue
+        def to_lc_document(d):
+            # 1) Lấy content
+            content = None
+            if hasattr(d, "text") and d.text is not None:
+                content = d.text
+            elif hasattr(d, "page_content") and d.page_content is not None:
+                content = d.page_content
+            elif hasattr(d, "get_text"):
+                content = d.get_text()
+            else:
+                content = str(d)
+
+            # 2) Lấy metadata (nhiều lib dùng extra_info thay vì metadata)
+            meta = {}
+            if hasattr(d, "metadata") and d.metadata:
+                meta = d.metadata
+            elif hasattr(d, "extra_info") and d.extra_info:
+                meta = d.extra_info
+            elif hasattr(d, "meta") and d.meta:
+                meta = d.meta
+            elif hasattr(d, "dict"):
+                try:
+                    dd = d.dict()
+                    meta = dd.get("metadata") or dd.get("extra_info") or {}
+                except Exception:
+                    meta = {}
+
+            meta.setdefault("source", SOURCE_ID)
+            meta.setdefault("ingest_type", "local")
+
+            return LCDocument(page_content=content, metadata=meta)
+
+        raw_docs = reader.load_data()
+        documents = [to_lc_document(d) for d in raw_docs]
+
+        total_docs = len(documents)
+
+        if total_docs == 0:
+            logging.warning("[AUTO-INGEST] No documents found")
+            return
+
+        logging.info(f"[AUTO-INGEST] Total documents loaded: {total_docs}")
+
+        embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base", model_kwargs={"device": "cpu"})
+
+        # 2. Batch embed
+        for start in range(0, total_docs, BATCH_SIZE):
+            end = start + BATCH_SIZE
+            batch_docs = documents[start:end]
+
+            logging.info(
+                f"[AUTO-INGEST] Embedding batch {start // BATCH_SIZE + 1} "
+                f"({start} → {min(end, total_docs)})"
+            )
 
             embed_and_store_documents(
-                documents=documents,
+                docs=batch_docs,
+                folder_name=VECTOR_FOLDER,
                 source_id=SOURCE_ID,
-                metadata={"origin": "local-folder"},
-                embedding_model=embedding_model,
-                vector_store=vector_store,
+                task_status=self,
+                embeddings=embeddings,
             )
 
-            logger.info(
-                "[AUTO-INGEST] Batch %d completed (%d docs)",
-                i + 1, len(documents)
-            )
+        logging.info("[AUTO-INGEST] Completed all batches successfully")
 
-        except Exception as e:
-            logger.exception(
-                "[AUTO-INGEST] Batch %d failed: %s",
-                i + 1, e
-            )
-
-        finally:
-            documents = None
-            gc.collect()
-
-    logger.info("[AUTO-INGEST] DONE")
-    return "DONE"
+    except Exception as e:
+        logging.error("[AUTO-INGEST] FAILED", exc_info=True)
+        raise

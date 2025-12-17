@@ -1,6 +1,6 @@
 from datetime import timedelta
 from application.celery_init import celery
-from application.api.user.auto_ingest import auto_ingest_local_task
+from application.api.user.auto_ingest import auto_ingest_local
 
 from application.worker import (
     agent_webhook_worker,

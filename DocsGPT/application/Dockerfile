@@ -44,7 +44,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 
 # Final Stage
-FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04 as final
+FROM ubuntu:24.04 as final
 
 RUN apt-get update && \
     apt-get install -y software-properties-common && \

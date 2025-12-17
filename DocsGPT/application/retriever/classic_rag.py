@@ -116,6 +116,8 @@ class ClassicRAG(BaseRetriever):
             return []
 
         all_docs = []
+        candidates = []
+
         chunks_per_source = max(1, self.chunks // len(self.vectorstores))
         token_budget = max(int(self.doc_token_limit * 0.9), 100)
         cumulative_tokens = 0
@@ -165,14 +167,16 @@ class ClassicRAG(BaseRetriever):
                         doc_tokens = num_tokens_from_string(doc_text_with_header)
 
                         if cumulative_tokens + doc_tokens < token_budget:
-                            all_docs.append(
+                            candidates.append(
                                 {
                                     "title": title,
                                     "text": page_content,
                                     "source": source_path,
                                     "filename": filename,
+                                    "metadata": metadata or {},
                                 }
                             )
+
                             cumulative_tokens += doc_tokens
 
                     if cumulative_tokens >= token_budget:
@@ -186,10 +190,30 @@ class ClassicRAG(BaseRetriever):
                     continue
 
         logging.info(
-            f"ClassicRAG._get_data: Retrieval complete - retrieved {len(all_docs)} documents "
+            f"ClassicRAG._get_data: Retrieval complete - retrieved {len(candidates)} documents "
             f"(requested chunks={self.chunks}, chunks_per_source={chunks_per_source}, "
             f"cumulative_tokens={cumulative_tokens}/{token_budget})"
         )
+
+        # === LEGAL RERANK ===
+        candidates.sort(
+            key=lambda d: legal_chunk_score(d, self.question),
+            reverse=True
+        )
+
+        all_docs = []
+        cumulative_tokens = 0
+
+        for d in candidates:
+            doc_text = f"{d['filename']}\n{d['text']}"
+            tokens = num_tokens_from_string(doc_text)
+
+            if cumulative_tokens + tokens > token_budget:
+                break
+
+            all_docs.append(d)
+            cumulative_tokens += tokens
+
         return all_docs
 
     def search(self, query: str = ""):
@@ -198,3 +222,32 @@ class ClassicRAG(BaseRetriever):
             self.original_question = query
             self.question = self._rephrase_query()
         return self._get_data()
+
+def legal_chunk_score(doc, question: str):
+    """
+    Score chunk theo ưu tiên pháp lý
+    """
+    meta = doc.get("metadata", {}) or {}
+
+    score = 0
+
+    chunk_type = meta.get("chunk_type")
+
+    # Ưu tiên tuyệt đối Điều
+    if chunk_type == "article":
+        score += 100
+    elif chunk_type == "article_clause":
+        score += 50
+
+    article = meta.get("article", "")
+    article_title = meta.get("article_title", "")
+
+    q = question.lower()
+
+    if article and article.lower() in q:
+        score += 30
+
+    if article_title and article_title.lower() in q:
+        score += 20
+
+    return score

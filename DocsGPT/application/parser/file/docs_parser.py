@@ -5,6 +5,7 @@ Contains parsers for docx, pdf files.
 """
 from pathlib import Path
 from typing import Dict
+import logging
 
 from application.parser.file.base_parser import BaseParser
 from application.core.settings import settings
@@ -52,19 +53,31 @@ class PDFParser(BaseParser):
 
 
 class DocxParser(BaseParser):
-    """Docx parser."""
+    """Safe Docx parser (no unzip side-effects)."""
 
     def _init_parser(self) -> Dict:
-        """Init parser."""
         return {}
 
     def parse_file(self, file: Path, errors: str = "ignore") -> str:
-        """Parse file."""
         try:
-            import docx2txt
+            from docx import Document as DocxDocument
         except ImportError:
-            raise ValueError("docx2txt is required to read Microsoft Word files.")
+            raise ValueError("python-docx is required to read Microsoft Word files.")
 
-        text = docx2txt.process(file)
+        try:
+            doc = DocxDocument(str(file))
+            texts = []
 
-        return text
+            for para in doc.paragraphs:
+                text = para.text.strip()
+                if text:
+                    texts.append(text)
+
+            return "\n".join(texts)
+
+        except Exception as e:
+            logging.error(
+                f"[DocxParser] Failed to parse DOCX: {file}",
+                exc_info=True
+            )
+            return ""

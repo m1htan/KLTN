@@ -154,6 +154,9 @@ class SimpleDirectoryReader(BaseReader):
                 if not parser.parser_config_set:
                     parser.init_parser()
                 data = parser.parse_file(input_file, errors=self.errors)
+                if not data or not str(data).strip():
+                    logging.error(f"[INGEST] Empty content from DOCX: {input_file}")
+                    continue
             else:
                 # do standard read
                 with open(input_file, "r", errors=self.errors) as f:

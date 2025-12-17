@@ -15,6 +15,7 @@ from urllib.parse import urljoin
 import requests
 from bson.dbref import DBRef
 from bson.objectid import ObjectId
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 from application.agents.agent_creator import AgentCreator
 from application.api.answer.services.stream_processor import get_prompt
@@ -26,10 +27,10 @@ from application.parser.chunking import Chunker
 from application.parser.connectors.connector_creator import ConnectorCreator
 from application.parser.embedding_pipeline import embed_and_store_documents
 from application.parser.file.bulk import SimpleDirectoryReader
-from application.parser.remote.remote_creator import RemoteCreator
 from application.parser.schema.base import Document
 from application.retriever.retriever_creator import RetrieverCreator
-
+from application.parser.legal_vn_parser import parse_law_text
+from application.parser.legal_chunker import chunk_articles
 from application.storage.storage_creator import StorageCreator
 from application.utils import count_tokens_docs, num_tokens_from_string
 
@@ -285,6 +286,7 @@ def ingest_worker(
     limit = None
     exclude = True
     sample = False
+    temp_file_path = None
 
     storage = StorageCreator.get_storage()
 
@@ -343,35 +345,65 @@ def ingest_worker(
             self.update_state(state="PROGRESS", meta={"current": 1})
             if sample:
                 logging.info(f"Sample mode enabled. Using {limit} documents.")
-            reader = SimpleDirectoryReader(
-                input_dir=temp_dir,
-                input_files=input_files,
-                recursive=recursive,
-                required_exts=formats,
-                exclude_hidden=exclude,
-                file_metadata=metadata_from_filename,
-            )
+            if temp_file_path and os.path.isfile(temp_file_path):
+                reader = SimpleDirectoryReader(
+                    input_files=[temp_file_path],
+                    recursive=False,
+                    required_exts=formats,
+                    exclude_hidden=exclude,
+                    file_metadata=metadata_from_filename,
+                )
+            else:
+                # Ingest thư mục
+                reader = SimpleDirectoryReader(
+                    input_dir=temp_dir,
+                    recursive=recursive,
+                    required_exts=formats,
+                    exclude_hidden=exclude,
+                    file_metadata=metadata_from_filename,
+                )
+
             raw_docs = reader.load_data()
 
             directory_structure = getattr(reader, "directory_structure", {})
             logging.info(f"Directory structure from reader: {directory_structure}")
 
-            chunker = Chunker(
-                chunking_strategy="classic_chunk",
-                max_tokens=MAX_TOKENS,
-                min_tokens=MIN_TOKENS,
-                duplicate_headers=False,
-            )
-            raw_docs = chunker.chunk(documents=raw_docs)
+            # raw_docs hiện là Document(text=...)
+            full_text = "\n".join(d.text for d in raw_docs)
 
-            docs = [Document.to_langchain_format(raw_doc) for raw_doc in raw_docs]
+            articles = parse_law_text(full_text)
+
+            law_meta = {
+                "law_name": "Bộ luật Lao động",
+                "law_number": "45/2019/QH14",
+                "year": 2019,
+            }
+
+            legal_docs = chunk_articles(
+                articles=articles,
+                law_meta=law_meta,
+                source_file=filename,
+            )
+
+            docs = [Document.to_langchain_format(d) for d in legal_docs]
 
             id = ObjectId()
 
             vector_store_path = os.path.join(temp_dir, "vector_store")
             os.makedirs(vector_store_path, exist_ok=True)
 
-            embed_and_store_documents(docs, vector_store_path, id, self)
+            embeddings = HuggingFaceEmbeddings(
+                model_name="intfloat/multilingual-e5-base",
+                model_kwargs={"device": "cpu"}
+            )
+
+            embed_and_store_documents(
+                docs=docs,
+                folder_name=vector_store_path,
+                source_id=id,
+                task_status=self,
+                embeddings=embeddings,
+            )
 
             tokens = count_tokens_docs(docs)
 
@@ -735,6 +767,7 @@ def remote_worker(
     operation_mode="upload",
     doc_id=None,
 ):
+    from application.parser.remote.remote_creator import RemoteCreator
     full_path = os.path.join(directory, user, name_job)
     if not os.path.exists(full_path):
         os.makedirs(full_path)
@@ -757,13 +790,32 @@ def remote_worker(
 
         if operation_mode == "upload":
             id = ObjectId()
-            embed_and_store_documents(docs, full_path, id, self)
+            vector_store_path = full_path
+
+            embeddings = HuggingFaceEmbeddings(
+                model_name="intfloat/multilingual-e5-base",
+                model_kwargs={"device": "cpu"}
+            )
+
+            embed_and_store_documents(
+                docs=docs,
+                folder_name=vector_store_path,
+                source_id=id,
+                task_status=self,
+                embeddings=embeddings,
+            )
         elif operation_mode == "sync":
             if not doc_id or not ObjectId.is_valid(doc_id):
                 logging.error("Invalid doc_id provided for sync operation: %s", doc_id)
                 raise ValueError("doc_id must be provided for sync operation.")
             id = ObjectId(doc_id)
-            embed_and_store_documents(docs, full_path, id, self)
+            embed_and_store_documents(
+                docs=docs,
+                folder_name=vector_store_path,
+                source_id=id,
+                task_status=self,
+                embeddings=embeddings,
+            )
         self.update_state(state="PROGRESS", meta={"current": 100})
 
         file_data = {
@@ -1127,7 +1179,19 @@ def ingest_connector(
             self.update_state(
                 state="PROGRESS", meta={"current": 80, "status": "Storing documents"}
             )
-            embed_and_store_documents(docs, vector_store_path, id, self)
+
+            embeddings = HuggingFaceEmbeddings(
+                model_name="intfloat/multilingual-e5-base",
+                model_kwargs={"device": "cpu"}
+            )
+
+            embed_and_store_documents(
+                docs=docs,
+                folder_name=vector_store_path,
+                source_id=id,
+                task_status=self,
+                embeddings=embeddings,
+            )
 
             tokens = count_tokens_docs(docs)
 

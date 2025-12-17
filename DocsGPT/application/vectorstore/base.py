@@ -1,6 +1,7 @@
 import logging
 import os
 from abc import ABC, abstractmethod
+import torch
 
 from langchain_openai import OpenAIEmbeddings
 from sentence_transformers import SentenceTransformer
@@ -16,6 +17,10 @@ class EmbeddingsWrapper:
             self.model = SentenceTransformer(
                 model_name,
                 config_kwargs={"allow_dangerous_deserialization": True},
+                model_kwargs={
+                    "torch_dtype": torch.float16,
+                    "low_cpu_mem_usage": True,
+                },
                 *args,
                 **kwargs,
             )
