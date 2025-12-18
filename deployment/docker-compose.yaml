@@ -38,10 +38,10 @@ services:
     ports:
       - "7091:7091"
     volumes:
-      - D:/Github/KLTN/DocsGPT/application/indexes:/app/indexes
-      - D:/Github/KLTN/DocsGPT/application/inputs:/app/inputs
-      - D:/Github/KLTN/DocsGPT/application/vectors:/app/vectors
-      - D:/Github/KLTN/DocsGPT/application/inputs/local:/app/application/inputs/local
+      - D:/Github/KLTN/application/indexes:/app/indexes
+      - D:/Github/KLTN/application/inputs:/app/inputs
+      - D:/Github/KLTN/application/vectors:/app/vectors
+      - D:/Github/KLTN/application/inputs/local:/app/application/inputs/local
     depends_on:
       - redis
       - mongo
@@ -79,11 +79,11 @@ services:
       - NUMEXPR_NUM_THREADS=1
       - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
     volumes:
-      - D:/Github/KLTN/DocsGPT/application/indexes:/app/indexes
-      - D:/Github/KLTN/DocsGPT/application/inputs:/app/inputs
-      - D:/Github/KLTN/DocsGPT/application/vectors:/app/vectors
-      - D:/Github/KLTN/DocsGPT/application/inputs/local:/app/application/inputs/local
-      - D:/Github/KLTN/DocsGPT/application:/app/application
+      - D:/Github/KLTN/application/indexes:/app/indexes
+      - D:/Github/KLTN/application/inputs:/app/inputs
+      - D:/Github/KLTN/application/vectors:/app/vectors
+      - D:/Github/KLTN/application/inputs/local:/app/application/inputs/local
+      - D:/Github/KLTN/application:/app/application
     depends_on:
       - redis
       - mongo
@@ -114,7 +114,7 @@ services:
     env_file:
       - .env
     volumes:
-      - D:/Github/KLTN/DocsGPT/application:/app/application
+      - D:/Github/KLTN/application:/app/application
     depends_on:
       - redis
       - mongo

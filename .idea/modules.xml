@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/KLTN.iml" filepath="$PROJECT_DIR$/.idea/KLTN.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DocsGPT.iml" filepath="$PROJECT_DIR$/.idea/DocsGPT.iml" />
     </modules>
   </component>
 </project>
