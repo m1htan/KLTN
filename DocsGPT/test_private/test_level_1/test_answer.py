@@ -6,7 +6,7 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 db = FAISS.load_local(
-    "D:/Github/KLTN/DocsGPT/application/indexes/local-folder",
+    "/DocsGPT/application/indexes/local-folder",
     embeddings,
     allow_dangerous_deserialization=True
 )

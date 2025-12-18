@@ -4,7 +4,7 @@ from collections import defaultdict
 import re
 
 # ====== CONFIG ======
-INDEX_PATH = "D:/Github/KLTN/DocsGPT/application/indexes/local-folder"
+INDEX_PATH = "/DocsGPT/application/indexes/local-folder"
 EMBED_MODEL = "intfloat/multilingual-e5-base"
 
 # ====== LOAD INDEX ======
@@ -69,7 +69,7 @@ for src, chunks in by_source.items():
 from langchain_community.vectorstores import FAISS
 from DocsGPT.application.vectorstore.base import EmbeddingsWrapper
 
-INDEX_PATH = "D:/Github/KLTN/DocsGPT/application/indexes/local-folder"
+INDEX_PATH = "/DocsGPT/application/indexes/local-folder"
 EMBED_MODEL = "intfloat/multilingual-e5-base"
 
 emb = EmbeddingsWrapper(EMBED_MODEL)

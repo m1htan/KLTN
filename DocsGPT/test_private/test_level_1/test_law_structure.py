@@ -1,7 +1,7 @@
 import re
 from docx import Document
 
-LAW_FILE = "D:/Github/KLTN/DocsGPT/application/inputs/local/Bộ luật-45-2019-QH14.docx"
+LAW_FILE = "/DocsGPT/application/inputs/local/Bộ luật-45-2019-QH14.docx"
 
 doc = Document(LAW_FILE)
 

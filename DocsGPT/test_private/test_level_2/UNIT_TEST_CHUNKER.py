@@ -1,6 +1,6 @@
-from DocsGPT.application.parser.legal_chunker import chunk_articles
-from DocsGPT.application.parser.legal_vn_parser import parse_law_text
-from DocsGPT.application.parser.file.docs_parser import DocxParser
+from application.parser.legal_chunker import chunk_articles
+from application.parser.legal_vn_parser import parse_law_text
+from application.parser.file.docs_parser import DocxParser
 from pathlib import Path
 
 parser = DocxParser()
