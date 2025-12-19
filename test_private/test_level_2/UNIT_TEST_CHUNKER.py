@@ -4,7 +4,7 @@ from application.parser.file.docs_parser import DocxParser
 from pathlib import Path
 
 parser = DocxParser()
-file = Path("D:/Github/KLTN/DocsGPT/application/inputs/local/Bộ luật-45-2019-QH14.docx")
+file = Path("D:/Github/KLTN/application/inputs/local/Bộ luật-45-2019-QH14.docx")
 
 text = parser.parse_file(file)
 articles = parse_law_text(text)

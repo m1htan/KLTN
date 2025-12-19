@@ -1,10 +1,10 @@
 from langchain_community.vectorstores import FAISS
-from DocsGPT.application.vectorstore.base import EmbeddingsWrapper
+from application.vectorstore.base import EmbeddingsWrapper
 from collections import defaultdict
 import re
 
 # ====== CONFIG ======
-INDEX_PATH = "/DocsGPT/application/indexes/local-folder"
+INDEX_PATH = "application/indexes/local-folder"
 EMBED_MODEL = "intfloat/multilingual-e5-base"
 
 # ====== LOAD INDEX ======

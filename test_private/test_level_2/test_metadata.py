@@ -1,10 +1,8 @@
 from pathlib import Path
-from DocsGPT.application.parser.file.docs_parser import DocxParser
+from application.parser.file.docs_parser import DocxParser
 
 parser = DocxParser()
-file = Path(
-    "/DocsGPT/application/inputs/local/Bộ luật-45-2019-QH14.docx"  # chọn 1 file bất kỳ
-)
+file = Path("/application/inputs/local/Bộ luật-45-2019-QH14.docx")
 
 text = parser.parse_file(file)
 

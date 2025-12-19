@@ -1,10 +1,10 @@
 from langchain_community.vectorstores import FAISS
-from DocsGPT.application.vectorstore.base import EmbeddingsWrapper
+from application.vectorstore.base import EmbeddingsWrapper
 
 emb = EmbeddingsWrapper("intfloat/multilingual-e5-base")
 
 db = FAISS.load_local(
-    "D:/Github/KLTN/DocsGPT/application/indexes/local-folder",
+    "D:/Github/KLTN/application/indexes/local-folder",
     emb,
     allow_dangerous_deserialization=True
 )

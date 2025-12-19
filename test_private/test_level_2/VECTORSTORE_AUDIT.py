@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import FAISS
-from DocsGPT.application.vectorstore.base import EmbeddingsWrapper
+from application.vectorstore.base import EmbeddingsWrapper
 
 emb = EmbeddingsWrapper("intfloat/multilingual-e5-base")
 db = FAISS.load_local(

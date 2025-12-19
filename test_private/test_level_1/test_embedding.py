@@ -1,6 +1,6 @@
 import pickle
 
-with open("/DocsGPT/application/indexes/local-folder/index.pkl", "rb") as f:
+with open("application/indexes/local-folder/index.pkl", "rb") as f:
     data = pickle.load(f)
 
 docstore = data[0]
