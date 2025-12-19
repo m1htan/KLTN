@@ -6,7 +6,7 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 db = FAISS.load_local(
-    "application/indexes/local-folder",
+    "D:/Github/KLTN/application/indexes/local-folder",
     embeddings,
     allow_dangerous_deserialization=True
 )

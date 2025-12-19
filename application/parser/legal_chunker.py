@@ -12,6 +12,11 @@ LAW_FILE_RE = re.compile(
     re.IGNORECASE
 )
 
+def build_law_id(law_info: dict) -> str | None:
+    if not law_info.get("law_number") or not law_info.get("law_year") or not law_info.get("law_code"):
+        return None
+    return f"luat_{law_info['law_number']}_{law_info['law_year']}_{law_info['law_code'].lower()}"
+
 def parse_law_info(source_file: str) -> dict:
     name = os.path.basename(source_file)
     m = LAW_FILE_RE.search(name)
@@ -41,17 +46,34 @@ def chunk_articles(
     for art in articles:
         token_count = num_tokens_from_string(art.raw_text)
 
+        law_id = build_law_id(law_info)
+
         base_meta = {
-            **law_meta,
-            **law_info,
+            # contract
+            "schema_version": "law_meta_v1",
+            "doc_type": "law",
+
+            # law identity
+            "law_id": law_id,
+            "law_type": law_info.get("law_type"),
+            "law_number": law_info.get("law_number"),
+            "law_year": law_info.get("law_year"),
+            "law_code": law_info.get("law_code"),
+
+            # structure
             "chapter": art.chapter,
             "chapter_title": art.chapter_title,
-            "article": f"Điều {art.number}",
-            "article_number": art.number,
-            "article_title": art.title,
+
+            "article_label": f"Điều {art.number}",
+            "article_no": int(re.sub(r"\D", "", art.number)),
+
+            # system
             "source_file": source_file,
             "language": "vi",
             "jurisdiction": "VN",
+
+            # preserve upstream
+            **law_meta,
         }
 
         # --- 1 Điều = 1 chunk ---
@@ -62,8 +84,8 @@ def chunk_articles(
                     extra_info={
                         **base_meta,
                         "chunk_type": "article",
-                        "clause": None,
-                        "clause_number": None,
+                        "clause_label": None,
+                        "clause_no": None,
                     },
                 )
             )
@@ -83,8 +105,8 @@ def chunk_articles(
                         extra_info={
                             **base_meta,
                             "chunk_type": "article_clause",
-                            "clause": f"Khoản {clause.number}",
-                            "clause_number": clause.number,
+                            "clause_label": f"Khoản {clause.number}",
+                            "clause_no": int(clause.number),
                         },
                     )
                 )

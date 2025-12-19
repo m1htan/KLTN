@@ -1,7 +1,7 @@
 import re
 from docx import Document
 
-LAW_FILE = "application/inputs/local/Bộ luật-45-2019-QH14.docx"
+LAW_FILE = "D:/Github/KLTN/application/inputs/local/Bộ luật-45-2019-QH14.docx"
 
 doc = Document(LAW_FILE)
 
