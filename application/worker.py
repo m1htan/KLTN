@@ -8,6 +8,7 @@ import string
 import tempfile
 from typing import Any, Dict
 import zipfile
+import re
 
 from collections import Counter
 from urllib.parse import urljoin
@@ -46,16 +47,23 @@ MAX_TOKENS = 1250
 RECURSION_DEPTH = 2
 
 
+LEGAL_SIGNAL_RE = re.compile(
+    r"(?im)^\s*(chương\s+[ivxlcdm]+|điều\s+\d+[a-zA-Z]?\.)"
+)
+
+def looks_like_vn_law(text: str, min_hits: int = 3) -> bool:
+    if not text:
+        return False
+    hits = LEGAL_SIGNAL_RE.findall(text)
+    return len(hits) >= min_hits
+
+
 # Define a function to extract metadata from a given filename.
-
-
 def metadata_from_filename(title):
     return {"title": title}
 
 
 # Define a function to generate a random string of a given length.
-
-
 def generate_random_string(length):
     return "".join([string.ascii_letters[i % 52] for i in range(length)])
 
@@ -369,23 +377,52 @@ def ingest_worker(
             logging.info(f"Directory structure from reader: {directory_structure}")
 
             # raw_docs hiện là Document(text=...)
-            full_text = "\n".join(d.text for d in raw_docs)
+            docs = []
 
-            articles = parse_law_text(full_text)
+            for d in raw_docs:
+                text = d.text or ""
+                source_file = (d.extra_info or {}).get("source", filename)
 
-            law_meta = {
-                "law_name": "Bộ luật Lao động",
-                "law_number": "45/2019/QH14",
-                "year": 2019,
-            }
+                # AUTO-DETECT LUẬT
+                if looks_like_vn_law(text):
+                    logging.info(f"[ROUTER] Legal document detected: {source_file}")
 
-            legal_docs = chunk_articles(
-                articles=articles,
-                law_meta=law_meta,
-                source_file=filename,
-            )
+                    articles = parse_law_text(text)
+                    if not articles:
+                        logging.warning(f"[ROUTER] Failed to parse law structure: {source_file}")
+                        continue
 
-            docs = [Document.to_langchain_format(d) for d in legal_docs]
+                    law_meta = {
+                        "source": source_file,
+                        "ingest_type": "auto_detect_legal",
+                    }
+
+                    legal_chunks = chunk_articles(
+                        articles=articles,
+                        law_meta=law_meta,
+                        source_file=source_file,
+                    )
+
+                    docs.extend(
+                        [Document.to_langchain_format(c) for c in legal_chunks]
+                    )
+
+                # GENERAL DOCUMENT
+                else:
+                    logging.info(f"[ROUTER] General document detected: {source_file}")
+
+                    chunker = Chunker(
+                        chunking_strategy="classic_chunk",
+                        max_tokens=MAX_TOKENS,
+                        min_tokens=MIN_TOKENS,
+                        duplicate_headers=False,
+                    )
+
+                    general_chunks = chunker.chunk([d])
+
+                    docs.extend(
+                        [Document.to_langchain_format(c) for c in general_chunks]
+                    )
 
             id = ObjectId()
 

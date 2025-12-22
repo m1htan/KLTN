@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 from application.core.settings import settings
 from application.llm.llm_creator import LLMCreator
@@ -128,8 +129,30 @@ class ClassicRAG(BaseRetriever):
                     docsearch = VectorCreator.create_vectorstore(
                         settings.VECTOR_STORE, vectorstore_id, settings.EMBEDDINGS_KEY
                     )
+                    analysis = analyze_legal_query(self.question)
+
+                    search_kwargs = {
+                        "k": max(chunks_per_source * 2, 20)
+                    }
+
+                    # ===== HARD METADATA FILTER (STEP 5) =====
+                    if analysis["has_structure"]:
+                        metadata_filter = {
+                            "doc_type": "law",
+                            "article_no": analysis["article_no"],
+                        }
+
+                        if analysis["clause_no"] is not None:
+                            metadata_filter["clause_no"] = analysis["clause_no"]
+
+                        search_kwargs["filter"] = metadata_filter
+                        logging.info(
+                            f"[LEGAL-ROUTING] Applying metadata filter: {metadata_filter}"
+                        )
+
                     docs_temp = docsearch.search(
-                        self.question, k=max(chunks_per_source * 2, 20)
+                        self.question,
+                        **search_kwargs
                     )
 
                     for doc in docs_temp:
@@ -223,31 +246,51 @@ class ClassicRAG(BaseRetriever):
             self.question = self._rephrase_query()
         return self._get_data()
 
+def analyze_legal_query(question: str) -> dict:
+    """
+    Phân tích câu hỏi pháp luật: Điều / Khoản
+    """
+    q = question.lower()
+
+    article_no = None
+    clause_no = None
+
+    m_article = re.search(r"điều\s+(\d+)", q)
+    if m_article:
+        article_no = int(m_article.group(1))
+
+    m_clause = re.search(r"khoản\s+(\d+)", q)
+    if m_clause:
+        clause_no = int(m_clause.group(1))
+
+    return {
+        "article_no": article_no,
+        "clause_no": clause_no,
+        "has_structure": article_no is not None,
+    }
+
+
 def legal_chunk_score(doc, question: str):
     """
-    Score chunk theo ưu tiên pháp lý
+    Rerank nhẹ sau khi đã filter cứng
     """
     meta = doc.get("metadata", {}) or {}
-
     score = 0
 
     chunk_type = meta.get("chunk_type")
-
-    # Ưu tiên tuyệt đối Điều
     if chunk_type == "article":
         score += 100
     elif chunk_type == "article_clause":
         score += 50
 
-    article = meta.get("article", "")
-    article_title = meta.get("article_title", "")
+    analysis = analyze_legal_query(question)
 
-    q = question.lower()
+    if analysis["article_no"] is not None:
+        if meta.get("article_no") == analysis["article_no"]:
+            score += 50
 
-    if article and article.lower() in q:
-        score += 30
-
-    if article_title and article_title.lower() in q:
-        score += 20
+    if analysis["clause_no"] is not None:
+        if meta.get("clause_no") == analysis["clause_no"]:
+            score += 30
 
     return score

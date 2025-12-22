@@ -1,101 +1,178 @@
 import logging
-from pathlib import Path
 from celery import shared_task
+import re
+import os
+import torch
 
-from langchain.schema import Document as LCDocument
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 from application.parser.file.bulk import SimpleDirectoryReader
-from application.parser.embedding_pipeline import embed_and_store_documents
+from application.parser.legal_vn_parser import parse_law_text
+from application.parser.legal_chunker import chunk_articles
+from application.utils import count_tokens_docs
+from application.parser.embedding_pipeline import embed_and_store_documents_batched
 
-# ===== CONFIG =====
+from application.knowledge_graph.graph_builder import LegalGraphBuilder
+from application.knowledge_graph.graph_writer import GraphWriter
+from application.knowledge_graph.neo4j_client import (
+    Neo4jClient,
+    load_neo4j_config_from_env
+)
+from application.knowledge_graph import schema as S
+
+
+# CONFIG
 LOCAL_DATA_DIR = "/app/application/inputs/local"
-VECTOR_FOLDER = "/app/application/indexes/local-folder"
+VECTOR_FOLDER = "/app/indexes/local-folder"
 SOURCE_ID = "local-folder"
-BATCH_SIZE = 16
-# ==================
 
 
 @shared_task(bind=True, name="auto_ingest_local")
 def auto_ingest_local(self):
     """
-    Auto ingest documents from local folder using SimpleDirectoryReader
-    and embed them in batches to avoid OOM.
+    Auto ingest LAW documents from local folder.
+    All files in LOCAL_DATA_DIR are treated as LAW documents.
     """
     try:
-        logging.info("[AUTO-INGEST] Starting local auto ingest")
+        logging.info("[AUTO-INGEST-LAW] Starting local law auto ingest")
 
-        # 1. Load documents bằng parser CHUẨN của hệ thống
-        reader = SimpleDirectoryReader(
-            input_dir=LOCAL_DATA_DIR,
-            recursive=True
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+        embeddings = HuggingFaceEmbeddings(
+            model_name="intfloat/multilingual-e5-base",
+            model_kwargs={"device": device},
+            encode_kwargs={"normalize_embeddings": True},
         )
 
-        def to_lc_document(d):
-            # 1) Lấy content
-            content = None
-            if hasattr(d, "text") and d.text is not None:
-                content = d.text
-            elif hasattr(d, "page_content") and d.page_content is not None:
-                content = d.page_content
-            elif hasattr(d, "get_text"):
-                content = d.get_text()
-            else:
-                content = str(d)
+        all_chunks = []
 
-            # 2) Lấy metadata (nhiều lib dùng extra_info thay vì metadata)
-            meta = {}
-            if hasattr(d, "metadata") and d.metadata:
-                meta = d.metadata
-            elif hasattr(d, "extra_info") and d.extra_info:
-                meta = d.extra_info
-            elif hasattr(d, "meta") and d.meta:
-                meta = d.meta
-            elif hasattr(d, "dict"):
-                try:
-                    dd = d.dict()
-                    meta = dd.get("metadata") or dd.get("extra_info") or {}
-                except Exception:
-                    meta = {}
+        for filename in os.listdir(LOCAL_DATA_DIR):
+            file_path = os.path.join(LOCAL_DATA_DIR, filename)
 
-            meta.setdefault("source", SOURCE_ID)
-            meta.setdefault("ingest_type", "local")
+            if not os.path.isfile(file_path):
+                continue
 
-            return LCDocument(page_content=content, metadata=meta)
+            if not filename.lower().endswith((".txt", ".docx", ".pdf")):
+                continue
 
-        raw_docs = reader.load_data()
-        documents = [to_lc_document(d) for d in raw_docs]
+            logging.info(f"[AUTO-INGEST-LAW] Processing file: {filename}")
 
-        total_docs = len(documents)
+            # 1. Read raw text
+            reader = SimpleDirectoryReader(
+                input_files=[file_path],
+                recursive=False
+            )
+            raw_docs = reader.load_data()
+            if not raw_docs:
+                logging.warning(f"[AUTO-INGEST-LAW] Empty file: {filename}")
+                continue
 
-        if total_docs == 0:
-            logging.warning("[AUTO-INGEST] No documents found")
+            full_text = "\n".join(d.text for d in raw_docs if d.text)
+
+            # 2. Parse law structure
+            articles = parse_law_text(full_text)
+
+            if not articles:
+                logging.warning(f"[AUTO-INGEST-LAW] No articles parsed: {filename}")
+                continue
+
+            # 3. Law-level metadata
+            law_meta = {
+                "source": filename,
+                "ingest_type": "local_law",
+            }
+
+            # 4. Chunk theo Điều / Khoản (đã chuẩn hoá ở STEP 2)
+            chunks = chunk_articles(
+                articles=articles,
+                law_meta=law_meta,
+                source_file=filename,
+            )
+
+            all_chunks.extend(chunks)
+
+        if not all_chunks:
+            logging.warning("[AUTO-INGEST-LAW] No law chunks generated")
             return
 
-        logging.info(f"[AUTO-INGEST] Total documents loaded: {total_docs}")
+        docs = [
+            d.to_langchain_format()
+            for d in all_chunks
+            if d.extra_info.get("chunk_type") == "article"
+        ]
+        total_tokens = count_tokens_docs(docs)
 
-        embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base", model_kwargs={"device": "cpu"})
+        logging.info(
+            f"[AUTO-INGEST-LAW] Total chunks: {len(docs)} | Total tokens: {total_tokens}"
+        )
 
-        # 2. Batch embed
-        for start in range(0, total_docs, BATCH_SIZE):
-            end = start + BATCH_SIZE
-            batch_docs = documents[start:end]
+        # ===== BUILD KNOWLEDGE GRAPH (MVP) =====
+        logging.info("[GRAPH] Start building graph_docs")
+        graph_docs = []
+        for d in all_chunks:
+            graph_docs.append({
+                "text": d.text,
+                "metadata": d.extra_info
+            })
+        logging.info(f"[GRAPH] graph_docs ready | size={len(graph_docs)}")
 
-            logging.info(
-                f"[AUTO-INGEST] Embedding batch {start // BATCH_SIZE + 1} "
-                f"({start} → {min(end, total_docs)})"
-            )
+        logging.info("[GRAPH] Initializing LegalGraphBuilder")
+        builder = LegalGraphBuilder()
 
-            embed_and_store_documents(
-                docs=batch_docs,
-                folder_name=VECTOR_FOLDER,
-                source_id=SOURCE_ID,
-                task_status=self,
-                embeddings=embeddings,
-            )
+        logging.info("[GRAPH] Calling build_from_retrieved_docs")
+        result = builder.build_from_retrieved_docs(graph_docs)
+        logging.info("[GRAPH] build_from_retrieved_docs DONE")
 
-        logging.info("[AUTO-INGEST] Completed all batches successfully")
+        logging.info("[GRAPH] Connecting Neo4j")
+        client = Neo4jClient(load_neo4j_config_from_env())
+        writer = GraphWriter(client)
+
+        logging.info("[GRAPH] ensure_constraints")
+        writer.ensure_constraints()
+        logging.info("[GRAPH] ensure_constraints DONE")
+
+        logging.info(f"[GRAPH] upsert_nodes LAW={len(result.laws)}")
+        writer.upsert_nodes(S.LABEL_LAW, result.laws)
+
+        logging.info(f"[GRAPH] upsert_nodes ARTICLE={len(result.articles)}")
+        writer.upsert_nodes(S.LABEL_ARTICLE, result.articles)
+
+        logging.info(f"[GRAPH] upsert_nodes CLAUSE={len(result.clauses)}")
+        writer.upsert_nodes(S.LABEL_CLAUSE, result.clauses)
+
+        logging.info(f"[GRAPH] upsert_nodes POINT={len(result.points)}")
+        writer.upsert_nodes(S.LABEL_POINT, result.points)
+
+        logging.info("[GRAPH] upsert_edges HAS_ARTICLE")
+        writer.upsert_edges(S.REL_HAS_ARTICLE, result.edges_has_article)
+
+        logging.info("[GRAPH] upsert_edges HAS_CLAUSE")
+        writer.upsert_edges(S.REL_HAS_CLAUSE, result.edges_has_clause)
+
+        logging.info("[GRAPH] upsert_edges HAS_POINT")
+        writer.upsert_edges(S.REL_HAS_POINT, result.edges_has_point)
+
+        logging.info("[GRAPH] upsert_edges REFERS_TO")
+        writer.upsert_edges(S.REL_REFERS_TO, result.edges_refers_to)
+
+        logging.info("[GRAPH] upsert_edges EXCEPTION_OF")
+        writer.upsert_edges(S.REL_EXCEPTION_OF, result.edges_exception_of)
+
+        client.close()
+        logging.info("[GRAPH] Neo4j closed")
+
+        # 5. Embed & store
+        embed_and_store_documents_batched(
+            docs=docs,
+            folder_name=VECTOR_FOLDER,
+            source_id=SOURCE_ID,
+            embeddings=embeddings,
+            batch_size=512,
+            task_status=self,
+        )
+
+        logging.info("[AUTO-INGEST-LAW] Completed successfully")
 
     except Exception as e:
-        logging.error("[AUTO-INGEST] FAILED", exc_info=True)
+        logging.error("[AUTO-INGEST-LAW] FAILED", exc_info=True)
         raise

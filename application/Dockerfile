@@ -68,8 +68,6 @@ COPY --from=builder /models /app/models
 # Copy your application code
 COPY . /app/application
 
-COPY models/gte-qwen2 /app/application/models/gte-qwen2
-
 # Change the ownership of the /app directory to the appuser
 	
 RUN mkdir -p /app/application/inputs/local

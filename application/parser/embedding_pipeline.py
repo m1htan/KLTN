@@ -3,6 +3,7 @@ import logging
 from typing import List, Any
 from retry import retry
 from tqdm import tqdm
+import numpy as np
 
 from langchain_community.vectorstores import FAISS
 from langchain_community.docstore import InMemoryDocstore
@@ -24,6 +25,39 @@ def sanitize_content(content: str) -> str:
     if not content:
         return content
     return content.replace('\x00', '')
+
+def _is_sentence_transformer(embeddings: Any) -> bool:
+    return hasattr(embeddings, "encode") and not hasattr(embeddings, "embed_documents")
+
+def _get_embedding_dim(embeddings: Any) -> int:
+    """
+    Supports:
+    - sentence-transformers SentenceTransformer (encode)
+    - LangChain embeddings (embed_query)
+    """
+    if _is_sentence_transformer(embeddings):
+        v = embeddings.encode(["dimension_check"], convert_to_numpy=True, show_progress_bar=False)
+        return int(v.shape[1])
+    # LangChain embeddings
+    return len(embeddings.embed_query("dimension_check"))
+
+def _embed_texts(embeddings: Any, texts: List[str], st_batch_size: int = 64) -> "np.ndarray":
+    """
+    Returns np.ndarray shape (n, dim), dtype float32
+    """
+    if _is_sentence_transformer(embeddings):
+        vecs = embeddings.encode(
+            texts,
+            batch_size=st_batch_size,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+            normalize_embeddings=False,  # GIỮ tương thích với IndexFlatL2 hiện tại
+        )
+        return np.asarray(vecs, dtype=np.float32)
+
+    # LangChain fallback
+    vecs = embeddings.embed_documents(texts)
+    return np.asarray(vecs, dtype=np.float32)
 
 
 @retry(tries=10, delay=60)
@@ -155,3 +189,106 @@ def embed_and_store_documents(
 
     store.save_local(folder_name)
     logging.info("[EMBED] FAISS index saved successfully")
+
+
+def embed_and_store_documents_batched(
+    docs: List[Any],
+    folder_name: str,
+    source_id: str,
+    embeddings: Any,
+    batch_size: int = 512,
+    task_status: Any = None,
+) -> None:
+    """
+    Embed documents in batches and save FAISS index incrementally.
+    Safe for large corpora (30k+ chunks).
+    """
+
+    if not docs:
+        logging.warning("[EMBED-BATCH] No documents to embed.")
+        return
+
+    os.makedirs(folder_name, exist_ok=True)
+
+    store = None
+    index_path = os.path.join(folder_name, "index.faiss")
+
+    # Load existing index if exists
+    if os.path.exists(index_path):
+        logging.info("[EMBED-BATCH] Loading existing FAISS index")
+        store = FAISS.load_local(
+            folder_name,
+            embeddings,
+            allow_dangerous_deserialization=True,
+        )
+    else:
+        import faiss
+        dim = len(embeddings.embed_query("dimension_check"))
+        index = faiss.IndexFlatL2(dim)
+        store = FAISS(
+            embedding_function=embeddings,
+            index=index,
+            docstore=InMemoryDocstore({}),
+            index_to_docstore_id={},
+        )
+
+    total = len(docs)
+
+    for start in range(0, total, batch_size):
+        end = min(start + batch_size, total)
+        batch = docs[start:end]
+
+        texts = []
+        metas = []
+
+        for doc in batch:
+            content = sanitize_content(doc.page_content)
+            if not content.strip():
+                continue
+
+            meta = doc.metadata or {}
+            meta["source_id"] = str(source_id)
+
+            texts.append(content)
+            metas.append(meta)
+
+        if not texts:
+            continue
+
+        logging.info(
+            f"[EMBED-BATCH] Embedding batch {start // batch_size + 1} "
+            f"({start} → {end})"
+        )
+
+        # 1) Embed batch (GPU nếu là SentenceTransformer)
+        vectors = _embed_texts(embeddings, texts, st_batch_size=min(64, len(texts)))
+
+        # 2) Add vectors to FAISS index (CPU FAISS, OK)
+        store.index.add(vectors)
+
+        # 3) Update docstore + mapping (giữ tương thích FAISS.load_local/save_local)
+        for meta, text in zip(metas, texts):
+            # tạo doc_id mới theo số lượng mapping hiện tại
+            new_idx = len(store.index_to_docstore_id)
+            doc_id = str(new_idx)
+            store.index_to_docstore_id[new_idx] = doc_id
+
+            # docstore lưu Document (đúng chuẩn LangChain), không chỉ meta
+            from langchain_core.documents import Document
+            store.docstore._dict[doc_id] = Document(page_content=text, metadata=meta)
+
+        # 4) SAVE sau mỗi batch (GIỮ yêu cầu của bạn)
+        store.save_local(folder_name)
+
+        if task_status:
+            progress = int((end / total) * 100)
+            task_status.update_state(
+                state="PROGRESS",
+                meta={"current": progress},
+            )
+
+        logging.info(
+            f"[EMBED-BATCH] Saved FAISS | vectors={store.index.ntotal}"
+        )
+
+    logging.info("[EMBED-BATCH] Completed all batches successfully")

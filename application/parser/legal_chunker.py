@@ -42,71 +42,84 @@ def chunk_articles(
 
     chunks = []
     law_info = parse_law_info(source_file)
+    law_id = build_law_id(law_info)
 
     for art in articles:
         token_count = num_tokens_from_string(art.raw_text)
 
-        law_id = build_law_id(law_info)
-
         base_meta = {
-            # contract
             "schema_version": "law_meta_v1",
             "doc_type": "law",
 
-            # law identity
             "law_id": law_id,
             "law_type": law_info.get("law_type"),
             "law_number": law_info.get("law_number"),
             "law_year": law_info.get("law_year"),
             "law_code": law_info.get("law_code"),
 
-            # structure
             "chapter": art.chapter,
             "chapter_title": art.chapter_title,
 
             "article_label": f"Điều {art.number}",
             "article_no": int(re.sub(r"\D", "", art.number)),
 
-            # system
             "source_file": source_file,
             "language": "vi",
             "jurisdiction": "VN",
 
-            # preserve upstream
             **law_meta,
         }
 
-        # --- 1 Điều = 1 chunk ---
-        if token_count <= MAX_TOKENS_ARTICLE:
+        # ===============================
+        # 1. ARTICLE – vector + graph
+        # ===============================
+        chunks.append(
+            Document(
+                text=art.raw_text,
+                extra_info={
+                    **base_meta,
+                    "chunk_type": "article",
+                    "for_vector": True,
+                    "for_graph": True,
+                    "clause_label": None,
+                    "clause_no": None,
+                    "point_label": None,
+                },
+            )
+        )
+
+        # ===============================
+        # 2. CLAUSE – graph only
+        # ===============================
+        for clause in art.clauses:
+            clause_meta = {
+                **base_meta,
+                "chunk_type": "clause",
+                "for_vector": False,
+                "for_graph": True,
+                "clause_label": f"Khoản {clause.number}",
+                "clause_no": int(clause.number),
+                "point_label": None,
+            }
+
             chunks.append(
                 Document(
-                    text=art.raw_text,
-                    extra_info={
-                        **base_meta,
-                        "chunk_type": "article",
-                        "clause_label": None,
-                        "clause_no": None,
-                    },
+                    text=clause.text,
+                    extra_info=clause_meta,
                 )
             )
-        else:
-            # --- fallback theo Khoản ---
-            for clause in art.clauses:
-                clause_text = (
-                    f"{law_info.get('law_type')} số {law_info.get('law_number')}/{law_info.get('law_year')}\n"
-                    f"{art.chapter} – {art.chapter_title}\n\n"
-                    f"Điều {art.number}. {art.title}\n"
-                    f"Khoản {clause.number}.\n"
-                    f"{clause.text}"
-                )
+
+            # ===============================
+            # 3. POINT – graph only
+            # ===============================
+            for point in getattr(clause, "points", []):
                 chunks.append(
                     Document(
-                        text=clause_text,
+                        text=point.text,
                         extra_info={
-                            **base_meta,
-                            "chunk_type": "article_clause",
-                            "clause_label": f"Khoản {clause.number}",
-                            "clause_no": int(clause.number),
+                            **clause_meta,
+                            "chunk_type": "point",
+                            "point_label": point.letter
                         },
                     )
                 )

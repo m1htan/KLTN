@@ -170,12 +170,17 @@ class SimpleDirectoryReader(BaseReader):
             
             full_path = str(input_file.resolve())
             self.file_token_counts[full_path] = file_tokens
-            
+
             base_metadata = {
-                'title': input_file.name,
-                'token_count': file_tokens,
+                # contract
+                "schema_version": "general_v1",
+                "doc_type": "general",
+
+                # file info
+                "title": input_file.name,
+                "token_count": file_tokens,
             }
-            
+
             if hasattr(self, 'input_dir'):
                 try:
                     relative_path = str(input_file.relative_to(self.input_dir))
