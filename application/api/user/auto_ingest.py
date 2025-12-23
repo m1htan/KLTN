@@ -26,7 +26,6 @@ LOCAL_DATA_DIR = "/app/application/inputs/local"
 VECTOR_FOLDER = "/app/indexes/local-folder"
 SOURCE_ID = "local-folder"
 
-
 @shared_task(bind=True, name="auto_ingest_local")
 def auto_ingest_local(self):
     """
@@ -69,8 +68,15 @@ def auto_ingest_local(self):
 
             full_text = "\n".join(d.text for d in raw_docs if d.text)
 
-            # 2. Parse law structure
-            articles = parse_law_text(full_text)
+            # LAW IDENTITY (MVP: derive from filename, later from header text)
+            law_code = os.path.splitext(filename)[0]
+            law_name = law_code
+
+            articles = parse_law_text(
+                full_text,
+                law_code=law_code,
+                law_name=law_name,
+            )
 
             if not articles:
                 logging.warning(f"[AUTO-INGEST-LAW] No articles parsed: {filename}")

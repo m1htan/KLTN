@@ -83,7 +83,8 @@ class LegalGraphBuilder:
             # Clause node if clause_no exists
             clause_node_id: Optional[str] = None
             if isinstance(clause_no, int):
-                clause_node = self._ensure_clause(clauses, meta, text=text if (meta.get("chunk_type") == "article_clause") else None)
+                clause_text = text if meta.get("chunk_type") in ("clause", "article_clause") else None
+                clause_node = self._ensure_clause(clauses, meta, text=clause_text)
                 clause_node_id = clause_node["id"]
                 edges_has_clause.append({
                     "from": article_node["id"],
@@ -92,13 +93,21 @@ class LegalGraphBuilder:
                 })
 
                 # Extract points inside clause text (node-level, không chunk)
-                for p_label, p_text in self._extract_points_from_text(text):
-                    p_node = self._ensure_point(points, meta, point_label=p_label, text=p_text)
+                if meta.get("chunk_type") == "point" and meta.get("point_label"):
+                    p_node = self._ensure_point(points, meta, meta["point_label"], text)
                     edges_has_point.append({
                         "from": clause_node["id"],
                         "to": p_node["id"],
                         "props": {}
                     })
+                elif meta.get("chunk_type") in ("clause", "article_clause"):
+                    for p_label, p_text in self._extract_points_from_text(text):
+                        p_node = self._ensure_point(points, meta, p_label, p_text)
+                        edges_has_point.append({
+                            "from": clause_node["id"],
+                            "to": p_node["id"],
+                            "props": {}
+                        })
 
             # REFERS_TO edges (from current node -> referenced Article/Clause/Point as available in MVP)
             # MVP resolution:

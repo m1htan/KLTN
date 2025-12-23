@@ -16,6 +16,8 @@ class Clause:
 
 @dataclass
 class Article:
+    law_code: str
+    law_name: str
     number: str
     title: str
     chapter: str
@@ -29,7 +31,7 @@ CLAUSE_RE  = re.compile(r"^\s*(\d+)\.\s+(.+)")
 POINT_RE = re.compile(r"^\s*([a-z])\)\s+(.+)")
 
 
-def parse_law_text(text: str) -> List[Article]:
+def parse_law_text(text: str, law_code: str, law_name: str) -> List[Article]:
     lines = [l.rstrip() for l in text.splitlines() if l.strip()]
 
     articles: List[Article] = []
@@ -47,6 +49,8 @@ def parse_law_text(text: str) -> List[Article]:
         if current_article:
             articles.append(
                 Article(
+                    law_code=law_code,
+                    law_name=law_name,
                     number=current_article["number"],
                     title=current_article["title"],
                     chapter=current_chapter,

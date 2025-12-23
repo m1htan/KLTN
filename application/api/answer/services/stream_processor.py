@@ -291,7 +291,7 @@ class StreamProcessor:
                 if source_ref == "default":
                     processed_source = {
                         "id": "default",
-                        "retriever": "classic",
+                        "retriever": "graph",
                         "chunks": data.get("chunks", "2"),
                     }
                     sources_list.append(processed_source)
@@ -300,7 +300,7 @@ class StreamProcessor:
                     if source_doc:
                         processed_source = {
                             "id": str(source_doc["_id"]),
-                            "retriever": source_doc.get("retriever", "classic"),
+                            "retriever": source_doc.get("retriever", "graph"),
                             "chunks": source_doc.get("chunks", data.get("chunks", "2")),
                         }
                         sources_list.append(processed_source)
@@ -333,7 +333,7 @@ class StreamProcessor:
             self.all_sources = [
                 {
                     "id": doc_id,
-                    "retriever": "classic",
+                    "retriever": self.retriever_config.get("retriever_name", "graph"),
                     "chunks": self.retriever_config.get("chunks", 2),
                 }
                 for doc_id in active_docs
@@ -348,7 +348,7 @@ class StreamProcessor:
         self.all_sources = [
             {
                 "id": default_legal_source,
-                "retriever": "classic",
+                "retriever": self.retriever_config.get("retriever_name", "graph"),
                 "chunks": self.retriever_config.get("chunks", 2),
             }
         ]
@@ -433,7 +433,7 @@ class StreamProcessor:
         )
 
         self.retriever_config = {
-            "retriever_name": self.data.get("retriever", "classic"),
+            "retriever_name": self.data.get("retriever", "graph"),
             "chunks": int(self.data.get("chunks", 2)),
             "doc_token_limit": doc_token_limit,
             "history_token_limit": history_token_limit,

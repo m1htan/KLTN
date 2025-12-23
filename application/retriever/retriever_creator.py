@@ -1,10 +1,11 @@
 from application.retriever.classic_rag import ClassicRAG
-
+from application.retriever.graph_rag import GraphRAG
 
 class RetrieverCreator:
     retrievers = {
         "classic": ClassicRAG,
-        "default": ClassicRAG,
+        "graph": GraphRAG,
+        "default": GraphRAG,
     }
 
     @classmethod

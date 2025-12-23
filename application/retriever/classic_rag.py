@@ -129,25 +129,23 @@ class ClassicRAG(BaseRetriever):
                     docsearch = VectorCreator.create_vectorstore(
                         settings.VECTOR_STORE, vectorstore_id, settings.EMBEDDINGS_KEY
                     )
+
+                    # ===== HARD METADATA FILTER (ARTICLE-LEVEL ONLY) =====
                     analysis = analyze_legal_query(self.question)
 
-                    search_kwargs = {
-                        "k": max(chunks_per_source * 2, 20)
-                    }
+                    search_kwargs = {"k": max(chunks_per_source * 2, 20)}
 
-                    # ===== HARD METADATA FILTER (STEP 5) =====
-                    if analysis["has_structure"]:
+                    if analysis.get("has_structure") and analysis.get("article_no") is not None:
                         metadata_filter = {
                             "doc_type": "law",
                             "article_no": analysis["article_no"],
                         }
 
-                        if analysis["clause_no"] is not None:
-                            metadata_filter["clause_no"] = analysis["clause_no"]
-
+                        # IMPORTANT: Do NOT filter clause_no/point at vector layer (handled by graph)
                         search_kwargs["filter"] = metadata_filter
+
                         logging.info(
-                            f"[LEGAL-ROUTING] Applying metadata filter: {metadata_filter}"
+                            f"[LEGAL-ROUTING] Applying metadata filter (ARTICLE-LEVEL ONLY): {metadata_filter}"
                         )
 
                     docs_temp = docsearch.search(
@@ -289,8 +287,9 @@ def legal_chunk_score(doc, question: str):
         if meta.get("article_no") == analysis["article_no"]:
             score += 50
 
-    if analysis["clause_no"] is not None:
-        if meta.get("clause_no") == analysis["clause_no"]:
-            score += 30
+    # Clause score disabled – clause handled by graph
+    # if analysis["clause_no"] is not None:
+    #     if meta.get("clause_no") == analysis["clause_no"]:
+    #         score += 30
 
     return score

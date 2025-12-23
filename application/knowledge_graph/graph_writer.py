@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Dict, Any
+from typing import Iterable, Dict, Any, Tuple, List
 import logging
 
 from application.knowledge_graph.neo4j_client import Neo4jClient
@@ -45,27 +45,32 @@ class GraphWriter:
         Batch upsert edges, using labels so Neo4j can use label-scoped unique constraints/indexes.
         """
 
-        def _labels_for_rel(rt: str) -> Tuple[str, str]:
+        def _labels_for_rel(rt: str) -> Tuple[List[str], List[str]]:
             if rt == S.REL_HAS_ARTICLE:
-                return S.LABEL_LAW, S.LABEL_ARTICLE
+                return [S.LABEL_LAW], [S.LABEL_ARTICLE]
             if rt == S.REL_HAS_CLAUSE:
-                return S.LABEL_ARTICLE, S.LABEL_CLAUSE
+                return [S.LABEL_ARTICLE], [S.LABEL_CLAUSE]
             if rt == S.REL_HAS_POINT:
-                return S.LABEL_CLAUSE, S.LABEL_POINT
+                return [S.LABEL_CLAUSE], [S.LABEL_POINT]
             if rt == S.REL_REFERS_TO:
                 # from: Article or Clause, to: Article (per current builder)
-                return "Article|Clause", S.LABEL_ARTICLE
+                return [S.LABEL_ARTICLE, S.LABEL_CLAUSE], [S.LABEL_ARTICLE]
             if rt == S.REL_EXCEPTION_OF:
                 # can be from Article or Clause; to can be Article or Clause (self-loop unresolved)
-                return "Article|Clause", "Article|Clause"
+                return [S.LABEL_ARTICLE, S.LABEL_CLAUSE], [S.LABEL_ARTICLE, S.LABEL_CLAUSE]
             raise ValueError(f"Unknown rel_type: {rt}")
 
         from_labels, to_labels = _labels_for_rel(rel_type)
 
+        def _label_pred(var: str, labels: List[str]) -> str:
+            return " OR ".join([f"{var}:{lb}" for lb in labels])
+
         cypher = f"""
         UNWIND $rows AS row
-        MATCH (a:{from_labels} {{id: row.from}})
-        MATCH (b:{to_labels} {{id: row.to}})
+        MATCH (a {{id: row.from}})
+        WHERE {_label_pred("a", from_labels)}
+        MATCH (b {{id: row.to}})
+        WHERE {_label_pred("b", to_labels)}
         MERGE (a)-[r:{rel_type}]->(b)
         SET r += row.props
         """
