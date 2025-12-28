@@ -9,6 +9,12 @@ from bson.dbref import DBRef
 
 from bson.objectid import ObjectId
 
+from application.api.answer.routes.base import BaseAnswerResource
+from application.retriever.legal_query_analyzer import analyze_legal_query
+from application.retriever.law_resolver import resolve_law_id
+from application.knowledge_graph.neo4j_client import Neo4jClient, load_neo4j_config_from_env
+from application.knowledge_graph import schema as S
+
 from application.agents.agent_creator import AgentCreator
 from application.api.answer.services.compression import CompressionOrchestrator
 from application.api.answer.services.compression.token_counter import TokenCounter
@@ -20,6 +26,8 @@ from application.core.model_utils import (
     get_provider_from_model_id,
     validate_model_id,
 )
+from application.retriever.legal_structure_validator import validate_legal_structure
+
 from application.core.mongo_db import MongoDB
 from application.core.settings import settings
 from application.retriever.retriever_creator import RetrieverCreator
@@ -65,7 +73,7 @@ def get_prompt(prompt_id: str, prompts_collection=None) -> str:
         raise ValueError(f"Invalid prompt ID: {prompt_id}") from e
 
 
-class StreamProcessor:
+class StreamProcessor(BaseAnswerResource):
     def __init__(
         self, request_data: Dict[str, Any], decoded_token: Optional[Dict[str, Any]]
     ):
@@ -475,32 +483,174 @@ class StreamProcessor:
         if self.data.get("isNoneDoc", False):
             logger.info("Pre-fetch skipped: isNoneDoc=True")
             return None, None
+
+        # =====================================================
+        # 1) Parse structured legal reference
+        # =====================================================
+        parsed = analyze_legal_query(question)
+        article_no = parsed.get("article_no")
+        clause_no = parsed.get("clause_no")
+        point_label = parsed.get("point_label")
+        has_structured_ref = parsed.get("has_structured_ref", False)
+
+        # =====================================================
+        # 2) Resolve law_id if user mentioned a law name
+        # =====================================================
+        law_res = resolve_law_id(question)
+        resolved_law_id = law_res.law_id
+
+        # Nếu user hỏi kiểu Điều/Khoản/Điểm mà KHÔNG nêu rõ luật -> bắt họ nêu.
+        # Đây là hành vi “an toàn”, tránh trộn nhiều luật.
+        if has_structured_ref and not resolved_law_id:
+            safe_msg = (
+                "Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
+                "Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật."
+            )
+            logger.info(f"[LEGAL-GUARD] unresolved law_id, reason={law_res.reason}")
+            return safe_msg, None
+
+        # =====================================================
+        # 3) Validate existence in Neo4j (chặn hallucination)
+        # =====================================================
+        if resolved_law_id and article_no:
+            # Neo4jClient dùng singleton driver, KHÔNG close trong request
+            neo = Neo4jClient(load_neo4j_config_from_env())
+
+            cy_article = """
+            MATCH (a:Article {law_id: $law_id, article_no: $article_no})
+            RETURN count(a) AS n
+            """
+            rows = neo.run_read(
+                cy_article,
+                {"law_id": resolved_law_id, "article_no": int(article_no)}
+            )
+
+            n_article = (rows[0]["n"] if rows else 0)
+
+            if n_article == 0:
+                safe_msg = (
+                    f"Không tìm thấy Điều {article_no} trong văn bản bạn nêu trong hệ thống hiện tại. "
+                    "Vui lòng kiểm tra lại số điều hoặc đảm bảo văn bản đó đã được nạp vào hệ thống."
+                )
+                logger.info("[LEGAL-GUARD] article not found in graph")
+                return safe_msg, None
+
+            # If clause specified -> check Clause
+            if clause_no is not None:
+                cy_clause = f"""
+                MATCH (c:{S.LABEL_CLAUSE} {{law_id: $law_id, article_no: $article_no, clause_no: $clause_no}})
+                RETURN count(c) AS n
+                """
+                rows = neo.run_read(
+                    cy_clause,
+                    {
+                        "law_id": resolved_law_id,
+                        "article_no": int(article_no),
+                        "clause_no": int(clause_no),
+                    },
+                )
+                n_clause = (rows[0]["n"] if rows else 0)
+                if n_clause == 0:
+                    safe_msg = (
+                        f"Không tìm thấy Khoản {clause_no} của Điều {article_no} trong văn bản bạn nêu trong hệ thống hiện tại. "
+                        "Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng."
+                    )
+                    logger.info("[LEGAL-GUARD] clause not found in graph")
+                    return safe_msg, None
+
+                logger.info(
+                    f"[LEGAL-GUARD] passed graph existence check: law_id={resolved_law_id}, "
+                    f"article={article_no}, clause={clause_no}, point={point_label}"
+                )
+
+        # =====================================================
+        # 4) Do retrieval
+        # =====================================================
         try:
             retriever = self.create_retriever()
             logger.info(
                 f"Pre-fetching docs with chunks={retriever.chunks}, doc_token_limit={retriever.doc_token_limit}"
             )
+
+            logger.info(f"[RETRIEVER] calling search() retriever={type(retriever).__name__}")
+
             docs = retriever.search(question)
+
+            logger.info(f"[RETRIEVER] docs={docs}")
             logger.info(f"Pre-fetch retrieved {len(docs) if docs else 0} documents")
 
             if not docs:
                 logger.info("Pre-fetch: No documents returned from search")
                 return None, None
-            self.retrieved_docs = docs
+
+            # =====================================================
+            # 5) Filter docs strictly by resolved_law_id + article/clause/point
+            # =====================================================
+            def _meta(doc):
+                return (doc.get("metadata") or {}) if isinstance(doc, dict) else {}
+
+            filtered = []
+            for d in docs:
+                meta = _meta(d)
+                if resolved_law_id and meta.get("law_id") is not None and meta.get("law_id") != resolved_law_id:
+                    continue
+                if article_no is not None and meta.get("article_no") != int(article_no):
+                    continue
+                if clause_no is not None:
+                    # clause chunk may store clause_no or not; only accept if matches when present
+                    if meta.get("clause_no") is not None and meta.get("clause_no") != int(clause_no):
+                        continue
+                if point_label is not None:
+                    # accept only point chunk or clause chunk containing points;
+                    # if meta has point/point_label, enforce match
+                    if meta.get("point") and str(meta.get("point")).lower() != point_label:
+                        continue
+                    if meta.get("point_label") and str(meta.get("point_label")).lower() != point_label:
+                        continue
+                filtered.append(d)
+
+            # Nếu lọc quá gắt mà rỗng -> fail an toàn, KHÔNG trả luật khác
+            if resolved_law_id and has_structured_ref and not filtered:
+                safe_msg = (
+                    "Không tìm thấy đúng nội dung khớp với Điều/Khoản/Điểm trong văn bản bạn nêu. "
+                    "Hệ thống sẽ không suy diễn từ luật khác. Vui lòng kiểm tra lại câu hỏi hoặc dữ liệu ingest."
+                )
+                logger.info("[LEGAL-GUARD] retrieval mismatch after filtering")
+                return safe_msg, None
+
+            # Giữ lại docs đã lọc (nếu có), nếu không thì dùng docs gốc (trường hợp không có structured ref)
+            final_docs = filtered if filtered else docs
+            self.retrieved_docs = final_docs
+
+            # =====================================================
+            # 6) Build docs_together with size cap (tránh 295k chars)
+            # =====================================================
+            MAX_TOTAL_CHARS = 120000  # bạn có thể chỉnh; mục tiêu: không nhồi 295k chars/1 chunk
+            MAX_PER_DOC_CHARS = 20000
 
             docs_with_filenames = []
-            for doc in docs:
+            total = 0
+            for doc in final_docs:
+                text = doc.get("text") or ""
+                if len(text) > MAX_PER_DOC_CHARS:
+                    text = text[:MAX_PER_DOC_CHARS] + "\n...[TRUNCATED]..."
+
                 filename = doc.get("filename") or doc.get("title") or doc.get("source")
                 if filename:
-                    chunk_header = str(filename)
-                    docs_with_filenames.append(f"{chunk_header}\n{doc['text']}")
+                    chunk = f"{str(filename)}\n{text}"
                 else:
-                    docs_with_filenames.append(doc["text"])
+                    chunk = text
+
+                if total + len(chunk) > MAX_TOTAL_CHARS:
+                    break
+                docs_with_filenames.append(chunk)
+                total += len(chunk)
+
             docs_together = "\n\n".join(docs_with_filenames)
+            logger.info(f"Pre-fetch docs_together size: {len(docs_together)} chars (capped)")
 
-            logger.info(f"Pre-fetch docs_together size: {len(docs_together)} chars")
+            return docs_together, final_docs
 
-            return docs_together, docs
         except Exception as e:
             logger.error(f"Failed to pre-fetch docs: {str(e)}", exc_info=True)
             return None, None

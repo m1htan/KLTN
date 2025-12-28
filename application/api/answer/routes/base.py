@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 from typing import Any, Dict, Generator, List, Optional
+import time
 
 from flask import jsonify, make_response, Response
 from flask_restx import Namespace
@@ -12,6 +13,8 @@ from application.core.model_utils import (
     get_default_model_id,
     get_provider_from_model_id,
 )
+from application.retriever.legal_query_analyzer import analyze_legal_query
+from application.retriever.law_resolver import resolve_law_id
 
 from application.core.mongo_db import MongoDB
 from application.core.settings import settings
@@ -140,6 +143,17 @@ class BaseAnswerResource:
             )
         return None
 
+    def _sse(self, payload: Dict[str, Any]) -> str:
+        return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
+
+    def _early_end(self, message: str, conversation_id: Optional[str] = None) -> Generator[str, None, None]:
+        # Always emit id then answer then end (to keep /api/answer stable)
+        logger.info("[SSE] early_end start")
+        yield self._sse({"type": "id", "id": str(conversation_id or "")})
+        yield self._sse({"type": "answer", "answer": message})
+        yield self._sse({"type": "end"})
+        logger.info("[SSE] early_end end")
+
     def complete_stream(
         self,
         question: str,
@@ -155,6 +169,7 @@ class BaseAnswerResource:
         is_shared_usage: bool = False,
         shared_token: Optional[str] = None,
         model_id: Optional[str] = None,
+        override_answer=None,
     ) -> Generator[str, None, None]:
         """
         Generator function that streams the complete conversation response.
@@ -179,11 +194,88 @@ class BaseAnswerResource:
         Yields:
             Server-sent event strings
         """
+
+        # OVERRIDE ANSWER (LEGAL VALIDATION BLOCK)
+        if override_answer:
+            yield from self._early_end(str(override_answer), conversation_id=None)
+            return
+
+        yield self._sse({"type": "start"})
+
+        # =========================
+        # LEGAL GUARD (NO HALLUCINATION / NO CROSS-LAW MIX)
+        # =========================
+        parsed = analyze_legal_query(question)
+        law_res = resolve_law_id(question)
+
+        has_structured_ref = bool(parsed.get("has_structured_ref"))
+        article_no = parsed.get("article_no")
+        clause_no = parsed.get("clause_no")
+        point_label = parsed.get("point_label")
+
+        # 1) Nếu có cấu trúc Điều/Khoản/Điểm mà không resolve được luật -> chặn ngay
+        if has_structured_ref and not law_res.law_id:
+            msg = (
+                "Câu hỏi của bạn có dạng Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
+                "Vui lòng nêu rõ tên văn bản (ví dụ: Bộ luật Hình sự 100/2015/QH13) hoặc cung cấp số/ký hiệu để tra cứu chính xác."
+            )
+            yield from self._early_end(msg, conversation_id=None)
+            return
+
+        # 2) Nếu đã resolve được law_id + có Điều/Khoản/Điểm, kiểm tra retrieved_docs của agent có khớp không.
+        #    Nếu không khớp -> chặn để không trả nhầm Điều 15 của luật khác.
+        resolved_law_id = law_res.law_id
+        if has_structured_ref and resolved_law_id:
+            retrieved_docs = getattr(agent, "retrieved_docs", None) or []
+
+            # retrieved_docs trong hệ thống bạn là list[dict] (từ StreamProcessor.create_agent)
+            # Mỗi doc có dạng {"text": ..., "metadata": {...}}
+            def _doc_matches(d: Dict[str, Any]) -> bool:
+                meta = (d.get("metadata") or {})
+                if meta.get("law_id") != resolved_law_id:
+                    return False
+                if article_no is not None and meta.get("article_no") is not None:
+                    if int(meta.get("article_no")) != int(article_no):
+                        return False
+                if clause_no is not None and meta.get("clause_no") is not None:
+                    if int(meta.get("clause_no")) != int(clause_no):
+                        return False
+                # point có thể lưu meta["point"] hoặc meta["point_label"]
+                if point_label is not None:
+                    pv = meta.get("point") or meta.get("point_label")
+                    if pv is not None and str(pv).lower() != str(point_label).lower():
+                        return False
+                return True
+
+            # Nếu có docs mà không doc nào match -> chặn
+            if retrieved_docs and not any(_doc_matches(d) for d in retrieved_docs):
+                # message rõ ràng, không cho model bịa/đưa ví dụ
+                msg = (
+                    "Không tìm thấy nội dung khớp đúng Điều/Khoản/Điểm trong văn bản bạn nêu (theo dữ liệu hệ thống hiện tại). "
+                    "Hệ thống sẽ không suy diễn từ luật khác. "
+                    "Vui lòng kiểm tra lại số Điều/Khoản/Điểm hoặc kiểm tra dữ liệu ingest/metadata (law_id, article_no, clause_no, point)."
+                )
+                yield from self._early_end(msg, conversation_id=None)
+                return
+
+            # Nếu không có retrieved_docs thì cũng chặn với structured query (tránh model tự bịa)
+            if not retrieved_docs:
+                msg = (
+                    "Hệ thống không truy xuất được đoạn luật phù hợp để trả lời chính xác cho Điều/Khoản/Điểm bạn hỏi. "
+                    "Vui lòng kiểm tra dữ liệu đã ingest chưa hoặc thử lại sau khi build lại index/graph."
+                )
+                yield from self._early_end(msg, conversation_id=None)
+                return
+
         try:
             response_full, thought, source_log_docs, tool_calls = "", "", [], []
             is_structured = False
             schema_info = None
             structured_chunks = []
+
+            logger.info("[STREAM] entering agent.gen()")
+
+            start = time.time()
 
             for line in agent.gen(query=question):
                 if "answer" in line:
@@ -192,6 +284,8 @@ class BaseAnswerResource:
                         is_structured = True
                         schema_info = line.get("schema")
                         structured_chunks.append(line["answer"])
+                        if time.time() - start > 10:
+                            logger.warning("[STREAM] agent.gen() delayed >10s before first token")
                     else:
                         data = json.dumps({"type": "answer", "answer": line["answer"]})
                         yield f"data: {data}\n\n"

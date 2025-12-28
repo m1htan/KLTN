@@ -5,9 +5,9 @@ from flask import request, Response
 from flask_restx import fields, Resource
 
 from application.api import api
-
 from application.api.answer.routes.base import answer_ns, BaseAnswerResource
-
+from application.retriever.legal_structure_validator import validate_legal_structure
+from application.knowledge_graph.neo4j_client import load_neo4j_config_from_env, Neo4jClient
 from application.api.answer.services.stream_processor import StreamProcessor
 
 logger = logging.getLogger(__name__)
@@ -80,14 +80,45 @@ class StreamResource(Resource, BaseAnswerResource):
         decoded_token = getattr(request, "decoded_token", None)
         processor = StreamProcessor(data, decoded_token)
         try:
+            logger.info("[STREAM] initialize processor")
             processor.initialize()
 
+            logger.info("[STREAM] pre_fetch_docs start")
             docs_together, docs_list = processor.pre_fetch_docs(data["question"])
-            tools_data = processor.pre_fetch_tools()
+            logger.info("[STREAM] pre_fetch_docs done")
 
+            # Nếu validator trả message lỗi → trả thẳng cho user
+            if docs_list is None and isinstance(docs_together, str):
+
+                logger.info("[STREAM] returning override_answer SSE")
+
+                return Response(
+                    self.complete_stream(
+                        question=data["question"],
+                        agent=None,
+                        conversation_id=processor.conversation_id,
+                        user_api_key=processor.agent_config.get("user_api_key"),
+                        decoded_token=processor.decoded_token,
+                        isNoneDoc=True,
+                        index=data.get("index"),
+                        should_save_conversation=False,
+                        model_id=processor.model_id,
+                        override_answer=docs_together,
+                    ),
+                    mimetype="text/event-stream",
+                )
+
+            logger.info("[STREAM] pre_fetch_tools start")
+            tools_data = processor.pre_fetch_tools()
+            logger.info("[STREAM] pre_fetch_tools done")
+
+            logger.info("[STREAM] create_agent start")
             agent = processor.create_agent(
                 docs_together=docs_together, docs=docs_list, tools_data=tools_data
             )
+            logger.info("[STREAM] create_agent done")
+
+            logger.info("[STREAM] start complete_stream")
 
             if error := self.check_usage(processor.agent_config):
                 return error

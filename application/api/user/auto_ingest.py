@@ -173,7 +173,7 @@ def auto_ingest_local(self):
             folder_name=VECTOR_FOLDER,
             source_id=SOURCE_ID,
             embeddings=embeddings,
-            batch_size=512,
+            batch_size=256,
             task_status=self,
         )
 

@@ -5,8 +5,9 @@ from flask import make_response, request
 from flask_restx import fields, Resource
 
 from application.api import api
-
 from application.api.answer.routes.base import answer_ns, BaseAnswerResource
+from application.retriever.legal_structure_validator import validate_legal_structure
+from application.knowledge_graph.neo4j_client import load_neo4j_config_from_env, Neo4jClient
 
 from application.api.answer.services.stream_processor import StreamProcessor
 
@@ -78,6 +79,24 @@ class AnswerResource(Resource, BaseAnswerResource):
         processor = StreamProcessor(data, decoded_token)
         try:
             processor.initialize()
+
+            neo4j = Neo4jClient(load_neo4j_config_from_env())
+            error_msg = validate_legal_structure(
+                neo4j=neo4j,
+                question=data["question"],
+            )
+            neo4j.close()
+
+            if error_msg:
+                return make_response(
+                    {
+                        "answer": error_msg,
+                        "sources": [],
+                        "tool_calls": [],
+                    },
+                    200,
+                )
+
             if not processor.decoded_token:
                 return make_response({"error": "Unauthorized"}, 401)
 

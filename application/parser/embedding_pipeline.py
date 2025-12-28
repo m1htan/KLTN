@@ -196,7 +196,7 @@ def embed_and_store_documents_batched(
     folder_name: str,
     source_id: str,
     embeddings: Any,
-    batch_size: int = 512,
+    batch_size: int = 256,
     task_status: Any = None,
 ) -> None:
     """

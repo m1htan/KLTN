@@ -10,10 +10,3 @@ answer = Blueprint("answer", __name__)
 
 api.add_namespace(answer_ns)
 
-
-def init_answer_routes():
-    api.add_resource(StreamResource, "/stream")
-    api.add_resource(AnswerResource, "/api/answer")
-
-
-init_answer_routes()

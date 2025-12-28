@@ -20,13 +20,21 @@ def load_neo4j_config_from_env() -> Neo4jConfig:
 
 
 class Neo4jClient:
+    _driver = None
+
     def __init__(self, cfg: Neo4jConfig):
         self.cfg = cfg
-        self._driver = GraphDatabase.driver(cfg.uri, auth=(cfg.user, cfg.password))
+        if Neo4jClient._driver is None:
+            Neo4jClient._driver = GraphDatabase.driver(
+                cfg.uri,
+                auth=(cfg.user, cfg.password),
+            )
+        self._driver = Neo4jClient._driver
 
     def close(self) -> None:
-        if self._driver:
-            self._driver.close()
+        # KHÔNG close driver trong request
+        pass
+
 
     def run_write(self, cypher: str, params: dict | None = None) -> None:
         params = params or {}

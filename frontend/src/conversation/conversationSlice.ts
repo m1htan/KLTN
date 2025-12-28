@@ -259,11 +259,11 @@ export const conversationSlice = createSlice({
       }>,
     ) {
       const { conversationId, index, query } = action.payload;
-      // Only update if this update is for the current conversation
-      if (state.status === 'idle' || state.conversationId !== conversationId)
-        return;
 
-      if (query.response != undefined) {
+      // CHỈ chặn khi conversationId tồn tại và KHÔNG khớp
+      if (conversationId && state.conversationId !== conversationId) return;
+
+      if (query.response !== undefined) {
         state.queries[index].response =
           (state.queries[index].response || '') + query.response;
       }
@@ -292,9 +292,10 @@ export const conversationSlice = createSlice({
       }>,
     ) {
       const { conversationId, index, query } = action.payload;
-      if (state.conversationId !== conversationId) return;
 
-      if (query.thought != undefined) {
+      if (conversationId && state.conversationId !== conversationId) return;
+
+      if (query.thought !== undefined) {
         state.queries[index].thought =
           (state.queries[index].thought || '') + query.thought;
       }
@@ -307,9 +308,13 @@ export const conversationSlice = createSlice({
         query: Partial<Query>;
       }>,
     ) {
-      const { index, query } = action.payload;
-      if (query.sources !== undefined)
+      const { conversationId, index, query } = action.payload;
+
+      if (conversationId && state.conversationId !== conversationId) return;
+
+      if (query.sources !== undefined) {
         state.queries[index].sources = query.sources;
+      }
     },
     updateToolCall(state, action) {
       const { index, tool_call } = action.payload;
