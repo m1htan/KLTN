@@ -5,29 +5,37 @@ import torch
 
 from langchain_openai import OpenAIEmbeddings
 from sentence_transformers import SentenceTransformer
+from langchain_core.embeddings import Embeddings
 
 from application.core.settings import settings
 
 
-class EmbeddingsWrapper:
+class EmbeddingsWrapper(Embeddings):
     def __init__(self, model_name, *args, **kwargs):
         logging.info(f"Initializing EmbeddingsWrapper with model: {model_name}")
         try:
             kwargs.setdefault("trust_remote_code", True)
+
+            # Force device based on settings.USE_GPU (để worker/backend dùng GPU đúng)
+            device = "cuda" if settings.USE_GPU else "cpu"
+            kwargs.setdefault("device", device)
+
             self.model = SentenceTransformer(
                 model_name,
                 config_kwargs={"allow_dangerous_deserialization": True},
                 model_kwargs={
-                    "torch_dtype": torch.float16,
+                    "torch_dtype": torch.float16 if settings.USE_GPU else torch.float32,
                     "low_cpu_mem_usage": True,
                 },
                 *args,
                 **kwargs,
             )
+
             if self.model is None or self.model._first_module() is None:
                 raise ValueError(
                     f"SentenceTransformer model failed to load properly for: {model_name}"
                 )
+
             self.dimension = self.model.get_sentence_embedding_dimension()
             logging.info(f"Successfully loaded model with dimension: {self.dimension}")
         except Exception as e:
@@ -37,11 +45,21 @@ class EmbeddingsWrapper:
             )
             raise
 
-    def embed_query(self, query: str):
-        return self.model.encode(query).tolist()
+    def embed_query(self, query: str) -> list[float]:
+        return self.model.encode(
+            query,
+            convert_to_numpy=True,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        ).tolist()
 
-    def embed_documents(self, documents: list):
-        return self.model.encode(documents).tolist()
+    def embed_documents(self, documents: list[str]) -> list[list[float]]:
+        return self.model.encode(
+            documents,
+            convert_to_numpy=True,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        ).tolist()
 
     def __call__(self, text):
         if isinstance(text, str):

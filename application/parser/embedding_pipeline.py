@@ -51,7 +51,7 @@ def _embed_texts(embeddings: Any, texts: List[str], st_batch_size: int = 64) -> 
             batch_size=st_batch_size,
             convert_to_numpy=True,
             show_progress_bar=False,
-            normalize_embeddings=False,  # GIỮ tương thích với IndexFlatL2 hiện tại
+            normalize_embeddings=True,
         )
         return np.asarray(vecs, dtype=np.float32)
 

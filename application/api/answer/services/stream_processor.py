@@ -11,9 +11,9 @@ from bson.objectid import ObjectId
 
 from application.api.answer.routes.base import BaseAnswerResource
 from application.retriever.legal_query_analyzer import analyze_legal_query
-from application.retriever.law_resolver import resolve_law_id
 from application.knowledge_graph.neo4j_client import Neo4jClient, load_neo4j_config_from_env
 from application.knowledge_graph import schema as S
+from application.retriever.law_resolver import resolve_law_meta, norm_text
 
 from application.agents.agent_creator import AgentCreator
 from application.api.answer.services.compression import CompressionOrchestrator
@@ -56,8 +56,13 @@ def get_prompt(prompt_id: str, prompts_collection=None) -> str:
     if prompt_id in preset_mapping:
         file_path = os.path.join(prompts_dir, preset_mapping[prompt_id])
         try:
-            with open(file_path, "r") as f:
-                return f.read()
+            try:
+                with open(file_path, "r", encoding="utf-8-sig", errors="strict") as f:
+                    return f.read()
+            except UnicodeDecodeError:
+                # fallback nếu file không phải utf-8 (một số file copy từ Windows có thể là cp1252)
+                with open(file_path, "r", encoding="cp1252", errors="replace") as f:
+                    return f.read()
         except FileNotFoundError:
             raise FileNotFoundError(f"Prompt file not found: {file_path}")
     try:
@@ -496,8 +501,8 @@ class StreamProcessor(BaseAnswerResource):
         # =====================================================
         # 2) Resolve law_id if user mentioned a law name
         # =====================================================
-        law_res = resolve_law_id(question)
-        resolved_law_id = law_res.law_id
+        law_meta = resolve_law_meta(question)
+        resolved_law_id = law_meta.law_id if law_meta else None
 
         # Nếu user hỏi kiểu Điều/Khoản/Điểm mà KHÔNG nêu rõ luật -> bắt họ nêu.
         # Đây là hành vi “an toàn”, tránh trộn nhiều luật.
@@ -506,34 +511,52 @@ class StreamProcessor(BaseAnswerResource):
                 "Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
                 "Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật."
             )
-            logger.info(f"[LEGAL-GUARD] unresolved law_id, reason={law_res.reason}")
+            logger.info(
+                f"[LEGAL-GUARD] unresolved law_id, has_structured_ref={has_structured_ref}, q_norm={norm_text(question)}")
             return safe_msg, None
 
         # =====================================================
         # 3) Validate existence in Neo4j (chặn hallucination)
         # =====================================================
         if resolved_law_id and article_no:
-            # Neo4jClient dùng singleton driver, KHÔNG close trong request
             neo = Neo4jClient(load_neo4j_config_from_env())
 
-            cy_article = """
-            MATCH (a:Article {law_id: $law_id, article_no: $article_no})
-            RETURN count(a) AS n
-            """
-            rows = neo.run_read(
-                cy_article,
-                {"law_id": resolved_law_id, "article_no": int(article_no)}
-            )
+            def _count_article(neo, law_id: str, article_no: int) -> int:
+                cy = """
+                MATCH (a:Article {law_id: $law_id, article_no: $article_no})
+                RETURN count(a) AS n
+                """
+                r = neo.run_read(cy, {"law_id": law_id, "article_no": int(article_no)})
+                return int(r[0]["n"]) if r else 0
 
-            n_article = (rows[0]["n"] if rows else 0)
+            n_article = _count_article(neo, resolved_law_id, article_no)
 
             if n_article == 0:
-                safe_msg = (
-                    f"Không tìm thấy Điều {article_no} trong văn bản bạn nêu trong hệ thống hiện tại. "
-                    "Vui lòng kiểm tra lại số điều hoặc đảm bảo văn bản đó đã được nạp vào hệ thống."
-                )
-                logger.info("[LEGAL-GUARD] article not found in graph")
-                return safe_msg, None
+                q_norm = norm_text(question)
+
+                # Fallback theo metadata cho riêng case Luật Doanh nghiệp
+                if "luat doanh nghiep" in q_norm:
+                    candidates = ["luat_59_2020_qh14", "luat_76_2025_qh15"]  # ưu tiên luật gốc trước
+                    matched = [lid for lid in candidates if _count_article(neo, lid, article_no) > 0]
+
+                    if len(matched) == 1:
+                        resolved_law_id = matched[0]
+                    elif len(matched) > 1:
+                        return (
+                            f"Có nhiều văn bản Luật Doanh nghiệp trong hệ thống đều có Điều {article_no}. "
+                            "Vui lòng nêu số hiệu (ví dụ 59/2020/QH14 hoặc 76/2025/QH15) để xác định đúng văn bản."
+                        ), None
+                    else:
+                        return (
+                            f"Không tìm thấy Điều {article_no} trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. "
+                            "Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu."
+                        ), None
+
+                # Nếu không phải case đặc biệt, giữ logic cũ hoặc trả về yêu cầu nêu số hiệu
+                return (
+                    f"Không tìm thấy Điều {article_no} trong văn bản đã xác định. "
+                    "Bạn vui lòng cung cấp số hiệu (ví dụ 59/2020/QH14) để mình tra đúng văn bản."
+                ), None
 
             # If clause specified -> check Clause
             if clause_no is not None:
@@ -592,8 +615,9 @@ class StreamProcessor(BaseAnswerResource):
             filtered = []
             for d in docs:
                 meta = _meta(d)
-                if resolved_law_id and meta.get("law_id") is not None and meta.get("law_id") != resolved_law_id:
-                    continue
+                if resolved_law_id:
+                    if meta.get("law_id") != resolved_law_id:
+                        continue
                 if article_no is not None and meta.get("article_no") != int(article_no):
                     continue
                 if clause_no is not None:

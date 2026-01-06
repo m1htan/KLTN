@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     LLM_NAME: Optional[str] = (
         None  # if LLM_PROVIDER is openai, LLM_NAME can be gpt-4 or gpt-3.5-turbo
     )
-    EMBEDDINGS_NAME: str = "huggingface_sentence-transformers/all-mpnet-base-v2"
+    EMBEDDINGS_NAME: str = "intfloat/multilingual-e5-base"
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/1"
     MONGO_URI: str = "mongodb://localhost:27017/docsgpt"

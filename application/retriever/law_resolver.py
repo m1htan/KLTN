@@ -1,92 +1,189 @@
+from __future__ import annotations
+
+import os
 import re
+import unicodedata
 from dataclasses import dataclass
-from typing import Optional, List, Tuple
+from pathlib import Path
+import pandas as pd
 
-from application.knowledge_graph.neo4j_client import Neo4jClient, load_neo4j_config_from_env
-from application.knowledge_graph import schema as S
-
-
-@dataclass
-class LawResolveResult:
-    law_id: Optional[str]
-    law_name: Optional[str]
-    reason: str
-
-
-# Alias “thực tế” cho các luật bạn hay gọi bằng tên rút gọn.
-# Bạn có thể bổ sung dần, nhưng KHÔNG phải hard-code theo từng luật “ngẫu nhiên”;
-# chỉ nên hard-code alias phổ biến như BLHS, BLTTHS, BLDS, ...
-LAW_ALIASES = {
-    # Bộ luật Hình sự
-    "luật hình sự": "vn_law_100_2015_qh13",
-    "bộ luật hình sự": "vn_law_100_2015_qh13",
-    "blhs": "vn_law_100_2015_qh13",
-
-    # Bạn có thể thêm:
-    # "bộ luật tố tụng hình sự": "...",
-    # "bltths": "...",
-}
-
-
-def extract_law_phrase(q: str) -> Optional[str]:
+def _default_metadata_path() -> Path:
     """
-    Trích cụm sau 'luật' hoặc 'bộ luật' để dùng match Neo4j.
-    Ví dụ: 'điểm a khoản 2 điều 15 luật hình sự' -> 'hình sự'
+    Ưu tiên:
+    1) ENV METADATA_CSV (cho Docker)
+    2) <repo_root>/data/metadata.csv (chạy trong container /app)
+    3) fallback: working dir hiện tại
     """
-    if not q:
-        return None
-    s = q.strip().lower()
+    env = os.getenv("METADATA_CSV")
+    if env:
+        return Path(env)
 
-    # Ưu tiên match alias đầy đủ trước
-    for k in LAW_ALIASES.keys():
-        if k in s:
-            return k
-
-    # Thử bắt cụm 'bộ luật xxx' hoặc 'luật xxx'
-    m = re.search(r"\b(bộ\s+luật|luật)\s+([^\.,;:\n]+)", s, flags=re.IGNORECASE)
-    if not m:
-        return None
-
-    phrase = (m.group(0) or "").strip().lower()
-    # phrase dạng "luật hình sự" hoặc "bộ luật hình sự"
-    return phrase
+    repo_root = Path(__file__).resolve().parents[2]  # application/.. -> repo root
+    p = repo_root / "data" / "metadata.csv"
+    return p
 
 
-def resolve_law_id(q: str) -> LawResolveResult:
+METADATA_CSV = _default_metadata_path()
+
+
+def _strip_accents(s: str) -> str:
+    s = unicodedata.normalize("NFKD", s)
+    return "".join(ch for ch in s if not unicodedata.combining(ch))
+
+
+def _norm_text(s: str) -> str:
+    s = _strip_accents(s or "").lower().strip()
+    # giữ chữ và số, thay phần còn lại bằng space
+    s = re.sub(r"[^a-z0-9]+", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+def norm_text(s: str) -> str:
+    return _norm_text(s)
+
+def _norm_so_hieu(so_hieu: str) -> str:
+    # ví dụ: 59/2020/QH14 -> 59/2020/QH14 (uppercase, gọn)
+    s = (so_hieu or "").strip().upper()
+    s = re.sub(r"\s+", "", s)
+    return s
+
+
+def _law_id_from_file_name(file_name: str) -> str:
     """
-    Resolve law_id bằng:
-    1) Alias map
-    2) Query Neo4j Law nodes theo law_name/law_number chứa keyword
+    file_name: 'Luật-59-2020-QH14' -> 'luat_59_2020_qh14'
+              'Bộ luật-100-2015-QH13' -> 'bo_luat_100_2015_qh13'
     """
-    phrase = extract_law_phrase(q)
-    if not phrase:
-        return LawResolveResult(None, None, "no_law_phrase")
+    s = (file_name or "").strip()
+    s_norm = _norm_text(s).replace(" ", "_")  # 'luat_59_2020_qh14'
+    return s_norm
 
-    # 1) Alias map (ổn định, đúng thực tế)
-    if phrase in LAW_ALIASES:
-        return LawResolveResult(LAW_ALIASES[phrase], phrase, "alias")
 
-    # 2) Tìm trong Neo4j Law nodes
-    # keyword: bỏ 'luật'/'bộ luật'
-    keyword = phrase
-    keyword = keyword.replace("bộ luật", "").replace("luật", "").strip()
-    if not keyword:
-        return LawResolveResult(None, None, "empty_keyword")
+@dataclass(frozen=True)
+class LawMeta:
+    file_name: str
+    law_name: str
+    so_hieu: str
+    law_id: str
+    sua_doi_bo_sung: str
 
-    neo = Neo4jClient(load_neo4j_config_from_env())
-    try:
-        cypher = f"""
-        MATCH (l:{S.LABEL_LAW})
-        WHERE l.law_name IS NOT NULL AND toLower(l.law_name) CONTAINS $kw
-        RETURN l.law_id AS law_id, l.law_name AS law_name
-        LIMIT 5
+    @property
+    def law_name_norm(self) -> str:
+        return _norm_text(self.law_name)
+
+    @property
+    def file_name_norm(self) -> str:
+        return _norm_text(self.file_name)
+
+    @property
+    def so_hieu_norm(self) -> str:
+        return _norm_so_hieu(self.so_hieu)
+
+class MetadataLawIndex:
+    def __init__(self, csv_path: Path):
+        self.csv_path = csv_path
+        self.items: list[LawMeta] = []
+        self.by_so_hieu: dict[str, LawMeta] = {}
+
+        self._load()
+
+    def _load(self) -> None:
+        if not self.csv_path.exists():
+            raise FileNotFoundError(
+                f"metadata.csv not found at: {self.csv_path}. "
+                f"Set env METADATA_CSV or mount ./data/metadata.csv into the container."
+            )
+
+        df = pd.read_csv(self.csv_path, dtype=str, sep=",", engine="python")
+        df = df.fillna("")
+
+
+        items: list[LawMeta] = []
+        by_so_hieu: dict[str, LawMeta] = {}
+
+        for _, r in df.iterrows():
+            file_name = r.get("file_name", "").strip()
+            law_name = r.get("law_name", "").strip()
+            so_hieu = r.get("Số hiệu", "").strip()
+            sua = r.get("SỬA ĐỔI, BỔ SUNG", "").strip()
+
+            if not file_name:
+                continue
+
+            law_id = _law_id_from_file_name(file_name)
+
+            m = LawMeta(
+                file_name=file_name,
+                law_name=law_name,
+                so_hieu=so_hieu,
+                law_id=law_id,
+                sua_doi_bo_sung=sua,
+            )
+            items.append(m)
+
+            if so_hieu:
+                by_so_hieu[m.so_hieu_norm] = m
+
+        self.items = items
+        self.by_so_hieu = by_so_hieu
+
+    def resolve(self, query: str) -> LawMeta | None:
         """
-        rows = neo.run_read(cypher, {"kw": keyword})
-        if not rows:
-            return LawResolveResult(None, None, "neo4j_no_match")
+        Ưu tiên:
+        1) Nếu query có số hiệu dạng 59/2020/QH14 -> match chính xác
+        2) Nếu query nhắc rõ tên luật -> match theo law_name (ưu tiên tên đúng, ngắn, không phải luật sửa đổi)
+        """
+        q_raw = query or ""
+        q_norm = _norm_text(q_raw)
 
-        # Chọn match tốt nhất (ưu tiên law_name chứa keyword dài)
-        best = rows[0]
-        return LawResolveResult(best.get("law_id"), best.get("law_name"), "neo4j_match")
-    finally:
-        neo.close()
+        # 1) match theo số hiệu
+        m = re.search(r"(\d+/\d{4}/qh\d+)", q_raw, flags=re.IGNORECASE)
+        if m:
+            so = _norm_so_hieu(m.group(1))
+            hit = self.by_so_hieu.get(so)
+            if hit:
+                return hit
+
+        # 2) match theo tên luật (chỉ khi có chữ "luat" hoặc "bo luat" trong query để tránh bắt nhầm keyword nội dung)
+        if "luat" not in q_norm and "bo luat" not in q_norm:
+            return None
+
+        candidates: list[LawMeta] = []
+        for it in self.items:
+            name_norm = it.law_name_norm
+            if not name_norm:
+                continue
+            # query là substring của tên luật
+            if q_norm in name_norm:
+                candidates.append(it)
+
+        if not candidates:
+            return None
+
+        # Ranking: ưu tiên tên chính xác, tên ngắn, không phải "sửa đổi, bổ sung"
+        def score(it: LawMeta) -> tuple:
+            name = it.law_name_norm
+            exact = 1 if name == q_norm else 0
+            is_amend = 1 if _norm_text(it.sua_doi_bo_sung) == _norm_text("SỬA ĐỔI, BỔ SUNG") else 0
+            # càng ngắn càng tốt
+            length = len(name.split())
+            return (exact, -is_amend, -1 / max(1, length))
+
+        candidates.sort(key=score, reverse=True)
+        return candidates[0]
+
+# singleton index (lazy load để Celery không crash khi import)
+_METADATA_INDEX: MetadataLawIndex | None = None
+
+def _get_index() -> MetadataLawIndex:
+    global _METADATA_INDEX
+    if _METADATA_INDEX is None:
+        _METADATA_INDEX = MetadataLawIndex(METADATA_CSV)
+    return _METADATA_INDEX
+
+def resolve_law_meta(user_text: str) -> LawMeta | None:
+    return _get_index().resolve(user_text)
+
+
+def resolve_law_id(user_text: str) -> str | None:
+    hit = _get_index().resolve(user_text)
+    return hit.law_id if hit else None

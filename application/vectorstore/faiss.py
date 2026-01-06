@@ -103,22 +103,29 @@ class FaissStore(BaseVectorStore):
         return self.docsearch.delete(*args, **kwargs)
 
     def assert_embedding_dimensions(self, embeddings):
-        """Check that the word embedding dimension of the docsearch index matches the dimension of the word embeddings used."""
-        if (
-            settings.EMBEDDINGS_NAME
-            == "huggingface_sentence-transformers/all-mpnet-base-v2"
-        ):
-            word_embedding_dimension = getattr(embeddings, "dimension", None)
-            if word_embedding_dimension is None:
-                raise AttributeError(
-                    "'dimension' attribute not found in embeddings instance."
-                )
+        """
+        Ensure embedding dimension matches FAISS index dimension.
+        Works for both LangChain embeddings and SentenceTransformer wrapper.
+        """
+        # LangChain embeddings usually have embed_query
+        dim = None
+        if hasattr(embeddings, "embed_query"):
+            dim = len(embeddings.embed_query("dimension_check"))
+        else:
+            # fallback for wrappers that expose .dimension
+            dim = getattr(embeddings, "dimension", None)
 
-            docsearch_index_dimension = self.docsearch.index.d
-            if word_embedding_dimension != docsearch_index_dimension:
-                raise ValueError(
-                    f"Embedding dimension mismatch: embeddings.dimension ({word_embedding_dimension}) != docsearch index dimension ({docsearch_index_dimension})"
-                )
+        if dim is None:
+            raise AttributeError("Cannot determine embedding dimension from embeddings instance")
+
+        index_dim = getattr(self.docsearch.index, "d", None)
+        if index_dim is None:
+            raise AttributeError("Cannot determine FAISS index dimension (missing index.d)")
+
+        if int(dim) != int(index_dim):
+            raise ValueError(
+                f"Embedding dimension mismatch: embeddings_dim={dim} != faiss_index_dim={index_dim}"
+            )
 
     def get_chunks(self):
         chunks = []

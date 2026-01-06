@@ -387,7 +387,10 @@ def ingest_worker(
                 if looks_like_vn_law(text):
                     logging.info(f"[ROUTER] Legal document detected: {source_file}")
 
-                    articles = parse_law_text(text)
+                    law_code = os.path.splitext(os.path.basename(source_file))[0]
+                    law_name = law_code  # tạm thời; nếu bạn có metadata mapping thì thay bằng law_name chuẩn
+                    articles = parse_law_text(text, law_code=law_code, law_name=law_name)
+
                     if not articles:
                         logging.warning(f"[ROUTER] Failed to parse law structure: {source_file}")
                         continue
@@ -429,9 +432,11 @@ def ingest_worker(
             vector_store_path = os.path.join(temp_dir, "vector_store")
             os.makedirs(vector_store_path, exist_ok=True)
 
+            # Use the same embeddings stack as retrieval/vectorstore
             embeddings = HuggingFaceEmbeddings(
-                model_name="intfloat/multilingual-e5-base",
-                model_kwargs={"device": "cpu"}
+                model_name=settings.EMBEDDINGS_NAME,
+                model_kwargs={"device": "cuda" if settings.USE_GPU else "cpu"},
+                encode_kwargs={"normalize_embeddings": True},
             )
 
             embed_and_store_documents(
@@ -820,8 +825,10 @@ def remote_worker(
             min_tokens=MIN_TOKENS,
             duplicate_headers=False,
         )
-        docs = chunker.chunk(documents=raw_docs)
-        docs = [Document.to_langchain_format(raw_doc) for raw_doc in raw_docs]
+
+        chunked = chunker.chunk(documents=raw_docs)
+        docs = [Document.to_langchain_format(d) for d in chunked]
+
         tokens = count_tokens_docs(docs)
         logging.info("Total tokens calculated: %d", tokens)
 
@@ -830,8 +837,9 @@ def remote_worker(
             vector_store_path = full_path
 
             embeddings = HuggingFaceEmbeddings(
-                model_name="intfloat/multilingual-e5-base",
-                model_kwargs={"device": "cpu"}
+                model_name=settings.EMBEDDINGS_NAME,
+                model_kwargs={"device": "cuda" if settings.USE_GPU else "cpu"},
+                encode_kwargs={"normalize_embeddings": True},
             )
 
             embed_and_store_documents(
@@ -1218,8 +1226,9 @@ def ingest_connector(
             )
 
             embeddings = HuggingFaceEmbeddings(
-                model_name="intfloat/multilingual-e5-base",
-                model_kwargs={"device": "cpu"}
+                model_name=settings.EMBEDDINGS_NAME,
+                model_kwargs={"device": "cuda" if settings.USE_GPU else "cpu"},
+                encode_kwargs={"normalize_embeddings": True},
             )
 
             embed_and_store_documents(

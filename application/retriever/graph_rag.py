@@ -4,6 +4,8 @@ from typing import List, Dict, Any, Optional
 from application.retriever.base import BaseRetriever
 from application.vectorstore.vector_creator import VectorCreator
 from application.core.settings import settings
+from application.retriever.law_resolver import resolve_law_meta
+from application.retriever.legal_structure_validator import validate_legal_structure
 
 from application.knowledge_graph.neo4j_client import (
     Neo4jClient,
@@ -62,7 +64,7 @@ class GraphRAG(BaseRetriever):
         except Exception:
             pass
 
-    def _query_graph_clause_first(self, query: str) -> list[dict]:
+    def _query_graph_clause_first(self, query: str, law_id: Optional[str] = None) -> list[dict]:
         """
         Clause-first graph retrieval (chuẩn cho luật VN)
 
@@ -86,6 +88,7 @@ class GraphRAG(BaseRetriever):
             cypher = """
             MATCH (a:Article)-[:HAS_CLAUSE]->(c:Clause {clause_no: $clause_no})
             WHERE ($article_no IS NULL OR a.article_no = $article_no)
+              AND ($law_id IS NULL OR a.law_id = $law_id)
 
             OPTIONAL MATCH (c)-[:HAS_POINT]->(p:Point)
             WHERE $point_label IS NULL OR p.point_label = $point_label
@@ -111,6 +114,7 @@ class GraphRAG(BaseRetriever):
         if article_no is not None:
             cypher = """
             MATCH (a:Article {article_no: $article_no})
+            WHERE ($law_id IS NULL OR a.law_id = $law_id)
             OPTIONAL MATCH (a)-[:HAS_CLAUSE]->(c:Clause)
             OPTIONAL MATCH (c)-[:HAS_POINT]->(p:Point)
             RETURN
@@ -121,8 +125,14 @@ class GraphRAG(BaseRetriever):
 
             rows = self.neo4j.run_read(
                 cypher,
-                {"article_no": article_no},
+                {
+                    "law_id": law_id,
+                    "article_no": article_no,
+                    "clause_no": clause_no,
+                    "point_label": point_label,
+                },
             )
+
             return [r.data() for r in rows]
 
         return []
@@ -155,8 +165,27 @@ class GraphRAG(BaseRetriever):
             logging.info("[GraphRAG] No article detected → return empty")
             return []
 
+        # resolve law_id
+        law_meta = resolve_law_meta(query)
+        law_id = law_meta.law_id if law_meta else None
+
+        # validate nếu có law_id (tránh hỏi Điều/Khoản/Điểm không tồn tại)
+        if law_id:
+            err = validate_legal_structure(
+                neo4j=self.neo4j,
+                question=qtext,
+                law_id=law_id
+            )
+            if err:
+                return [{
+                    "title": "Không tìm thấy cấu trúc pháp lý tương ứng",
+                    "text": err,
+                    "source": "neo4j",
+                    "metadata": {"doc_type": "law", "chunk_type": "graph_error"}
+                }]
+
         # 1) Clause-first graph retrieval: truyền STRING query, không truyền dict
-        graph_hits = self._query_graph_clause_first(qtext)
+        graph_hits = self._query_graph_clause_first(qtext, law_id=law_id)
 
         # 2) Nếu Graph không có dữ liệu -> Fallback Vector
         if not graph_hits:
@@ -178,6 +207,7 @@ class GraphRAG(BaseRetriever):
             "metadata": {
                 "doc_type": "law",
                 "chunk_type": "graph_context",
+                "law_id": law_id,
                 "article_no": analysis.get("article_no"),
                 "clause_no": analysis.get("clause_no"),
                 "point_label": analysis.get("point_label"),

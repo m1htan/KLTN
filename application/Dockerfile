@@ -46,6 +46,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Final Stage
 FROM ubuntu:24.04 as final
 
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \

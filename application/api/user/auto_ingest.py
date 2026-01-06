@@ -40,7 +40,7 @@ def auto_ingest_local(self):
         embeddings = HuggingFaceEmbeddings(
             model_name="intfloat/multilingual-e5-base",
             model_kwargs={"device": device},
-            encode_kwargs={"normalize_embeddings": True},
+            encode_kwargs={"normalize_embeddings": False},
         )
 
         all_chunks = []
