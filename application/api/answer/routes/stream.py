@@ -12,6 +12,13 @@ from application.api.answer.services.stream_processor import StreamProcessor
 
 logger = logging.getLogger(__name__)
 
+def _wrap_sse(gen):
+    # 1) Đẩy 1 event ngay lập tức để frontend biết stream đã mở
+    yield "event: ping\ndata: ok\n\n"
+
+    # 2) Stream thật
+    for chunk in gen:
+        yield chunk
 
 @answer_ns.route("/stream")
 class StreamResource(Resource, BaseAnswerResource):
@@ -120,26 +127,33 @@ class StreamResource(Resource, BaseAnswerResource):
 
             logger.info("[STREAM] start complete_stream")
 
+            logger.info("[STREAM] check_usage start")
             if error := self.check_usage(processor.agent_config):
+                logger.info("[STREAM] check_usage returned error=%s", type(error))
                 return error
-            return Response(
-                self.complete_stream(
-                    question=data["question"],
-                    agent=agent,
-                    conversation_id=processor.conversation_id,
-                    user_api_key=processor.agent_config.get("user_api_key"),
-                    decoded_token=processor.decoded_token,
-                    isNoneDoc=data.get("isNoneDoc"),
-                    index=data.get("index"),
-                    should_save_conversation=data.get("save_conversation", True),
-                    attachment_ids=data.get("attachments", []),
-                    agent_id=data.get("agent_id"),
-                    is_shared_usage=processor.is_shared_usage,
-                    shared_token=processor.shared_token,
-                    model_id=processor.model_id,
-                ),
-                mimetype="text/event-stream",
+            logger.info("[STREAM] check_usage done")
+
+            gen = self.complete_stream(
+                question=data["question"],
+                agent=agent,
+                conversation_id=processor.conversation_id,
+                user_api_key=processor.agent_config.get("user_api_key"),
+                decoded_token=processor.decoded_token,
+                isNoneDoc=data.get("isNoneDoc"),
+                index=data.get("index"),
+                should_save_conversation=data.get("save_conversation", True),
+                attachment_ids=data.get("attachments", []),
+                agent_id=data.get("agent_id"),
+                is_shared_usage=processor.is_shared_usage,
+                shared_token=processor.shared_token,
+                model_id=processor.model_id,
             )
+
+            resp = Response(_wrap_sse(gen), mimetype="text/event-stream")
+            resp.headers["Cache-Control"] = "no-cache"
+            resp.headers["X-Accel-Buffering"] = "no"
+            return resp
+
         except ValueError as e:
             message = "Malformed request body"
             logger.error(

@@ -93,9 +93,23 @@ class MetadataLawIndex:
                 f"Set env METADATA_CSV or mount ./data/metadata.csv into the container."
             )
 
-        df = pd.read_csv(self.csv_path, dtype=str, sep=",", engine="python")
-        df = df.fillna("")
+        df = None
+        for sep in [",", "\t", ";", "|"]:
+            try:
+                tmp = pd.read_csv(self.csv_path, dtype=str, sep=sep, engine="python")
+                # chọn parse nào có nhiều cột nhất (để tránh đọc nhầm 1 cột)
+                if df is None or tmp.shape[1] > df.shape[1]:
+                    df = tmp
+            except Exception:
+                continue
 
+        if df is None or df.shape[1] <= 1:
+            raise ValueError(
+                f"Cannot parse metadata file (delimiter issue): {self.csv_path}. "
+                f"Detected columns={0 if df is None else df.shape[1]}"
+            )
+
+        df = df.fillna("")
 
         items: list[LawMeta] = []
         by_so_hieu: dict[str, LawMeta] = {}
@@ -143,17 +157,16 @@ class MetadataLawIndex:
             if hit:
                 return hit
 
-        # 2) match theo tên luật (chỉ khi có chữ "luat" hoặc "bo luat" trong query để tránh bắt nhầm keyword nội dung)
-        if "luat" not in q_norm and "bo luat" not in q_norm:
-            return None
-
         candidates: list[LawMeta] = []
         for it in self.items:
             name_norm = it.law_name_norm
             if not name_norm:
                 continue
-            # query là substring của tên luật
-            if q_norm in name_norm:
+
+            # Match hai chiều:
+            # - tên luật nằm trong câu hỏi (phổ biến nhất)
+            # - hoặc câu hỏi là đúng tên luật (trường hợp user chỉ gõ "luật doanh nghiệp")
+            if (name_norm in q_norm) or (q_norm in name_norm):
                 candidates.append(it)
 
         if not candidates:

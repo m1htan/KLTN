@@ -92,3 +92,4 @@ websockets==14.1
 python-docx
 docx2txt
 neo4j>=5.14,<6.0
+gevent

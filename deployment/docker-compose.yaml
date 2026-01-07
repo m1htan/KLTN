@@ -57,6 +57,8 @@ services:
       - USE_GPU=true
       - CUDA_VISIBLE_DEVICES=0
       - METADATA_CSV=/app/data/metadata.csv
+      - GUNICORN_CMD_ARGS=--access-logfile - --error-logfile - --log-level debug --timeout 600
+      - GUNICORN_CMD_ARGS=--worker-class gevent --workers 1 --threads 1 --timeout 600 --access-logfile - --error-logfile - --log-level info
     ports:
       - "7091:7091"
     volumes:
