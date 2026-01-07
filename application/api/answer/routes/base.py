@@ -206,6 +206,8 @@ class BaseAnswerResource:
         yield self._sse({"type": "debug", "msg": "entered_complete_stream"})
 
         try:
+            logger.info("[LEGAL_GUARD] start")
+
             # LEGAL GUARD (NO HALLUCINATION / NO CROSS-LAW MIX)
             parsed = analyze_legal_query(question)
             law_meta = resolve_law_meta(question)
@@ -218,6 +220,7 @@ class BaseAnswerResource:
             resolved_law_id = getattr(law_meta, "law_id", None)
 
             if has_structured_ref and not resolved_law_id:
+                logger.warning("[LEGAL_GUARD] blocked: structured_ref but cannot resolve law_id")
                 msg = (
                     "Câu hỏi của bạn có dạng Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
                     "Vui lòng nêu rõ tên văn bản (ví dụ: Bộ luật Hình sự 100/2015/QH13) hoặc cung cấp số/ký hiệu để tra cứu chính xác."
@@ -247,8 +250,23 @@ class BaseAnswerResource:
                             return False
                     return True
 
+                if not retrieved_docs:
+                    logger.warning("[LEGAL_GUARD] blocked: no retrieved_docs for structured query")
+                    msg = (
+                        "Hệ thống không truy xuất được đoạn luật phù hợp để trả lời chính xác cho Điều/Khoản/Điểm bạn hỏi. "
+                        "Vui lòng kiểm tra dữ liệu đã ingest chưa hoặc thử lại sau khi build lại index/graph."
+                    )
+                    yield from self._early_end(msg, conversation_id=None)
+                    return
+
                 # Nếu có docs mà không doc nào match -> chặn
                 if retrieved_docs and not any(_doc_matches(d) for d in retrieved_docs):
+
+                    logger.warning(
+                        "[LEGAL_GUARD] blocked: retrieved_docs mismatch (law_id/article/clause/point). "
+                        f"resolved_law_id={resolved_law_id} article={article_no} clause={clause_no} point={point_label}"
+                    )
+
                     # message rõ ràng, không cho model bịa/đưa ví dụ
                     msg = (
                         "Không tìm thấy nội dung khớp đúng Điều/Khoản/Điểm trong văn bản bạn nêu (theo dữ liệu hệ thống hiện tại). "
@@ -266,6 +284,8 @@ class BaseAnswerResource:
                     )
                     yield from self._early_end(msg, conversation_id=None)
                     return
+
+            logger.info("[LEGAL_GUARD] pass")
 
             response_full, thought, source_log_docs, tool_calls = "", "", [], []
             is_structured = False
