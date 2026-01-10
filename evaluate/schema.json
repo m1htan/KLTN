@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vietnam Business Law Golden Set Case",
+  "type": "object",
+  "required": ["id", "category", "question", "expected"],
+  "properties": {
+    "id": { "type": "string", "minLength": 3 },
+    "category": { "type": "string" },
+    "persona": { "type": "string" },
+    "question": { "type": "string", "minLength": 3 },
+    "active_docs": {
+      "type": ["string", "null"],
+      "description": "Tên tập tài liệu/collection dùng trong hệ thống RAG (nếu có)."
+    },
+    "expected": {
+      "type": "object",
+      "required": ["behavior"],
+      "properties": {
+        "behavior": {
+          "type": "object",
+          "required": ["should_answer", "should_ask_clarifying", "should_refuse_hallucination"],
+          "properties": {
+            "should_answer": { "type": "boolean" },
+            "should_ask_clarifying": { "type": "boolean" },
+            "should_refuse_hallucination": { "type": "boolean" }
+          }
+        },
+        "must_include": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Các cụm từ/regex mong muốn xuất hiện (ví dụ: 'Điều', 'Khoản', 'Luật Doanh nghiệp')."
+        },
+        "must_not_include": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Các cụm từ/regex không được xuất hiện (ví dụ: khẳng định bịa 'Điều 999')."
+        },
+        "relevant_laws": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Danh sách luật kỳ vọng được nhắc tới (tên/số hiệu)."
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

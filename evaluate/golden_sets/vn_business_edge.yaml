@@ -1,0 +1,197 @@
+name: vn_business_edge
+description: >
+  Edge cases: hỏi vu vơ, thiếu ngữ cảnh, người không có kiến thức luật,
+  hoặc câu hỏi business/tech nói rất đời thường.
+
+cases:
+  - id: edge_001
+    category: vague_no_context
+    persona: general
+    active_docs: local-folder
+    question: "Cho mình hỏi về luật doanh nghiệp với?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Doanh nghiệp"
+      must_include:
+        - "bạn muốn hỏi phần nào|mục tiêu"
+        - "thành lập|vốn|điều lệ|cổ phần|giải thể|thay đổi đăng ký"
+      notes: "Không được tự bịa ra một chủ đề; phải hỏi lại hướng."
+
+  - id: edge_002
+    category: naive_user
+    persona: non_law
+    active_docs: local-folder
+    question: "Mình có thể mở công ty mà không cần đăng ký không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Doanh nghiệp"
+        - "59/2020/QH14"
+      must_include:
+        - "đăng ký doanh nghiệp"
+        - "rủi ro|xử phạt"
+        - "tùy trường hợp"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_003
+    category: tech_short
+    persona: tech_pm
+    active_docs: local-folder
+    question: "Bên mình bán SaaS cho khách ở VN, có cần xuất hóa đơn không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Quản Lý Thuế"
+        - "38/2019/QH14"
+        - "Luật Thuế Giá Trị Gia Tăng"
+      must_include:
+        - "dịch vụ"
+        - "đối tượng khách hàng"
+        - "thời điểm"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_004
+    category: contract_vague
+    persona: business_staff
+    active_docs: local-folder
+    question: "Khách hàng không chịu trả tiền thì làm sao?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "BỘ LUẬT DÂN SỰ"
+        - "Luật Thương Mại"
+      must_include:
+        - "hợp đồng"
+        - "chứng cứ"
+        - "thông báo"
+        - "thương lượng|hòa giải"
+        - "khởi kiện|trọng tài"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_005
+    category: procurement
+    persona: business_staff
+    active_docs: local-folder
+    question: "Bên mình muốn tham gia đấu thầu thì cần chuẩn bị năng lực gì?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Đấu Thầu"
+        - "22/2023/QH15"
+      must_include:
+        - "hồ sơ dự thầu"
+        - "năng lực"
+        - "kinh nghiệm"
+        - "bảo đảm dự thầu|bảo lãnh"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_006
+    category: labor_basic
+    persona: business_owner
+    active_docs: local-folder
+    question: "Nhân viên nghỉ việc đột ngột thì công ty xử lý sao cho đúng?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "BỘ LUẬT LAO ĐỘNG"
+        - "45/2019/QH14"
+      must_include:
+        - "hợp đồng lao động"
+        - "báo trước"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_007
+    category: insurance_business
+    persona: fintech_ops
+    active_docs: local-folder
+    question: "Công ty bảo hiểm mới thành lập cần đáp ứng điều kiện gì?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Kinh Doanh Bảo Hiểm"
+        - "08/2022/QH15"
+      must_include:
+        - "điều kiện"
+        - "vốn"
+        - "giấy phép"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_008
+    category: consumer_protection
+    persona: ecommerce_ops
+    active_docs: local-folder
+    question: "Shop online bị khách đòi đổi trả vô lý, mình có phải nhận không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Bảo Vệ Quyền Lợi Người Tiêu Dùng"
+        - "19/2023/QH15"
+      must_include:
+        - "chính sách đổi trả"
+        - "tình trạng hàng"
+        - "bằng chứng"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_009
+    category: cybersecurity_business
+    persona: tech_pm
+    active_docs: local-folder
+    question: "Bị lộ dữ liệu khách hàng thì công ty phải làm gì trước?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật An Ninh Mạng"
+        - "24/2018/QH14"
+        - "Luật Dữ Liệu"
+      must_include:
+        - "khắc phục"
+        - "thông báo"
+        - "ghi nhận sự cố"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: edge_010
+    category: advertising
+    persona: marketing
+    active_docs: local-folder
+    question: "Chạy quảng cáo mà dùng hình người nổi tiếng thì có rủi ro gì?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Quảng Cáo"
+        - "16/2012/QH13"
+      must_include:
+        - "đồng ý"
+        - "quyền nhân thân|hình ảnh"
+        - "bạn cho mình biết|mình cần bạn"
+      notes: "Nên liên hệ thêm BLDS về quyền hình ảnh nếu hệ thống có."

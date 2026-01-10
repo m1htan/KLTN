@@ -1,0 +1,321 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260108204432
+Username: DESKTOP-BMI908T\ngmin
+RunAs User: DESKTOP-BMI908T\ngmin
+Configuration Name: 
+Machine: DESKTOP-BMI908T (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File C:\Program Files\JetBrains\PyCharm 2025.2.2\plugins\terminal\shell-integrations\powershell\powershell-integration.ps1
+Process ID: 20488
+PSVersion: 5.1.26100.7462
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.7462
+BuildVersion: 10.0.26100.7462
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is session.txt
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object { $_.case.id -eq "core_001" } |
+  Select-Object case, score, passed, details, answer | ConvertTo-Json -Depth 10
+{
+    "case":  {
+                 "id":  "core_001",
+                 "category":  "company_incorporation",
+                 "question":  "MÃ¬nh muá»‘n thÃ nh láº­p cÃ´ng ty TNHH 2 thÃ nh viÃªn thÃ¬ cáº§n nhá»¯ng giáº¥y tá» gÃ¬ vÃ  quy trÃ¬nh cÆ¡ báº£n ra sao?",
+                 "persona":  "business_owner",
+                 "active_docs":  "local-folder",
+                 "expected":  {
+                                  "behavior":  {
+                                                   "should_answer":  true,
+                                                   "should_ask_clarifying":  true,
+                                                   "should_refuse_hallucination":  true
+                                               },
+                                  "relevant_laws":  [
+                                                        "Luáº­t Doanh nghiá»‡p",
+                                                        "59/2020/QH14"
+                                                    ],
+                                  "must_include":  [
+                                                       "há»“ sÆ¡",
+                                                       "Ä‘Äƒng kÃ½ doanh nghiá»‡p",
+                                                       "báº¡n cho mÃ¬nh biáº¿t|mÃ¬nh cáº§n báº¡n"
+                                                   ],
+                                  "notes":  "Thiáº¿u ngá»¯ cáº£nh (ngÃ nh nghá», vá»‘n Ä‘iá»u lá»‡, Ä‘á»‹a chá»‰, ngÆ°á»i Ä‘áº¡i diá»‡n) nÃªn pháº£i há»i láº¡i."
+                              }
+             },
+    "score":  4.0,
+    "passed":  false,
+    "details":  {
+                    "must_not_hits":  [
+
+                                      ],
+                    "sus_hallucinated_article_number":  false,
+                    "relevant_law_hits":  [
+                                              "Luáº­t Doanh nghiá»‡p"
+                                          ],
+                    "has_dieu":  false,
+                    "has_khoan":  false,
+                    "soft_basis":  false,
+                    "should_ask_clarifying":  true,
+                    "asked_clarifying":  false,
+                    "must_include_hits":  [
+                                              "há»“ sÆ¡",
+                                              "Ä‘Äƒng kÃ½ doanh nghiá»‡p"
+                                          ]
+                },
+    "answer":  "ChÃ o báº¡n,\n\nViá»‡c thÃ nh láº­p CÃ´ng ty TNHH Hai ThÃ nh viÃªn trá»Ÿ lÃªn lÃ  má»™t thá»§ tá»¥c phá»• biáº¿n vÃ  Ä‘Æ°á»£c quy Ä‘á»‹nh rÃµ rÃ ng theo Luáº­t Doanh nghiá»‡p Viá»‡t Nam. Vá»›i vai trÃ² lÃ  DocsGPT, tÃ´i xin cung cáº¥p thÃ´ng tin chi tiáº¿t vá» cÃ¡c giáº¥y tá» cáº§n thiáº¿t vÃ  quy trÃ¬nh cÆ¡ báº£n Ä‘á»ƒ báº¡n cÃ³ thá»ƒ chuáº©n bá»‹ tá»‘t nháº¥t.\n\n---\n\n## I. Há»“ sÆ¡ cáº§n chuáº©n bá»‹ Ä‘á»ƒ thÃ nh láº­p CÃ´ng ty TNHH 2 ThÃ nh viÃªn\n\nHá»“ sÆ¡ Ä‘Äƒng kÃ½ doanh nghiá»‡p cáº§n ná»™p táº¡i PhÃ²ng ÄÄƒng kÃ½ kinh doanh thuá»™c Sá»Ÿ Káº¿ hoáº¡ch vÃ  Äáº§u tÆ° (SKHÄT) nÆ¡i cÃ´ng ty dá»± Ä‘á»‹nh Ä‘áº·t trá»¥ sá»Ÿ chÃ­nh, bao gá»“m cÃ¡c tÃ i liá»‡u sau:\n\n| STT | TÃ i liá»‡u | Chi tiáº¿t |\n| :--- | :--- | :--- |\n| **1** | **Giáº¥y Ä‘á» nghá»‹ Ä‘Äƒng kÃ½ doanh nghiá»‡p** | Theo máº«u thá»‘ng nháº¥t do CÆ¡ quan Ä‘Äƒng kÃ½ kinh doanh ban hÃ nh. |\n| **2** | **Äiá»u lá»‡ cÃ´ng ty** | Pháº£i cÃ³ Ä‘áº§y Ä‘á»§ chá»¯ kÃ½ cá»§a cÃ¡c thÃ nh viÃªn, ngÆ°á»i Ä‘áº¡i diá»‡n theo phÃ¡p luáº­t vÃ  ngÆ°á»i Ä‘áº¡i diá»‡n theo á»§y quyá»n (náº¿u cÃ³). |\n| **3** | **Danh sÃ¡ch thÃ nh viÃªn cÃ´ng ty TNHH** | KÃ¨m theo thÃ´ng tin chi tiáº¿t vá» pháº§n vá»‘n gÃ³p cá»§a tá»«ng thÃ nh viÃªn. |\n| **4** | **Báº£n sao há»£p lá»‡ cÃ¡c giáº¥y tá» chá»©ng thá»±c cÃ¡ nhÃ¢n/tá»• chá»©c** | **Äá»‘i vá»›i thÃ nh viÃªn lÃ  cÃ¡ nhÃ¢n:** Báº£n sao Tháº» cÄƒn cÆ°á»›c cÃ´ng dÃ¢n, Giáº¥y chá»©ng minh nhÃ¢n dÃ¢n, hoáº·c Há»™ chiáº¿u cÃ²n hiá»‡u lá»±c. \u003cbr\u003e **Äá»‘i vá»›i thÃ nh viÃªn lÃ  tá»• chá»©c:** Báº£n sao Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p hoáº·c cÃ¡c tÃ i liá»‡u tÆ°Æ¡ng Ä‘Æ°Æ¡ng khÃ¡c; Báº£n sao Tháº» cÄƒn cÆ°á»›c cÃ´ng dÃ¢n/Há»™ chiáº¿u cá»§a ngÆ°á»i Ä‘áº¡i diá»‡n theo á»§y quyá»n. |\n| **5** | **VÄƒn báº£n á»§y quyá»n** | Náº¿u ngÆ°á»i ná»™p há»“ sÆ¡ khÃ´ng pháº£i lÃ  ngÆ°á»i Ä‘áº¡i diá»‡n theo phÃ¡p luáº­t cá»§a cÃ´ng ty. |\n\n---\n\n## II. Quy trÃ¬nh cÆ¡ báº£n Ä‘á»ƒ thÃ nh láº­p CÃ´ng ty\n\nQuy trÃ¬nh thÃ nh láº­p CÃ´ng ty TNHH 2 ThÃ nh viÃªn tráº£i qua 02 giai Ä‘oáº¡n chÃ­nh: ÄÄƒng kÃ½ thÃ nh láº­p vÃ  cÃ¡c thá»§ tá»¥c sau thÃ nh láº­p.\n\n### Giai Ä‘oáº¡n 1: ÄÄƒng kÃ½ thÃ nh láº­p\n\n| BÆ°á»›c | Hoáº¡t Ä‘á»™ng | CÆ¡ quan thá»±c hiá»‡n | Thá»i gian (Dá»± kiáº¿n) |\n| :--- | :--- | :--- | :--- |\n| **1** | **Ná»™p há»“ sÆ¡** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh (SKHÄT) | CÃ³ thá»ƒ ná»™p trá»±c tiáº¿p hoáº·c ná»™p qua máº¡ng Ä‘iá»‡n tá»­ (Cá»•ng thÃ´ng tin quá»‘c gia vá» Ä‘Äƒng kÃ½ doanh nghiá»‡p). |\n| **2** | **Tháº©m Ä‘á»‹nh há»“ sÆ¡** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh | **03 ngÃ y lÃ m viá»‡c** ká»ƒ tá»« ngÃ y nháº­n Ä‘Æ°á»£c há»“ sÆ¡ há»£p lá»‡. |\n| **3** | **Nháº­n Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p (GCNÄKDN)** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh | Náº¿u há»“ sÆ¡ há»£p lá»‡, SKHÄT sáº½ cáº¥p GCNÄKDN. |\n\n### Giai Ä‘oáº¡n 2: Thá»§ tá»¥c sau thÃ nh láº­p\n\nSau khi nháº­n Ä‘Æ°á»£c GCNÄKDN, cÃ´ng ty pháº£i thá»±c hiá»‡n cÃ¡c thá»§ tá»¥c báº¯t buá»™c sau:\n\n1.  **Kháº¯c con dáº¥u phÃ¡p nhÃ¢n:** CÃ´ng ty tá»± quyáº¿t Ä‘á»‹nh vá» hÃ¬nh thá»©c, sá»‘ lÆ°á»£ng vÃ  ná»™i dung con dáº¥u.\n2.  **CÃ´ng bá»‘ ná»™i dung Ä‘Äƒng kÃ½ doanh nghiá»‡p:** Pháº£i thá»±c hiá»‡n cÃ´ng bá»‘ trÃªn Cá»•ng thÃ´ng tin quá»‘c gia vá» Ä‘Äƒng kÃ½ doanh nghiá»‡p trong vÃ²ng 30 ngÃ y ká»ƒ tá»« ngÃ y Ä‘Æ°á»£c cáº¥p GCNÄKDN.\n3.  **GÃ³p vá»‘n Ä‘iá»u lá»‡:** CÃ¡c thÃ nh viÃªn pháº£i gÃ³p Ä‘á»§ vÃ  Ä‘Ãºng loáº¡i tÃ i sáº£n Ä‘Ã£ cam káº¿t trong vÃ²ng 90 ngÃ y ká»ƒ tá»« ngÃ y Ä‘Æ°á»£c cáº¥p GCNÄKDN.\n4.  **Thá»§ tá»¥c vá» thuáº¿:** Má»Ÿ tÃ i khoáº£n ngÃ¢n hÃ ng, Ä‘Äƒng kÃ½ phÆ°Æ¡ng phÃ¡p kÃª khai thuáº¿, Ä‘áº·t mua/tá»± in hÃ³a Ä‘Æ¡n (náº¿u sá»­ dá»¥ng hÃ³a Ä‘Æ¡n giáº¥y), ná»™p há»“ sÆ¡ khai thuáº¿ ban Ä‘áº§u.\n5.  **Treo biá»ƒn táº¡i trá»¥ sá»Ÿ chÃ­nh:** Äáº£m báº£o trá»¥ sá»Ÿ hoáº¡t Ä‘á»™ng theo Ä‘Ãºng Ä‘á»‹a chá»‰ Ä‘Ã£ Ä‘Äƒng kÃ½.\n\n---\n\n## III. SÆ¡ Ä‘á»“ hÃ³a quy trÃ¬nh\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung hÆ¡n, Ä‘Ã¢y lÃ  sÆ¡ Ä‘á»“ tÃ³m táº¯t quy trÃ¬nh thÃ nh láº­p cÃ´ng ty TNHH 2 thÃ nh viÃªn:\n\n```mermaid\ngraph TD\n    A[Chuáº©n bá»‹ Há»“ sÆ¡: ÄÆ¡n Ä‘Äƒng kÃ½, Äiá»u lá»‡, Danh sÃ¡ch thÃ nh viÃªn, CCCD/Há»™ chiáº¿u] --\u003e B(Ná»™p há»“ sÆ¡ táº¡i PhÃ²ng ÄÄƒng kÃ½ kinh doanh - SKHÄT)\n    B --\u003e C{PhÃ²ng ÄÄƒng kÃ½ kinh doanh kiá»ƒm tra tÃ­nh há»£p lá»‡ - 3 ngÃ y lÃ m viá»‡c}\n    C -- Há»“ sÆ¡ Há»£p lá»‡ --\u003e D[Cáº¥p Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p (GCNÄKDN)]\n    C -- YÃªu cáº§u sá»­a Ä‘á»•i --\u003e B\n    D --\u003e E[Thá»±c hiá»‡n CÃ´ng bá»‘ ná»™i dung Ä‘Äƒng kÃ½ doanh nghiá»‡p (Trong 30 ngÃ y)]\n    E --\u003e F[Thá»§ tá»¥c sau thÃ nh láº­p: Kháº¯c dáº¥u, GÃ³p vá»‘n (Trong 90 ngÃ y), Má»Ÿ tÃ i khoáº£n, KÃª khai thuáº¿ ban Ä‘áº§u]\n```\n\nNáº¿u báº¡n cÃ³ báº¥t ká»³ cÃ¢u há»i nÃ o khÃ¡c vá» cÃ¡c chi tiáº¿t cá»¥ thá»ƒ trong há»“ sÆ¡ hoáº·c cáº§n há»— trá»£ vá» thá»§ tá»¥c háº­u kiá»ƒm tra, hÃ£y cho tÃ´i biáº¿t nhÃ©!"
+}
+PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object { $_.case.id -eq "core_002" } |
+  Select-Object case, score, passed, details, answer | ConvertTo-Json -Depth 10
+{
+    "case":  {
+                 "id":  "core_002",
+                 "category":  "company_governance",
+                 "question":  "CÃ´ng ty TNHH cÃ³ báº¯t buá»™c pháº£i cÃ³ ban kiá»ƒm soÃ¡t khÃ´ng?",
+                 "persona":  "business_owner",
+                 "active_docs":  "local-folder",
+                 "expected":  {
+                                  "behavior":  {
+                                                   "should_answer":  true,
+                                                   "should_ask_clarifying":  true,
+                                                   "should_refuse_hallucination":  true
+                                               },
+                                  "relevant_laws":  [
+                                                        "Luáº­t Doanh nghiá»‡p",
+                                                        "59/2020/QH14"
+                                                    ],
+                                  "must_include":  [
+                                                       "phá»¥ thuá»™c",
+                                                       "quy mÃ´|sá»‘ lÆ°á»£ng",
+                                                       "Äiá»u|Khoáº£n|Ä‘á»‘i chiáº¿u"
+                                                   ]
+                              }
+             },
+    "score":  3.0,
+    "passed":  false,
+    "details":  {
+                    "must_not_hits":  [
+
+                                      ],
+                    "sus_hallucinated_article_number":  false,
+                    "relevant_law_hits":  [
+                                              "Luáº­t Doanh nghiá»‡p"
+                                          ],
+                    "has_dieu":  false,
+                    "has_khoan":  false,
+                    "soft_basis":  false,
+                    "should_ask_clarifying":  true,
+                    "asked_clarifying":  false,
+                    "must_include_hits":  [
+                                              "Äiá»u|Khoáº£n|Ä‘á»‘i chiáº¿u"
+                                          ]
+                },
+    "answer":  "ChÃ o báº¡n, tÃ´i lÃ  DocsGPT, má»™t trá»£ lÃ½ AI sáºµn sÃ ng há»— trá»£ báº¡n.\n\nÄá»‘i vá»›i cÃ¢u há»i vá» cÆ¡ cáº¥u tá»• chá»©c cá»§a CÃ´ng ty TNHH, cÃ¢u tráº£ lá»i lÃ  **CÃ´ng ty TNHH khÃ´ng báº¯t buá»™c pháº£i cÃ³ Ban kiá»ƒm soÃ¡t**.\n\nTheo quy Ä‘á»‹nh cá»§a Luáº­t Doanh nghiá»‡p Viá»‡t Nam:\n\n1.  **CÃ´ng ty TNHH Hai thÃ nh viÃªn trá»Ÿ lÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Há»™i Ä‘á»“ng thÃ nh viÃªn, Chá»§ tá»‹ch Há»™i Ä‘á»“ng thÃ nh viÃªn vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n2.  **CÃ´ng ty TNHH Má»™t thÃ nh viÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Chá»§ tá»‹ch cÃ´ng ty (hoáº·c Há»™i Ä‘á»“ng thÃ nh viÃªn náº¿u tá»• chá»©c theo mÃ´ hÃ¬nh Ä‘Ã³) vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n\n**Ban kiá»ƒm soÃ¡t (hoáº·c Kiá»ƒm soÃ¡t viÃªn)** lÃ  cÆ¡ quan quáº£n lÃ½ **báº¯t buá»™c** Ä‘á»‘i vá»›i má»™t sá»‘ loáº¡i hÃ¬nh **CÃ´ng ty cá»• pháº§n**, Ä‘áº·c biá»‡t lÃ  cÃ¡c cÃ´ng ty cá»• pháº§n Ä‘áº¡i chÃºng hoáº·c cÃ¡c cÃ´ng ty cá»• pháº§n khÃ´ng chá»n mÃ´ hÃ¬nh quáº£n lÃ½ cÃ³ GiÃ¡m Ä‘á»‘c Ä‘á»™c láº­p.\n\nTuy nhiÃªn, náº¿u Äiá»u lá»‡ cÃ´ng ty TNHH cá»§a báº¡n quy Ä‘á»‹nh vá» viá»‡c thÃ nh láº­p Ban kiá»ƒm soÃ¡t Ä‘á»ƒ giÃ¡m sÃ¡t hoáº¡t Ä‘á»™ng quáº£n lÃ½, cÃ¡c thÃ nh viÃªn/chá»§ sá»Ÿ há»¯u váº«n cÃ³ thá»ƒ quyáº¿t Ä‘á»‹nh thÃ nh láº­p cÆ¡ quan nÃ y, nhÆ°ng vá» máº·t phÃ¡p lÃ½, Ä‘Ã¢y **khÃ´ng pháº£i lÃ  yÃªu cáº§u báº¯t buá»™c**.\n\n---\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung sá»± khÃ¡c biá»‡t, Ä‘Ã¢y lÃ  mÃ´ hÃ¬nh cÆ¡ cáº¥u quáº£n lÃ½ cÆ¡ báº£n cá»§a CÃ´ng ty TNHH so vá»›i CÃ´ng ty Cá»• pháº§n (dáº¡ng cÃ³ Ban kiá»ƒm soÃ¡t):\n\n```mermaid\ngraph TD\n    subgraph Cong_ty_TNHH\n        A[Há»™i Ä‘á»“ng thÃ nh viÃªn/Chá»§ sá»Ÿ há»¯u] --\u003e B(Chá»§ tá»‹ch CÃ´ng ty/Há»™i Ä‘á»“ng thÃ nh viÃªn)\n        B --\u003e C(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n\n    subgraph Cong_ty_Co_phan_Co_Ban_Kiem_Soat\n        D[Äáº¡i há»™i Ä‘á»“ng cá»• Ä‘Ã´ng] --\u003e E(Há»™i Ä‘á»“ng quáº£n trá»‹)\n        D --\u003e F(Ban kiá»ƒm soÃ¡t)\n        E --\u003e G(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n```"
+}
+PS D:\Github\KLTN> chcp 65001
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object { $_.case.id -eq "core_001" } |
+  Select-Object case, score, passed, details, answer | ConvertTo-Json -Depth 10
+{
+    "case":  {
+                 "id":  "core_001",
+                 "category":  "company_incorporation",
+                 "question":  "MÃ¬nh muá»‘n thÃ nh láº­p cÃ´ng ty TNHH 2 thÃ nh viÃªn thÃ¬ cáº§n nhá»¯ng giáº¥y tá» gÃ¬ vÃ  quy trÃ¬nh cÆ¡ báº£n ra sao?",
+                 "persona":  "business_owner",
+                 "active_docs":  "local-folder",
+                 "expected":  {
+                                  "behavior":  {
+                                                   "should_answer":  true,
+                                                   "should_ask_clarifying":  true,
+                                                   "should_refuse_hallucination":  true
+                                               },
+                                  "relevant_laws":  [
+                                                        "Luáº­t Doanh nghiá»‡p",
+                                                        "59/2020/QH14"
+                                                    ],
+                                  "must_include":  [
+                                                       "há»“ sÆ¡",
+                                                       "Ä‘Äƒng kÃ½ doanh nghiá»‡p",
+                                                       "báº¡n cho mÃ¬nh biáº¿t|mÃ¬nh cáº§n báº¡n"
+                                                   ],
+                                  "notes":  "Thiáº¿u ngá»¯ cáº£nh (ngÃ nh nghá», vá»‘n Ä‘iá»u lá»‡, Ä‘á»‹a chá»‰, ngÆ°á»i Ä‘áº¡i diá»‡n) nÃªn pháº£i há»i láº¡i."
+                              }
+             },
+    "score":  4.0,
+    "passed":  false,
+    "details":  {
+                    "must_not_hits":  [
+
+                                      ],
+                    "sus_hallucinated_article_number":  false,
+                    "relevant_law_hits":  [
+                                              "Luáº­t Doanh nghiá»‡p"
+                                          ],
+                    "has_dieu":  false,
+                    "has_khoan":  false,
+                    "soft_basis":  false,
+                    "should_ask_clarifying":  true,
+                    "asked_clarifying":  false,
+                    "must_include_hits":  [
+                                              "há»“ sÆ¡",
+                                              "Ä‘Äƒng kÃ½ doanh nghiá»‡p"
+                                          ]
+                },
+    "answer":  "ChÃ o báº¡n,\n\nViá»‡c thÃ nh láº­p CÃ´ng ty TNHH Hai ThÃ nh viÃªn trá»Ÿ lÃªn lÃ  má»™t thá»§ tá»¥c phá»• biáº¿n vÃ  Ä‘Æ°á»£c quy Ä‘á»‹nh rÃµ rÃ ng theo Luáº­t Doanh nghiá»‡p Viá»‡t Nam. Vá»›i vai trÃ² lÃ  DocsGPT, tÃ´i xin cung cáº¥p thÃ´ng tin chi tiáº¿t vá» cÃ¡c giáº¥y tá» cáº§n thiáº¿t vÃ  quy trÃ¬nh cÆ¡ báº£n Ä‘á»ƒ báº¡n cÃ³ thá»ƒ chuáº©n bá»‹ tá»‘t nháº¥t.\n\n---\n\n## I. Há»“ sÆ¡ cáº§n chuáº©n bá»‹ Ä‘á»ƒ thÃ nh láº­p CÃ´ng ty TNHH 2 ThÃ nh viÃªn\n\nHá»“ sÆ¡ Ä‘Äƒng kÃ½ doanh nghiá»‡p cáº§n ná»™p táº¡i PhÃ²ng ÄÄƒng kÃ½ kinh doanh thuá»™c Sá»Ÿ Káº¿ hoáº¡ch vÃ  Äáº§u tÆ° (SKHÄT) nÆ¡i cÃ´ng ty dá»± Ä‘á»‹nh Ä‘áº·t trá»¥ sá»Ÿ chÃ­nh, bao gá»“m cÃ¡c tÃ i liá»‡u sau:\n\n| STT | TÃ i liá»‡u | Chi tiáº¿t |\n| :--- | :--- | :--- |\n| **1** | **Giáº¥y Ä‘á» nghá»‹ Ä‘Äƒng kÃ½ doanh nghiá»‡p** | Theo máº«u thá»‘ng nháº¥t do CÆ¡ quan Ä‘Äƒng kÃ½ kinh doanh ban hÃ nh. |\n| **2** | **Äiá»u lá»‡ cÃ´ng ty** | Pháº£i cÃ³ Ä‘áº§y Ä‘á»§ chá»¯ kÃ½ cá»§a cÃ¡c thÃ nh viÃªn, ngÆ°á»i Ä‘áº¡i diá»‡n theo phÃ¡p luáº­t vÃ  ngÆ°á»i Ä‘áº¡i diá»‡n theo á»§y quyá»n (náº¿u cÃ³). |\n| **3** | **Danh sÃ¡ch thÃ nh viÃªn cÃ´ng ty TNHH** | KÃ¨m theo thÃ´ng tin chi tiáº¿t vá» pháº§n vá»‘n gÃ³p cá»§a tá»«ng thÃ nh viÃªn. |\n| **4** | **Báº£n sao há»£p lá»‡ cÃ¡c giáº¥y tá» chá»©ng thá»±c cÃ¡ nhÃ¢n/tá»• chá»©c** | **Äá»‘i vá»›i thÃ nh viÃªn lÃ  cÃ¡ nhÃ¢n:** Báº£n sao Tháº» cÄƒn cÆ°á»›c cÃ´ng dÃ¢n, Giáº¥y chá»©ng minh nhÃ¢n dÃ¢n, hoáº·c Há»™ chiáº¿u cÃ²n hiá»‡u lá»±c. \u003cbr\u003e **Äá»‘i vá»›i thÃ nh viÃªn lÃ  tá»• chá»©c:** Báº£n sao Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p hoáº·c cÃ¡c tÃ i liá»‡u tÆ°Æ¡ng Ä‘Æ°Æ¡ng khÃ¡c; Báº£n sao Tháº» cÄƒn cÆ°á»›c cÃ´ng dÃ¢n/Há»™ chiáº¿u cá»§a ngÆ°á»i Ä‘áº¡i diá»‡n theo á»§y quyá»n. |\n| **5** | **VÄƒn báº£n á»§y quyá»n** | Náº¿u ngÆ°á»i ná»™p há»“ sÆ¡ khÃ´ng pháº£i lÃ  ngÆ°á»i Ä‘áº¡i diá»‡n theo phÃ¡p luáº­t cá»§a cÃ´ng ty. |\n\n---\n\n## II. Quy trÃ¬nh cÆ¡ báº£n Ä‘á»ƒ thÃ nh láº­p CÃ´ng ty\n\nQuy trÃ¬nh thÃ nh láº­p CÃ´ng ty TNHH 2 ThÃ nh viÃªn tráº£i qua 02 giai Ä‘oáº¡n chÃ­nh: ÄÄƒng kÃ½ thÃ nh láº­p vÃ  cÃ¡c thá»§ tá»¥c sau thÃ nh láº­p.\n\n### Giai Ä‘oáº¡n 1: ÄÄƒng kÃ½ thÃ nh láº­p\n\n| BÆ°á»›c | Hoáº¡t Ä‘á»™ng | CÆ¡ quan thá»±c hiá»‡n | Thá»i gian (Dá»± kiáº¿n) |\n| :--- | :--- | :--- | :--- |\n| **1** | **Ná»™p há»“ sÆ¡** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh (SKHÄT) | CÃ³ thá»ƒ ná»™p trá»±c tiáº¿p hoáº·c ná»™p qua máº¡ng Ä‘iá»‡n tá»­ (Cá»•ng thÃ´ng tin quá»‘c gia vá» Ä‘Äƒng kÃ½ doanh nghiá»‡p). |\n| **2** | **Tháº©m Ä‘á»‹nh há»“ sÆ¡** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh | **03 ngÃ y lÃ m viá»‡c** ká»ƒ tá»« ngÃ y nháº­n Ä‘Æ°á»£c há»“ sÆ¡ há»£p lá»‡. |\n| **3** | **Nháº­n Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p (GCNÄKDN)** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh | Náº¿u há»“ sÆ¡ há»£p lá»‡, SKHÄT sáº½ cáº¥p GCNÄKDN. |\n\n### Giai Ä‘oáº¡n 2: Thá»§ tá»¥c sau thÃ nh láº­p\n\nSau khi nháº­n Ä‘Æ°á»£c GCNÄKDN, cÃ´ng ty pháº£i thá»±c hiá»‡n cÃ¡c thá»§ tá»¥c báº¯t buá»™c sau:\n\n1.  **Kháº¯c con dáº¥u phÃ¡p nhÃ¢n:** CÃ´ng ty tá»± quyáº¿t Ä‘á»‹nh vá» hÃ¬nh thá»©c, sá»‘ lÆ°á»£ng vÃ  ná»™i dung con dáº¥u.\n2.  **CÃ´ng bá»‘ ná»™i dung Ä‘Äƒng kÃ½ doanh nghiá»‡p:** Pháº£i thá»±c hiá»‡n cÃ´ng bá»‘ trÃªn Cá»•ng thÃ´ng tin quá»‘c gia vá» Ä‘Äƒng kÃ½ doanh nghiá»‡p trong vÃ²ng 30 ngÃ y ká»ƒ tá»« ngÃ y Ä‘Æ°á»£c cáº¥p GCNÄKDN.\n3.  **GÃ³p vá»‘n Ä‘iá»u lá»‡:** CÃ¡c thÃ nh viÃªn pháº£i gÃ³p Ä‘á»§ vÃ  Ä‘Ãºng loáº¡i tÃ i sáº£n Ä‘Ã£ cam káº¿t trong vÃ²ng 90 ngÃ y ká»ƒ tá»« ngÃ y Ä‘Æ°á»£c cáº¥p GCNÄKDN.\n4.  **Thá»§ tá»¥c vá» thuáº¿:** Má»Ÿ tÃ i khoáº£n ngÃ¢n hÃ ng, Ä‘Äƒng kÃ½ phÆ°Æ¡ng phÃ¡p kÃª khai thuáº¿, Ä‘áº·t mua/tá»± in hÃ³a Ä‘Æ¡n (náº¿u sá»­ dá»¥ng hÃ³a Ä‘Æ¡n giáº¥y), ná»™p há»“ sÆ¡ khai thuáº¿ ban Ä‘áº§u.\n5.  **Treo biá»ƒn táº¡i trá»¥ sá»Ÿ chÃ­nh:** Äáº£m báº£o trá»¥ sá»Ÿ hoáº¡t Ä‘á»™ng theo Ä‘Ãºng Ä‘á»‹a chá»‰ Ä‘Ã£ Ä‘Äƒng kÃ½.\n\n---\n\n## III. SÆ¡ Ä‘á»“ hÃ³a quy trÃ¬nh\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung hÆ¡n, Ä‘Ã¢y lÃ  sÆ¡ Ä‘á»“ tÃ³m táº¯t quy trÃ¬nh thÃ nh láº­p cÃ´ng ty TNHH 2 thÃ nh viÃªn:\n\n```mermaid\ngraph TD\n    A[Chuáº©n bá»‹ Há»“ sÆ¡: ÄÆ¡n Ä‘Äƒng kÃ½, Äiá»u lá»‡, Danh sÃ¡ch thÃ nh viÃªn, CCCD/Há»™ chiáº¿u] --\u003e B(Ná»™p há»“ sÆ¡ táº¡i PhÃ²ng ÄÄƒng kÃ½ kinh doanh - SKHÄT)\n    B --\u003e C{PhÃ²ng ÄÄƒng kÃ½ kinh doanh kiá»ƒm tra tÃ­nh há»£p lá»‡ - 3 ngÃ y lÃ m viá»‡c}\n    C -- Há»“ sÆ¡ Há»£p lá»‡ --\u003e D[Cáº¥p Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p (GCNÄKDN)]\n    C -- YÃªu cáº§u sá»­a Ä‘á»•i --\u003e B\n    D --\u003e E[Thá»±c hiá»‡n CÃ´ng bá»‘ ná»™i dung Ä‘Äƒng kÃ½ doanh nghiá»‡p (Trong 30 ngÃ y)]\n    E --\u003e F[Thá»§ tá»¥c sau thÃ nh láº­p: Kháº¯c dáº¥u, GÃ³p vá»‘n (Trong 90 ngÃ y), Má»Ÿ tÃ i khoáº£n, KÃª khai thuáº¿ ban Ä‘áº§u]\n```\n\nNáº¿u báº¡n cÃ³ báº¥t ká»³ cÃ¢u há»i nÃ o khÃ¡c vá» cÃ¡c chi tiáº¿t cá»¥ thá»ƒ trong há»“ sÆ¡ hoáº·c cáº§n há»— trá»£ vá» thá»§ tá»¥c háº­u kiá»ƒm tra, hÃ£y cho tÃ´i biáº¿t nhÃ©!"
+}
+PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object { $_.case.id -eq "core_002" } |
+  Select-Object case, score, passed, details, answer | ConvertTo-Json -Depth 10
+{
+    "case":  {
+                 "id":  "core_002",
+                 "category":  "company_governance",
+                 "question":  "CÃ´ng ty TNHH cÃ³ báº¯t buá»™c pháº£i cÃ³ ban kiá»ƒm soÃ¡t khÃ´ng?",
+                 "persona":  "business_owner",
+                 "active_docs":  "local-folder",
+                 "expected":  {
+                                  "behavior":  {
+                                                   "should_answer":  true,
+                                                   "should_ask_clarifying":  true,
+                                                   "should_refuse_hallucination":  true
+                                               },
+                                  "relevant_laws":  [
+                                                        "Luáº­t Doanh nghiá»‡p",
+                                                        "59/2020/QH14"
+                                                    ],
+                                  "must_include":  [
+                                                       "phá»¥ thuá»™c",
+                                                       "quy mÃ´|sá»‘ lÆ°á»£ng",
+                                                       "Äiá»u|Khoáº£n|Ä‘á»‘i chiáº¿u"
+                                                   ]
+                              }
+             },
+    "score":  3.0,
+    "passed":  false,
+    "details":  {
+                    "must_not_hits":  [
+
+                                      ],
+                    "sus_hallucinated_article_number":  false,
+                    "relevant_law_hits":  [
+                                              "Luáº­t Doanh nghiá»‡p"
+                                          ],
+                    "has_dieu":  false,
+                    "has_khoan":  false,
+                    "soft_basis":  false,
+                    "should_ask_clarifying":  true,
+                    "asked_clarifying":  false,
+                    "must_include_hits":  [
+                                              "Äiá»u|Khoáº£n|Ä‘á»‘i chiáº¿u"
+                                          ]
+                },
+    "answer":  "ChÃ o báº¡n, tÃ´i lÃ  DocsGPT, má»™t trá»£ lÃ½ AI sáºµn sÃ ng há»— trá»£ báº¡n.\n\nÄá»‘i vá»›i cÃ¢u há»i vá» cÆ¡ cáº¥u tá»• chá»©c cá»§a CÃ´ng ty TNHH, cÃ¢u tráº£ lá»i lÃ  **CÃ´ng ty TNHH khÃ´ng báº¯t buá»™c pháº£i cÃ³ Ban kiá»ƒm soÃ¡t**.\n\nTheo quy Ä‘á»‹nh cá»§a Luáº­t Doanh nghiá»‡p Viá»‡t Nam:\n\n1.  **CÃ´ng ty TNHH Hai thÃ nh viÃªn trá»Ÿ lÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Há»™i Ä‘á»“ng thÃ nh viÃªn, Chá»§ tá»‹ch Há»™i Ä‘á»“ng thÃ nh viÃªn vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n2.  **CÃ´ng ty TNHH Má»™t thÃ nh viÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Chá»§ tá»‹ch cÃ´ng ty (hoáº·c Há»™i Ä‘á»“ng thÃ nh viÃªn náº¿u tá»• chá»©c theo mÃ´ hÃ¬nh Ä‘Ã³) vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n\n**Ban kiá»ƒm soÃ¡t (hoáº·c Kiá»ƒm soÃ¡t viÃªn)** lÃ  cÆ¡ quan quáº£n lÃ½ **báº¯t buá»™c** Ä‘á»‘i vá»›i má»™t sá»‘ loáº¡i hÃ¬nh **CÃ´ng ty cá»• pháº§n**, Ä‘áº·c biá»‡t lÃ  cÃ¡c cÃ´ng ty cá»• pháº§n Ä‘áº¡i chÃºng hoáº·c cÃ¡c cÃ´ng ty cá»• pháº§n khÃ´ng chá»n mÃ´ hÃ¬nh quáº£n lÃ½ cÃ³ GiÃ¡m Ä‘á»‘c Ä‘á»™c láº­p.\n\nTuy nhiÃªn, náº¿u Äiá»u lá»‡ cÃ´ng ty TNHH cá»§a báº¡n quy Ä‘á»‹nh vá» viá»‡c thÃ nh láº­p Ban kiá»ƒm soÃ¡t Ä‘á»ƒ giÃ¡m sÃ¡t hoáº¡t Ä‘á»™ng quáº£n lÃ½, cÃ¡c thÃ nh viÃªn/chá»§ sá»Ÿ há»¯u váº«n cÃ³ thá»ƒ quyáº¿t Ä‘á»‹nh thÃ nh láº­p cÆ¡ quan nÃ y, nhÆ°ng vá» máº·t phÃ¡p lÃ½, Ä‘Ã¢y **khÃ´ng pháº£i lÃ  yÃªu cáº§u báº¯t buá»™c**.\n\n---\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung sá»± khÃ¡c biá»‡t, Ä‘Ã¢y lÃ  mÃ´ hÃ¬nh cÆ¡ cáº¥u quáº£n lÃ½ cÆ¡ báº£n cá»§a CÃ´ng ty TNHH so vá»›i CÃ´ng ty Cá»• pháº§n (dáº¡ng cÃ³ Ban kiá»ƒm soÃ¡t):\n\n```mermaid\ngraph TD\n    subgraph Cong_ty_TNHH\n        A[Há»™i Ä‘á»“ng thÃ nh viÃªn/Chá»§ sá»Ÿ há»¯u] --\u003e B(Chá»§ tá»‹ch CÃ´ng ty/Há»™i Ä‘á»“ng thÃ nh viÃªn)\n        B --\u003e C(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n\n    subgraph Cong_ty_Co_phan_Co_Ban_Kiem_Soat\n        D[Äáº¡i há»™i Ä‘á»“ng cá»• Ä‘Ã´ng] --\u003e E(Há»™i Ä‘á»“ng quáº£n trá»‹)\n        D --\u003e F(Ban kiá»ƒm soÃ¡t)\n        E --\u003e G(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n```"
+}
+PS D:\Github\KLTN> [Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+PS D:\Github\KLTN> [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+PS D:\Github\KLTN> $OutputEncoding = [System.Text.Encoding]::UTF8
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object { $_.case.id -eq "core_001" } |
+  Select-Object case, score, passed, details, answer | ConvertTo-Json -Depth 10
+{
+    "case":  {
+                 "id":  "core_001",
+                 "category":  "company_incorporation",
+                 "question":  "MÃ¬nh muá»‘n thÃ nh láº­p cÃ´ng ty TNHH 2 thÃ nh viÃªn thÃ¬ cáº§n nhá»¯ng giáº¥y tá» gÃ¬ vÃ  quy trÃ¬nh cÆ¡ báº£n ra sao?",
+                 "persona":  "business_owner",
+                 "active_docs":  "local-folder",
+                 "expected":  {
+                                  "behavior":  {
+                                                   "should_answer":  true,
+                                                   "should_ask_clarifying":  true,
+                                                   "should_refuse_hallucination":  true
+                                               },
+                                  "relevant_laws":  [
+                                                        "Luáº­t Doanh nghiá»‡p",
+                                                        "59/2020/QH14"
+                                                    ],
+                                  "must_include":  [
+                                                       "há»“ sÆ¡",
+                                                       "Ä‘Äƒng kÃ½ doanh nghiá»‡p",
+                                                       "báº¡n cho mÃ¬nh biáº¿t|mÃ¬nh cáº§n báº¡n"
+                                                   ],
+                                  "notes":  "Thiáº¿u ngá»¯ cáº£nh (ngÃ nh nghá», vá»‘n Ä‘iá»u lá»‡, Ä‘á»‹a chá»‰, ngÆ°á»i Ä‘áº¡i diá»‡n) nÃªn pháº£i há»i láº¡i."
+                              }
+             },
+    "score":  4.0,
+    "passed":  false,
+    "details":  {
+                    "must_not_hits":  [
+
+                                      ],
+                    "sus_hallucinated_article_number":  false,
+                    "relevant_law_hits":  [
+                                              "Luáº­t Doanh nghiá»‡p"
+                                          ],
+                    "has_dieu":  false,
+                    "has_khoan":  false,
+                    "soft_basis":  false,
+                    "should_ask_clarifying":  true,
+                    "asked_clarifying":  false,
+                    "must_include_hits":  [
+                                              "há»“ sÆ¡",
+                                              "Ä‘Äƒng kÃ½ doanh nghiá»‡p"
+                                          ]
+                },
+    "answer":  "ChÃ o báº¡n,\n\nViá»‡c thÃ nh láº­p CÃ´ng ty TNHH Hai ThÃ nh viÃªn trá»Ÿ lÃªn lÃ  má»™t thá»§ tá»¥c phá»• biáº¿n vÃ  Ä‘Æ°á»£c quy Ä‘á»‹nh rÃµ rÃ ng theo Luáº­t Doanh nghiá»‡p Viá»‡t Nam. Vá»›i vai trÃ² lÃ  DocsGPT, tÃ´i xin cung cáº¥p thÃ´ng tin chi tiáº¿t vá» cÃ¡c giáº¥y tá» cáº§n thiáº¿t vÃ  quy trÃ¬nh cÆ¡ báº£n Ä‘á»ƒ báº¡n cÃ³ thá»ƒ chuáº©n bá»‹ tá»‘t nháº¥t.\n\n---\n\n## I. Há»“ sÆ¡ cáº§n chuáº©n bá»‹ Ä‘á»ƒ thÃ nh láº­p CÃ´ng ty TNHH 2 ThÃ nh viÃªn\n\nHá»“ sÆ¡ Ä‘Äƒng kÃ½ doanh nghiá»‡p cáº§n ná»™p táº¡i PhÃ²ng ÄÄƒng kÃ½ kinh doanh thuá»™c Sá»Ÿ Káº¿ hoáº¡ch vÃ  Äáº§u tÆ° (SKHÄT) nÆ¡i cÃ´ng ty dá»± Ä‘á»‹nh Ä‘áº·t trá»¥ sá»Ÿ chÃ­nh, bao gá»“m cÃ¡c tÃ i liá»‡u sau:\n\n| STT | TÃ i liá»‡u | Chi tiáº¿t |\n| :--- | :--- | :--- |\n| **1** | **Giáº¥y Ä‘á» nghá»‹ Ä‘Äƒng kÃ½ doanh nghiá»‡p** | Theo máº«u thá»‘ng nháº¥t do CÆ¡ quan Ä‘Äƒng kÃ½ kinh doanh ban hÃ nh. |\n| **2** | **Äiá»u lá»‡ cÃ´ng ty** | Pháº£i cÃ³ Ä‘áº§y Ä‘á»§ chá»¯ kÃ½ cá»§a cÃ¡c thÃ nh viÃªn, ngÆ°á»i Ä‘áº¡i diá»‡n theo phÃ¡p luáº­t vÃ  ngÆ°á»i Ä‘áº¡i diá»‡n theo á»§y quyá»n (náº¿u cÃ³). |\n| **3** | **Danh sÃ¡ch thÃ nh viÃªn cÃ´ng ty TNHH** | KÃ¨m theo thÃ´ng tin chi tiáº¿t vá» pháº§n vá»‘n gÃ³p cá»§a tá»«ng thÃ nh viÃªn. |\n| **4** | **Báº£n sao há»£p lá»‡ cÃ¡c giáº¥y tá» chá»©ng thá»±c cÃ¡ nhÃ¢n/tá»• chá»©c** | **Äá»‘i vá»›i thÃ nh viÃªn lÃ  cÃ¡ nhÃ¢n:** Báº£n sao Tháº» cÄƒn cÆ°á»›c cÃ´ng dÃ¢n, Giáº¥y chá»©ng minh nhÃ¢n dÃ¢n, hoáº·c Há»™ chiáº¿u cÃ²n hiá»‡u lá»±c. \u003cbr\u003e **Äá»‘i vá»›i thÃ nh viÃªn lÃ  tá»• chá»©c:** Báº£n sao Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p hoáº·c cÃ¡c tÃ i liá»‡u tÆ°Æ¡ng Ä‘Æ°Æ¡ng khÃ¡c; Báº£n sao Tháº» cÄƒn cÆ°á»›c cÃ´ng dÃ¢n/Há»™ chiáº¿u cá»§a ngÆ°á»i Ä‘áº¡i diá»‡n theo á»§y quyá»n. |\n| **5** | **VÄƒn báº£n á»§y quyá»n** | Náº¿u ngÆ°á»i ná»™p há»“ sÆ¡ khÃ´ng pháº£i lÃ  ngÆ°á»i Ä‘áº¡i diá»‡n theo phÃ¡p luáº­t cá»§a cÃ´ng ty. |\n\n---\n\n## II. Quy trÃ¬nh cÆ¡ báº£n Ä‘á»ƒ thÃ nh láº­p CÃ´ng ty\n\nQuy trÃ¬nh thÃ nh láº­p CÃ´ng ty TNHH 2 ThÃ nh viÃªn tráº£i qua 02 giai Ä‘oáº¡n chÃ­nh: ÄÄƒng kÃ½ thÃ nh láº­p vÃ  cÃ¡c thá»§ tá»¥c sau thÃ nh láº­p.\n\n### Giai Ä‘oáº¡n 1: ÄÄƒng kÃ½ thÃ nh láº­p\n\n| BÆ°á»›c | Hoáº¡t Ä‘á»™ng | CÆ¡ quan thá»±c hiá»‡n | Thá»i gian (Dá»± kiáº¿n) |\n| :--- | :--- | :--- | :--- |\n| **1** | **Ná»™p há»“ sÆ¡** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh (SKHÄT) | CÃ³ thá»ƒ ná»™p trá»±c tiáº¿p hoáº·c ná»™p qua máº¡ng Ä‘iá»‡n tá»­ (Cá»•ng thÃ´ng tin quá»‘c gia vá» Ä‘Äƒng kÃ½ doanh nghiá»‡p). |\n| **2** | **Tháº©m Ä‘á»‹nh há»“ sÆ¡** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh | **03 ngÃ y lÃ m viá»‡c** ká»ƒ tá»« ngÃ y nháº­n Ä‘Æ°á»£c há»“ sÆ¡ há»£p lá»‡. |\n| **3** | **Nháº­n Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p (GCNÄKDN)** | PhÃ²ng ÄÄƒng kÃ½ kinh doanh | Náº¿u há»“ sÆ¡ há»£p lá»‡, SKHÄT sáº½ cáº¥p GCNÄKDN. |\n\n### Giai Ä‘oáº¡n 2: Thá»§ tá»¥c sau thÃ nh láº­p\n\nSau khi nháº­n Ä‘Æ°á»£c GCNÄKDN, cÃ´ng ty pháº£i thá»±c hiá»‡n cÃ¡c thá»§ tá»¥c báº¯t buá»™c sau:\n\n1.  **Kháº¯c con dáº¥u phÃ¡p nhÃ¢n:** CÃ´ng ty tá»± quyáº¿t Ä‘á»‹nh vá» hÃ¬nh thá»©c, sá»‘ lÆ°á»£ng vÃ  ná»™i dung con dáº¥u.\n2.  **CÃ´ng bá»‘ ná»™i dung Ä‘Äƒng kÃ½ doanh nghiá»‡p:** Pháº£i thá»±c hiá»‡n cÃ´ng bá»‘ trÃªn Cá»•ng thÃ´ng tin quá»‘c gia vá» Ä‘Äƒng kÃ½ doanh nghiá»‡p trong vÃ²ng 30 ngÃ y ká»ƒ tá»« ngÃ y Ä‘Æ°á»£c cáº¥p GCNÄKDN.\n3.  **GÃ³p vá»‘n Ä‘iá»u lá»‡:** CÃ¡c thÃ nh viÃªn pháº£i gÃ³p Ä‘á»§ vÃ  Ä‘Ãºng loáº¡i tÃ i sáº£n Ä‘Ã£ cam káº¿t trong vÃ²ng 90 ngÃ y ká»ƒ tá»« ngÃ y Ä‘Æ°á»£c cáº¥p GCNÄKDN.\n4.  **Thá»§ tá»¥c vá» thuáº¿:** Má»Ÿ tÃ i khoáº£n ngÃ¢n hÃ ng, Ä‘Äƒng kÃ½ phÆ°Æ¡ng phÃ¡p kÃª khai thuáº¿, Ä‘áº·t mua/tá»± in hÃ³a Ä‘Æ¡n (náº¿u sá»­ dá»¥ng hÃ³a Ä‘Æ¡n giáº¥y), ná»™p há»“ sÆ¡ khai thuáº¿ ban Ä‘áº§u.\n5.  **Treo biá»ƒn táº¡i trá»¥ sá»Ÿ chÃ­nh:** Äáº£m báº£o trá»¥ sá»Ÿ hoáº¡t Ä‘á»™ng theo Ä‘Ãºng Ä‘á»‹a chá»‰ Ä‘Ã£ Ä‘Äƒng kÃ½.\n\n---\n\n## III. SÆ¡ Ä‘á»“ hÃ³a quy trÃ¬nh\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung hÆ¡n, Ä‘Ã¢y lÃ  sÆ¡ Ä‘á»“ tÃ³m táº¯t quy trÃ¬nh thÃ nh láº­p cÃ´ng ty TNHH 2 thÃ nh viÃªn:\n\n```mermaid\ngraph TD\n    A[Chuáº©n bá»‹ Há»“ sÆ¡: ÄÆ¡n Ä‘Äƒng kÃ½, Äiá»u lá»‡, Danh sÃ¡ch thÃ nh viÃªn, CCCD/Há»™ chiáº¿u] --\u003e B(Ná»™p há»“ sÆ¡ táº¡i PhÃ²ng ÄÄƒng kÃ½ kinh doanh - SKHÄT)\n    B --\u003e C{PhÃ²ng ÄÄƒng kÃ½ kinh doanh kiá»ƒm tra tÃ­nh há»£p lá»‡ - 3 ngÃ y lÃ m viá»‡c}\n    C -- Há»“ sÆ¡ Há»£p lá»‡ --\u003e D[Cáº¥p Giáº¥y chá»©ng nháº­n Ä‘Äƒng kÃ½ doanh nghiá»‡p (GCNÄKDN)]\n    C -- YÃªu cáº§u sá»­a Ä‘á»•i --\u003e B\n    D --\u003e E[Thá»±c hiá»‡n CÃ´ng bá»‘ ná»™i dung Ä‘Äƒng kÃ½ doanh nghiá»‡p (Trong 30 ngÃ y)]\n    E --\u003e F[Thá»§ tá»¥c sau thÃ nh láº­p: Kháº¯c dáº¥u, GÃ³p vá»‘n (Trong 90 ngÃ y), Má»Ÿ tÃ i khoáº£n, KÃª khai thuáº¿ ban Ä‘áº§u]\n```\n\nNáº¿u báº¡n cÃ³ báº¥t ká»³ cÃ¢u há»i nÃ o khÃ¡c vá» cÃ¡c chi tiáº¿t cá»¥ thá»ƒ trong há»“ sÆ¡ hoáº·c cáº§n há»— trá»£ vá» thá»§ tá»¥c háº­u kiá»ƒm tra, hÃ£y cho tÃ´i biáº¿t nhÃ©!"
+}
+PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object { $_.case.id -eq "core_002" } |
+  Select-Object case, score, passed, details, answer | ConvertTo-Json -Depth 10
+{
+    "case":  {
+                 "id":  "core_002",
+                 "category":  "company_governance",
+                 "question":  "CÃ´ng ty TNHH cÃ³ báº¯t buá»™c pháº£i cÃ³ ban kiá»ƒm soÃ¡t khÃ´ng?",
+                 "persona":  "business_owner",
+                 "active_docs":  "local-folder",
+                 "expected":  {
+                                  "behavior":  {
+                                                   "should_answer":  true,
+                                                   "should_ask_clarifying":  true,
+                                                   "should_refuse_hallucination":  true
+                                               },
+                                  "relevant_laws":  [
+                                                        "Luáº­t Doanh nghiá»‡p",
+                                                        "59/2020/QH14"
+                                                    ],
+                                  "must_include":  [
+                                                       "phá»¥ thuá»™c",
+                                                       "quy mÃ´|sá»‘ lÆ°á»£ng",
+                                                       "Äiá»u|Khoáº£n|Ä‘á»‘i chiáº¿u"
+                                                   ]
+                              }
+             },
+    "score":  3.0,
+    "passed":  false,
+    "details":  {
+                    "must_not_hits":  [
+
+                                      ],
+                    "sus_hallucinated_article_number":  false,
+                    "relevant_law_hits":  [
+                                              "Luáº­t Doanh nghiá»‡p"
+                                          ],
+                    "has_dieu":  false,
+                    "has_khoan":  false,
+                    "soft_basis":  false,
+                    "should_ask_clarifying":  true,
+                    "asked_clarifying":  false,
+                    "must_include_hits":  [
+                                              "Äiá»u|Khoáº£n|Ä‘á»‘i chiáº¿u"
+                                          ]
+                },
+    "answer":  "ChÃ o báº¡n, tÃ´i lÃ  DocsGPT, má»™t trá»£ lÃ½ AI sáºµn sÃ ng há»— trá»£ báº¡n.\n\nÄá»‘i vá»›i cÃ¢u há»i vá» cÆ¡ cáº¥u tá»• chá»©c cá»§a CÃ´ng ty TNHH, cÃ¢u tráº£ lá»i lÃ  **CÃ´ng ty TNHH khÃ´ng báº¯t buá»™c pháº£i cÃ³ Ban kiá»ƒm soÃ¡t**.\n\nTheo quy Ä‘á»‹nh cá»§a Luáº­t Doanh nghiá»‡p Viá»‡t Nam:\n\n1.  **CÃ´ng ty TNHH Hai thÃ nh viÃªn trá»Ÿ lÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Há»™i Ä‘á»“ng thÃ nh viÃªn, Chá»§ tá»‹ch Há»™i Ä‘á»“ng thÃ nh viÃªn vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n2.  **CÃ´ng ty TNHH Má»™t thÃ nh viÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Chá»§ tá»‹ch cÃ´ng ty (hoáº·c Há»™i Ä‘á»“ng thÃ nh viÃªn náº¿u tá»• chá»©c theo mÃ´ hÃ¬nh Ä‘Ã³) vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n\n**Ban kiá»ƒm soÃ¡t (hoáº·c Kiá»ƒm soÃ¡t viÃªn)** lÃ  cÆ¡ quan quáº£n lÃ½ **báº¯t buá»™c** Ä‘á»‘i vá»›i má»™t sá»‘ loáº¡i hÃ¬nh **CÃ´ng ty cá»• pháº§n**, Ä‘áº·c biá»‡t lÃ  cÃ¡c cÃ´ng ty cá»• pháº§n Ä‘áº¡i chÃºng hoáº·c cÃ¡c cÃ´ng ty cá»• pháº§n khÃ´ng chá»n mÃ´ hÃ¬nh quáº£n lÃ½ cÃ³ GiÃ¡m Ä‘á»‘c Ä‘á»™c láº­p.\n\nTuy nhiÃªn, náº¿u Äiá»u lá»‡ cÃ´ng ty TNHH cá»§a báº¡n quy Ä‘á»‹nh vá» viá»‡c thÃ nh láº­p Ban kiá»ƒm soÃ¡t Ä‘á»ƒ giÃ¡m sÃ¡t hoáº¡t Ä‘á»™ng quáº£n lÃ½, cÃ¡c thÃ nh viÃªn/chá»§ sá»Ÿ há»¯u váº«n cÃ³ thá»ƒ quyáº¿t Ä‘á»‹nh thÃ nh láº­p cÆ¡ quan nÃ y, nhÆ°ng vá» máº·t phÃ¡p lÃ½, Ä‘Ã¢y **khÃ´ng pháº£i lÃ  yÃªu cáº§u báº¯t buá»™c**.\n\n---\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung sá»± khÃ¡c biá»‡t, Ä‘Ã¢y lÃ  mÃ´ hÃ¬nh cÆ¡ cáº¥u quáº£n lÃ½ cÆ¡ báº£n cá»§a CÃ´ng ty TNHH so vá»›i CÃ´ng ty Cá»• pháº§n (dáº¡ng cÃ³ Ban kiá»ƒm soÃ¡t):\n\n```mermaid\ngraph TD\n    subgraph Cong_ty_TNHH\n        A[Há»™i Ä‘á»“ng thÃ nh viÃªn/Chá»§ sá»Ÿ há»¯u] --\u003e B(Chá»§ tá»‹ch CÃ´ng ty/Há»™i Ä‘á»“ng thÃ nh viÃªn)\n        B --\u003e C(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n\n    subgraph Cong_ty_Co_phan_Co_Ban_Kiem_Soat\n        D[Äáº¡i há»™i Ä‘á»“ng cá»• Ä‘Ã´ng] --\u003e E(Há»™i Ä‘á»“ng quáº£n trá»‹)\n        D --\u003e F(Ban kiá»ƒm soÃ¡t)\n        E --\u003e G(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n```"
+}

@@ -1,0 +1,46 @@
+name: vn_business_stress
+description: >
+  Stress test: câu rất dài, nhiều ý, ngôn ngữ đời thường kiểu người làm kinh doanh/công nghệ.
+  Kỳ vọng chatbot biết tách vấn đề, hỏi lại phần thiếu, không trả lời bừa.
+
+cases:
+  - id: stress_001
+    category: long_multi_intent
+    persona: founder_tech
+    active_docs: local-folder
+    question: >
+      Mình đang làm startup (SaaS) ở Việt Nam, hiện có 3 co-founder góp vốn,
+      tụi mình muốn mở công ty càng nhanh càng tốt nhưng chưa thống nhất nên làm TNHH hay cổ phần.
+      Bên mình có bán gói dịch vụ theo tháng, thu tiền qua chuyển khoản và thẻ,
+      có xuất hóa đơn hay không thì mình chưa rõ; ngoài ra app có thu thập email/số điện thoại để login,
+      thỉnh thoảng gửi email marketing. Nếu khách hàng không trả tiền hoặc chargeback,
+      mình xử lý theo luật nào? Và hợp đồng điện tử/điều khoản sử dụng trong app có đủ giá trị không?
+      Cuối cùng, mình nghe nói nếu dùng tên thương hiệu thì phải đăng ký nhãn hiệu,
+      vậy cần chuẩn bị gì và mất khoảng bao lâu?
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Doanh nghiệp"
+        - "59/2020/QH14"
+        - "Luật Giao Dịch Điện Tử"
+        - "20/2023/QH15"
+        - "Luật Quản Lý Thuế"
+        - "38/2019/QH14"
+        - "Luật Dữ Liệu"
+        - "60/2024/QH15"
+        - "Luật Sở Hữu Trí Tuệ"
+      must_include:
+        - "mình tách thành"
+        - "1\\)|2\\)|3\\)|4\\)"   # kỳ vọng trả lời có cấu trúc
+        - "bạn cho mình biết|mình cần bạn"
+        - "Điều|Khoản|đối chiếu|tra cứu"
+      must_not_include:
+        - "Điều\\s+9999"
+      notes: >
+        Bắt buộc phải chia nhóm vấn đề: (1) loại hình DN, (2) hóa đơn/thuế, (3) dữ liệu/marketing,
+        (4) hợp đồng điện tử/điều khoản sử dụng, (5) tranh chấp thanh toán/chargeback,
+        (6) nhãn hiệu. Phải hỏi lại tối thiểu: doanh thu dự kiến, mô hình xuất hóa đơn,
+        đối tượng khách hàng (B2B/B2C), kênh thanh toán, đã có điều lệ/chia cổ phần chưa.

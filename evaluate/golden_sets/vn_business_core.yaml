@@ -1,0 +1,199 @@
+name: vn_business_core
+description: >
+  Golden set lõi cho luật kinh tế/doanh nghiệp VN. Tập trung các câu hỏi phổ biến,
+  ngôn ngữ business-friendly, và yêu cầu phản hồi có căn cứ + không bịa.
+
+cases:
+  - id: core_001
+    category: company_incorporation
+    persona: business_owner
+    active_docs: local-folder
+    question: "Mình muốn thành lập công ty TNHH 2 thành viên thì cần những giấy tờ gì và quy trình cơ bản ra sao?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Doanh nghiệp"
+        - "59/2020/QH14"
+      must_include:
+        - "hồ sơ"
+        - "đăng ký doanh nghiệp"
+        - "bạn cho mình biết|mình cần bạn"
+      notes: "Thiếu ngữ cảnh (ngành nghề, vốn điều lệ, địa chỉ, người đại diện) nên phải hỏi lại."
+
+  - id: core_002
+    category: company_governance
+    persona: business_owner
+    active_docs: local-folder
+    question: "Công ty TNHH có bắt buộc phải có ban kiểm soát không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Doanh nghiệp"
+        - "59/2020/QH14"
+      must_include:
+        - "phụ thuộc"
+        - "quy mô|số lượng"
+        - "Điều|Khoản|đối chiếu"
+
+  - id: core_003
+    category: contracts_trade
+    persona: business_staff
+    active_docs: local-folder
+    question: "Hợp đồng mua bán hàng hóa trong nước cần có các điều khoản tối thiểu nào để hạn chế rủi ro?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Thương Mại"
+        - "36/2005/QH11"
+        - "BỘ LUẬT DÂN SỰ"
+        - "91/2015/QH13"
+      must_include:
+        - "đối tượng"
+        - "giá"
+        - "giao hàng"
+        - "thanh toán"
+        - "phạt vi phạm|bồi thường"
+        - "giải quyết tranh chấp"
+
+  - id: core_004
+    category: dispute_resolution
+    persona: business_staff
+    active_docs: local-folder
+    question: "Nếu xảy ra tranh chấp hợp đồng thì nên chọn trọng tài thương mại hay tòa án?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Trọng Tài Thương Mại"
+        - "54/2010/QH12"
+      must_include:
+        - "ưu điểm"
+        - "nhược điểm"
+        - "điều kiện"
+        - "thỏa thuận trọng tài"
+
+  - id: core_005
+    category: ip_tech
+    persona: tech_pm
+    active_docs: local-folder
+    question: "Bên mình build app, muốn bảo vệ logo và tên sản phẩm thì cần làm gì?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Sở Hữu Trí Tuệ"
+        - "Luật-07-2022-QH15"
+      must_include:
+        - "nhãn hiệu"
+        - "đăng ký"
+        - "phân nhóm"
+        - "bạn cho mình biết|mình cần bạn"
+      notes: "Hỏi thêm nhóm sản phẩm/dịch vụ, phạm vi kinh doanh, đã sử dụng nhãn hiệu chưa."
+
+  - id: core_006
+    category: e_transactions
+    persona: tech_pm
+    active_docs: local-folder
+    question: "Hợp đồng điện tử có giá trị pháp lý như hợp đồng giấy không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: false
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Giao Dịch Điện Tử"
+        - "20/2023/QH15"
+      must_include:
+        - "giá trị pháp lý"
+        - "điều kiện"
+        - "chữ ký điện tử|xác thực"
+
+  - id: core_007
+    category: competition
+    persona: business_staff
+    active_docs: local-folder
+    question: "Bán phá giá trong thị trường nội địa có bị coi là hành vi cạnh tranh không lành mạnh không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Cạnh Tranh"
+        - "23/2018/QH14"
+      must_include:
+        - "phân biệt"
+        - "hành vi"
+        - "yếu tố"
+        - "bạn cho mình biết|làm rõ"
+
+  - id: core_008
+    category: taxation
+    persona: business_owner
+    active_docs: local-folder
+    question: "Công ty mình có doanh thu nhỏ, khi nào phải kê khai và nộp thuế GTGT?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Thuế Giá Trị Gia Tăng"
+        - "48/2024/QH15"
+      must_include:
+        - "phương pháp"
+        - "ngưỡng"
+        - "kỳ kê khai"
+        - "bạn cho mình biết|mình cần bạn"
+      notes: "Hỏi thêm ngành, phương pháp khấu trừ/trực tiếp, hóa đơn đầu vào/đầu ra."
+
+  - id: core_009
+    category: aml_compliance
+    persona: fintech_ops
+    active_docs: local-folder
+    question: "Bên mình làm ví điện tử, có phải tuân thủ phòng chống rửa tiền không và cần chuẩn bị gì?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Phòng, Chống Rửa Tiền"
+        - "14/2022/QH15"
+      must_include:
+        - "KYC|nhận biết khách hàng"
+        - "báo cáo"
+        - "giao dịch đáng ngờ"
+        - "bạn cho mình biết|mình cần bạn"
+
+  - id: core_010
+    category: data_law
+    persona: tech_pm
+    active_docs: local-folder
+    question: "Công ty mình thu thập dữ liệu người dùng (email, số điện thoại). Có cần xin consent không?"
+    expected:
+      behavior:
+        should_answer: true
+        should_ask_clarifying: true
+        should_refuse_hallucination: true
+      relevant_laws:
+        - "Luật Dữ Liệu"
+        - "60/2024/QH15"
+      must_include:
+        - "mục đích"
+        - "căn cứ"
+        - "đồng ý|consent"
+        - "bạn cho mình biết|mình cần bạn"
