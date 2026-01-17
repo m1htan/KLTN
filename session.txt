@@ -319,3 +319,3682 @@ PS D:\Github\KLTN> Get-Content evaluate\_runs\core_latest.jsonl | ForEach-Object
                 },
     "answer":  "ChÃ o báº¡n, tÃ´i lÃ  DocsGPT, má»™t trá»£ lÃ½ AI sáºµn sÃ ng há»— trá»£ báº¡n.\n\nÄá»‘i vá»›i cÃ¢u há»i vá» cÆ¡ cáº¥u tá»• chá»©c cá»§a CÃ´ng ty TNHH, cÃ¢u tráº£ lá»i lÃ  **CÃ´ng ty TNHH khÃ´ng báº¯t buá»™c pháº£i cÃ³ Ban kiá»ƒm soÃ¡t**.\n\nTheo quy Ä‘á»‹nh cá»§a Luáº­t Doanh nghiá»‡p Viá»‡t Nam:\n\n1.  **CÃ´ng ty TNHH Hai thÃ nh viÃªn trá»Ÿ lÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Há»™i Ä‘á»“ng thÃ nh viÃªn, Chá»§ tá»‹ch Há»™i Ä‘á»“ng thÃ nh viÃªn vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n2.  **CÃ´ng ty TNHH Má»™t thÃ nh viÃªn:** CÆ¡ cáº¥u tá»• chá»©c quáº£n lÃ½ báº¯t buá»™c bao gá»“m Chá»§ tá»‹ch cÃ´ng ty (hoáº·c Há»™i Ä‘á»“ng thÃ nh viÃªn náº¿u tá»• chá»©c theo mÃ´ hÃ¬nh Ä‘Ã³) vÃ  GiÃ¡m Ä‘á»‘c hoáº·c Tá»•ng giÃ¡m Ä‘á»‘c.\n\n**Ban kiá»ƒm soÃ¡t (hoáº·c Kiá»ƒm soÃ¡t viÃªn)** lÃ  cÆ¡ quan quáº£n lÃ½ **báº¯t buá»™c** Ä‘á»‘i vá»›i má»™t sá»‘ loáº¡i hÃ¬nh **CÃ´ng ty cá»• pháº§n**, Ä‘áº·c biá»‡t lÃ  cÃ¡c cÃ´ng ty cá»• pháº§n Ä‘áº¡i chÃºng hoáº·c cÃ¡c cÃ´ng ty cá»• pháº§n khÃ´ng chá»n mÃ´ hÃ¬nh quáº£n lÃ½ cÃ³ GiÃ¡m Ä‘á»‘c Ä‘á»™c láº­p.\n\nTuy nhiÃªn, náº¿u Äiá»u lá»‡ cÃ´ng ty TNHH cá»§a báº¡n quy Ä‘á»‹nh vá» viá»‡c thÃ nh láº­p Ban kiá»ƒm soÃ¡t Ä‘á»ƒ giÃ¡m sÃ¡t hoáº¡t Ä‘á»™ng quáº£n lÃ½, cÃ¡c thÃ nh viÃªn/chá»§ sá»Ÿ há»¯u váº«n cÃ³ thá»ƒ quyáº¿t Ä‘á»‹nh thÃ nh láº­p cÆ¡ quan nÃ y, nhÆ°ng vá» máº·t phÃ¡p lÃ½, Ä‘Ã¢y **khÃ´ng pháº£i lÃ  yÃªu cáº§u báº¯t buá»™c**.\n\n---\n\nÄá»ƒ báº¡n dá»… hÃ¬nh dung sá»± khÃ¡c biá»‡t, Ä‘Ã¢y lÃ  mÃ´ hÃ¬nh cÆ¡ cáº¥u quáº£n lÃ½ cÆ¡ báº£n cá»§a CÃ´ng ty TNHH so vá»›i CÃ´ng ty Cá»• pháº§n (dáº¡ng cÃ³ Ban kiá»ƒm soÃ¡t):\n\n```mermaid\ngraph TD\n    subgraph Cong_ty_TNHH\n        A[Há»™i Ä‘á»“ng thÃ nh viÃªn/Chá»§ sá»Ÿ há»¯u] --\u003e B(Chá»§ tá»‹ch CÃ´ng ty/Há»™i Ä‘á»“ng thÃ nh viÃªn)\n        B --\u003e C(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n\n    subgraph Cong_ty_Co_phan_Co_Ban_Kiem_Soat\n        D[Äáº¡i há»™i Ä‘á»“ng cá»• Ä‘Ã´ng] --\u003e E(Há»™i Ä‘á»“ng quáº£n trá»‹)\n        D --\u003e F(Ban kiá»ƒm soÃ¡t)\n        E --\u003e G(GiÃ¡m Ä‘á»‘c/Tá»•ng giÃ¡m Ä‘á»‘c)\n    end\n```"
 }
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> curl -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  -d $payload
+>> TerminatingError(Invoke-WebRequest): "Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type "System.String" to type "System.Collections.IDictionary"."
+Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type 
+"System.String" to type "System.Collections.IDictionary".
+At line:2 char:6
++   -H "Content-Type: application/json" `
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type "System.String" to type "System.Collections.IDictionary".
+At line:2 char:6
++   -H "Content-Type: application/json" `
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary $payload
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 2 column 5 (char 7)"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $payload | Out-File body.json -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@body.json"
+      "text": "[ARTICLE] \u0110i\u1ec1u 5\n\u0110i\u1ec1u 5. B\u1ea3o \u0111\u1ea3m c\u1ee7a Nh\u00e0 n\u01b0\u1edbc \u0111\u1ed1i v\u1edbi doanh nghi\u1ec7p v\u00e0 ch\u1ee7 s\u1edf h\u1eefu doanh nghi\u1ec7p\n1. Nh\u00e0...",
+      "title": "\u0110i\u1ec1u 5"
+    }
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $payload | Out-File body.json -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@body.json"
+      "text": "[ARTICLE] \u0110i\u1ec1u 5\n\u0110i\u1ec1u 5. B\u1ea3o \u0111\u1ea3m c\u1ee7a Nh\u00e0 n\u01b0\u1edbc \u0111\u1ed1i v\u1edbi doanh nghi\u1ec7p v\u00e0 ch\u1ee7 s\u1edf h\u1eefu doanh nghi\u1ec7p\n1. Nh\u00e0...",
+      "title": "\u0110i\u1ec1u 5"
+    }
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> curl -N -X POST "http://localhost:7091/stream" `
+  -H "Content-Type: application/json" `
+  -d $payload
+>> TerminatingError(Invoke-WebRequest): "Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type "System.String" to type "System.Collections.IDictionary"."
+Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type 
+"System.String" to type "System.Collections.IDictionary".
+At line:2 char:6
++   -H "Content-Type: application/json" `
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type "System.String" to type "System.Collections.IDictionary".
+At line:2 char:6
++   -H "Content-Type: application/json" `
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> curl -N -X POST "http://localhost:7091/stream" `
+  -H "Content-Type: application/json" `
+  -d $payload
+>> TerminatingError(Invoke-WebRequest): "Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type "System.String" to type "System.Collections.IDictionary"."
+Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type 
+"System.String" to type "System.Collections.IDictionary".
+At line:2 char:6
++   -H "Content-Type: application/json" `
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "Content-Type: application/json" value of type "System.String" to type "System.Collections.IDictionary".
+At line:2 char:6
++   -H "Content-Type: application/json" `
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $payload | Out-File body.json -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@body.json"
+      "text": "[ARTICLE] \u0110i\u1ec1u 5\n\u0110i\u1ec1u 5. B\u1ea3o \u0111\u1ea3m c\u1ee7a Nh\u00e0 n\u01b0\u1edbc \u0111\u1ed1i v\u1edbi doanh nghi\u1ec7p v\u00e0 ch\u1ee7 s\u1edf h\u1eefu doanh nghi\u1ec7p\n1. Nh\u00e0...",
+      "title": "\u0110i\u1ec1u 5"
+    }
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+  history  = "[]"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> curl.exe -N -X POST "http://localhost:7091/stream" `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary $payload
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $payload | Out-File body.json -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@body.json"
+      "text": "[ARTICLE] \u0110i\u1ec1u 5\n\u0110i\u1ec1u 5. B\u1ea3o \u0111\u1ea3m c\u1ee7a Nh\u00e0 n\u01b0\u1edbc \u0111\u1ed1i v\u1edbi doanh nghi\u1ec7p v\u00e0 ch\u1ee7 s\u1edf h\u1eefu doanh nghi\u1ec7p\n1. Nh\u00e0...",
+      "title": "\u0110i\u1ec1u 5"
+    }
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> $body = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+  history  = "[]"
+  conversation_id = "test-001"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $body | Out-File $path -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -N `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  -X POST "http://localhost:7091/stream" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> $body = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+  history  = "[]"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> $body | Out-File $path -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -N `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  -X POST "http://localhost:7091/stream" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> $body = @{
+  question = "Điều 5 Luật Doanh nghiệp quy định gì?"
+  history  = "[]"
+  conversation_id = "test-001"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $body | Out-File $path -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -N `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  -X POST "http://localhost:7091/stream" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 9999 Luật Doanh nghiệp 59/2020/QH14 quy định gì?"
+  history  = "[]"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> $payload | Out-File -FilePath $path -Encoding utf8
+PS D:\Github\KLTN> curl.exe -N -X POST "http://localhost:7091/stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  -H "Accept: text/event-stream" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question = "Hỏi tiếp: Khoản 1 Điều 5 nói gì?"
+  conversation_id = "69625be93a15c84fb18758a4"
+  history = "[]"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> $body | Out-File $path -Encoding UTF8
+PS D:\Github\KLTN> curl.exe -N -H "Accept: text/event-stream" -H "Content-Type: application/json; charset=utf-8" `
+  -X POST "http://localhost:7091/stream" --data-binary "@$path"
+
+data: {"type": "answer", "answer": "Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật."}
+
+data: {"type": "end"}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> python -m evaluate.runners.run_eval --golden evaluate/golden.yaml --endpoint http://localhost:7091/api/answer
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\Github\KLTN\evaluate\runners\run_eval.py", line 54, in main
+    cases = load_golden_cases(args.golden)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\KLTN\evaluate\runners\loaders.py", line 28, in load_golden_cases
+    data = load_yaml(path)
+           ^^^^^^^^^^^^^^^
+  File "D:\Github\KLTN\evaluate\runners\loaders.py", line 22, in load_yaml
+    with path.open("r", encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'evaluate\\golden.yaml'
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> cd evaluate
+PS D:\Github\KLTN\evaluate> python -m evaluate.runners.run_eval --golden evaluate/golden.yaml --endpoint http://localhost:7091/api/answer
+C:\Program Files\Python311\python.exe: Error while finding module specification for 'evaluate.runners.run_eval' (ModuleNotFoundError: No module named 'evaluate')
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> python -m evaluate.runners.run_eval --golden evaluate/golden.yaml --endpoint http://localhost:7091/api/answer
+C:\Program Files\Python311\python.exe: Error while finding module specification for 'evaluate.runners.run_eval' (ModuleNotFoundError: No module named 'evaluate')
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> cd D:\Github\KLTN\evaluate
+PS D:\Github\KLTN\evaluate> ls
+
+
+    Directory: D:\Github\KLTN\evaluate
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/8/2026   2:13 AM                golden_sets
+d-----          1/8/2026   2:13 AM                prompts
+d-----          1/8/2026   6:51 PM                runners
+d-----          1/8/2026   6:38 PM                tests
+d-----          1/8/2026   8:08 PM                _runs
+-a----          1/8/2026   4:40 PM           1476 README.md
+-a----          1/8/2026   2:13 AM           1798 schema.json
+
+
+PS D:\Github\KLTN\evaluate> ls runners
+
+
+    Directory: D:\Github\KLTN\evaluate\runners
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/8/2026   8:02 PM                __pycache__
+-a----          1/8/2026   2:13 AM           1803 loaders.py
+-a----          1/8/2026   2:13 AM           2665 run_eval.py
+-a----          1/8/2026   6:51 PM           4845 scoring.py
+
+
+PS D:\Github\KLTN\evaluate> ls golden.yaml
+ls : Cannot find path 'D:\Github\KLTN\evaluate\golden.yaml' because it does not exist.
+At line:1 char:1
++ ls golden.yaml
++ ~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\Github\KLTN\evaluate\golden.yaml:String) [Get-ChildItem], 
+ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ls : Cannot find path 'D:\Github\KLTN\evaluate\golden.yaml' because it does not exist.
+At line:1 char:1
++ ls golden.yaml
++ ~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\Github\KLTN\evaluate\golden.yaml:String) [Get-ChildItem], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> cd D:\Github\KLTN\evaluate
+PS D:\Github\KLTN\evaluate> python -m runners.run_eval --golden .\golden_sets\golden.yaml --endpoint http://localhost:7091/api/answer
+                     ^^^^^^
+  File "D:\Github\KLTN\evaluate\runners\run_eval.py", line 54, in main
+    cases = load_golden_cases(args.golden)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\KLTN\evaluate\runners\loaders.py", line 28, in load_golden_cases
+    data = load_yaml(path)
+           ^^^^^^^^^^^^^^^
+  File "D:\Github\KLTN\evaluate\runners\loaders.py", line 22, in load_yaml
+    with path.open("r", encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'golden_sets\\golden.yaml'
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> cd D:\Github\KLTN\evaluate
+PS D:\Github\KLTN\evaluate> Get-ChildItem .\golden_sets -Recurse -Filter *.yaml | Select-Object FullName
+
+FullName
+--------
+D:\Github\KLTN\evaluate\golden_sets\vn_business_core.yaml
+D:\Github\KLTN\evaluate\golden_sets\vn_business_edge.yaml
+D:\Github\KLTN\evaluate\golden_sets\vn_business_stress.yaml
+
+
+PS D:\Github\KLTN\evaluate> python -m runners.run_eval --golden "vn_business_core.yaml" --endpoint http://localhost:7091/api/answer
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'vn_business_core.yaml'
+PS D:\Github\KLTN\evaluate> python -m runners.run_eval --golden "D:\Github\KLTN\evaluate\golden_sets\vn_business_core.yaml" --endpoint http://localhost:7091/api/answer
+
+PS D:\Github\KLTN\evaluate> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> python -m runners.run_eval --golden "D:\Github\KLTN\evaluate\golden_sets\vn_business_core.yaml" --endpoint http://localhost:7091/api/answer
+Ran 10 cases. Passed: 2/10. Output: evaluate/_runs/latest.jsonl
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> cd D:\Github\KLTN\evaluate
+PS D:\Github\KLTN\evaluate> Get-ChildItem .\golden_sets -Recurse -Filter *.yaml | Select-Object FullName
+
+FullName
+--------
+D:\Github\KLTN\evaluate\golden_sets\vn_business_core.yaml
+D:\Github\KLTN\evaluate\golden_sets\vn_business_edge.yaml
+D:\Github\KLTN\evaluate\golden_sets\vn_business_stress.yaml
+
+
+PS D:\Github\KLTN\evaluate> cd KLTN
+cd : Cannot find path 'D:\Github\KLTN\evaluate\KLTN' because it does not exist.
+At line:1 char:1
++ cd KLTN
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\Github\KLTN\evaluate\KLTN:String) [Set-Location], 
+ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+cd : Cannot find path 'D:\Github\KLTN\evaluate\KLTN' because it does not exist.
+At line:1 char:1
++ cd KLTN
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\Github\KLTN\evaluate\KLTN:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS D:\Github\KLTN\evaluate> cd /KLTN
+cd : Cannot find path 'D:\KLTN' because it does not exist.
+At line:1 char:1
++ cd /KLTN
++ ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\KLTN:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+cd : Cannot find path 'D:\KLTN' because it does not exist.
+At line:1 char:1
++ cd /KLTN
++ ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\KLTN:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> clear
+PS D:\Github\KLTN\evaluate> cd D:/Github/KLTN
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question = "Hỏi tiếp: Khoản 1 Điều 5 nói gì?"
+  conversation_id = "69625be93a15c84fb18758a4"
+  history = @()   # list rỗng, không phải "[]"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question = "Hỏi tiếp: Khoản 1 Điều 5 nói gì?"
+  conversation_id = "69625be93a15c84fb18758a4"
+  history = "[]"
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -N `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  -X POST "http://localhost:7091/stream" `
+  --data-binary "@$path"
+data: {"type": "id", "id": ""}
+
+data: {"type": "answer", "answer": "Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật."}
+
+data: {"type": "end"}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = '{"question":"Theo Luật Trọng tài thương mại 54/2010/QH12, thỏa thuận trọng tài là gì?","history":"[]"}'
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+00e1c b\u00ean c\u00f3 th\u1ecfa thu\u1eadn kh\u00e1c ho\u1eb7c ph\u00e1p lu\u1eadt c\u00f3 quy \u0111\u1ecbnh kh\u00e1c.\n\n---\n\u0110\u1ec3 d\u1ec5 h\u00ecnh dung v\u1ec1 b\u1ea3n ch\u1ea5t c\u1ee7a th\u1ecfa thu\u1eadn tr\u1ecdng t\u00e0i, b\u1ea1n c\u00f3
+ th\u1ec3 tham kh\u1ea3o s\u01a1 \u0111\u1ed3 sau:\n\n```mermaid\ngraph TD\n    A[Tranh ch\u1ea5p ph\u00e1t sinh] --> B{Th\u1ecfa thu\u1eadn gi\u1ea3i quy\u1ebft b\u1eb1ng Tr\u1ecdng t\u00e0i};\n    B --> C[Th\u1ecfa thu\u1eadn Tr\u1ecdng t\u00e0i];\n    C -->
+ D1(H\u00ecnh th\u1ee9c \u0110i\u1ec1u kho\u1ea3n Tr\u1ecdng t\u00e0i trong H\u1ee3p \u0111\u1ed3ng);\n    C --> D2(H\u00ecnh th\u1ee9c Th\u1ecfa thu\u1eadn Tr\u1ecdng t\u00e0i ri\u00eang);\n    D1 & D2 --> E[Ph\u1ea3i \u0111\u01b0\u1ee3c x\u00e1c l\u1eadp b\u
+1eb1ng v\u0103n b\u1ea3n];\n    E --> F[Gi\u1ea3i quy\u1ebft tranh ch\u1ea5p t\u1ea1i Tr\u1ecdng t\u00e0i];\n```",
+  "conversation_id": "6962ab503a15c84fb18758e3",
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> $body = '{"question":"Theo Luật Sở hữu trí tuệ Luật-07-2022-QH15, nhãn hiệu là gì?","history":"[]"}'
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> $body = '{"question":"Theo Luật Thuế GTGT 48/2024/QH15, kỳ kê khai thuế GTGT thế nào?","history":"[]"}'
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> $body = '{"question":"Theo Luật Dữ Liệu 60/2024/QH15, xử lý dữ liệu cần căn cứ gì?","history":"[]"}'
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question = "Theo Luật Trọng tài thương mại 54/2010/QH12, thỏa thuận trọng tài là gì?"
+  active_docs = "local-folder"
+  history = @()
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+{
+  "error": "the JSON object must be str, bytes or bytearray, not list"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> $body = @{
+  question     = "Theo Luật Trọng tài thương mại 54/2010/QH12, thỏa thuận trọng tài là gì?"
+  active_docs  = "local-folder"
+  history      = "[]"   # QUAN TRỌNG: để dạng string JSON
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> Get-Content $path -Raw
+{
+    "history":  "[]",
+    "active_docs":  "local-folder",
+    "question":  "Theo Luật Trọng tài thương mại 54/2010/QH12, thỏa thuận trọng tài là gì?"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question     = "Theo Luật Trọng tài thương mại 54/2010/QH12, thỏa thuận trọng tài là gì?"
+  active_docs  = "local-folder"
+  history      = @()     # array thật sự
+} | ConvertTo-Json -Depth 10
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -s -X POST "http://localhost:7091/api/answer" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+{
+  "error": "the JSON object must be str, bytes or bytearray, not list"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
+>> TerminatingError(Invoke-WebRequest): "A parameter cannot be found that matches parameter name 'N'."
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN>   -H "Content-Type: application/json" ^
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN>   -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"history\":\"[]\",\"save_conversation\":false}"
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"hi ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"hi ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question = "Cho mình hỏi Khoản 2 Điều 3 quy định gì?"
+  history = @()
+  save_conversation = $false
+} | ConvertTo-Json -Depth 5
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"history\":[],\"save_conversation\":false}"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $body = @{
+  question = "Cho mình hỏi Khoản 2 Điều 3 quy định gì?"
+  history = @()
+  save_conversation = $false
+} | ConvertTo-Json -Depth 5
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:5000/stream" `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:5000...
+* connect to 127.0.0.1 port 5000 from 0.0.0.0 port 54691 failed: Connection refused
+* Failed to connect to 127.0.0.1 port 5000 after 2058 ms: Could not connect to server
+* closing connection #0
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2058 ms: Could not connect to server
+PS D:\Github\KLTN> curl.exe -i -N -X POST "http://127.0.0.1:5000/stream" `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2021 ms: Could not connect to server
+PS D:\Github\KLTN> Test-NetConnection 127.0.0.1 -Port 5000
+WARNING: TCP connect to (127.0.0.1 : 5000) failed
+
+
+ComputerName           : 127.0.0.1
+RemoteAddress          : 127.0.0.1
+RemotePort             : 5000
+InterfaceAlias         : Loopback Pseudo-Interface 1
+SourceAddress          : 127.0.0.1
+PingSucceeded          : True
+PingReplyDetails (RTT) : 0 ms
+TcpTestSucceeded       : False
+
+
+
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:7091/stream" `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> curl.exe -N -v --connect-timeout 3 --max-time 15 -X POST "http://127.0.0.1:5000/stream" `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> $LASTEXITCODE
+7
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> Get-Content $path -Raw
+{
+    "history":  [
+
+                ],
+    "question":  "Cho mình hỏi Khoản 2 Điều 3 quy định gì?",
+    "save_conversation":  false
+}
+PS D:\Github\KLTN> $body = '{"question":"Cho mình hỏi Khoản 2 Điều 3 quy định gì?","history":"[]"}'
+PS D:\Github\KLTN> $path = "$PWD\body.json"
+PS D:\Github\KLTN> [System.IO.File]::WriteAllText($path, $body, [System.Text.Encoding]::UTF8)
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:7091/stream" `
+  -H "Accept: text/event-stream" `
+  -H "Content-Type: application/json; charset=utf-8" `
+  --data-binary "@$path"
+
+PS D:\Github\KLTN> docker compose -f deployment/docker-compose.yaml logs -f backend
+
+PS D:\Github\KLTN> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
+>> TerminatingError(Invoke-WebRequest): "A parameter cannot be found that matches parameter name 'N'."
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN>   -H "Content-Type: application/json" ^
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN>   -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"history\":\"[]\",\"save_conversation\":false}"
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"hi ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"hi ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d "{\"question\":\"Cho mình hỏi Khoản 2 Điều 3 quy định gì?\",\"history\":[],\"save_conversation\":false}"
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2014 ms: Could not connect to server
+curl: (3) URL rejected: Port number was not a decimal number between 0 and 65535
+curl: (6) Could not resolve host: mÃ¬nh
+curl: (6) Could not resolve host: há»i
+curl: (6) Could not resolve host: Khoáº£n
+curl: (7) Failed to connect to 0.0.0.2 port 80 after 0 ms: Could not connect to server
+curl: (6) Could not resolve host: Äiá»u
+curl: (7) Failed to connect to 0.0.0.3 port 80 after 0 ms: Could not connect to server
+curl: (6) Could not resolve host: quy
+curl: (6) Could not resolve host: Ä‘á»‹nh
+curl: (3) unmatched close brace/bracket in URL position 43:
+gÃ¬?\,\history\:[],\save_conversation\:false}
+                                          ^
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
+>> TerminatingError(Invoke-WebRequest): "A parameter cannot be found that matches parameter name 'N'."
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN>   -H "Content-Type: application/json" ^
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN>   -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\",\"save_conversation\":false}"
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\",\"s ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\",\"s ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":[],\"save_conversation\":false}"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Cho mình hỏi Khoản 2 Điều 3 quy định gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\",\"save_conversation\":false}"
+
+PS D:\Github\KLTN> Get-Command curl
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Alias           curl -> Invoke-WebRequest
+
+
+PS D:\Github\KLTN> Get-Command curl.exe
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Application     curl.exe                                           8.16.0.0   C:\Windows\system32\curl.exe
+
+
+PS D:\Github\KLTN> curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
+>> TerminatingError(Invoke-WebRequest): "A parameter cannot be found that matches parameter name 'N'."
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+Invoke-WebRequest : A parameter cannot be found that matches parameter name 'N'.
+At line:1 char:6
++ curl -N -s -X POST "http://127.0.0.1:5000/stream" ^
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+PS D:\Github\KLTN>   -H "Content-Type: application/json" ^
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-H : The term '-H' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -H "Content-Type: application/json" ^
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-H:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN>   -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":[],\"save_conversation\":false}"
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":[],\"save_ ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+-d : The term '-d' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:3
++   -d "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":[],\"save_ ...
++   ~~
+    + CategoryInfo          : ObjectNotFound: (-d:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Cho mình hỏi Khoản 2 Điều 3 quy định gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5173/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5173/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Cho mình hỏi Khoản 2 Điều 3 quy định gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> curl.exe -N -s -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:5000...
+* connect to 127.0.0.1 port 5000 from 0.0.0.0 port 56755 failed: Connection refused
+* Failed to connect to 127.0.0.1 port 5000 after 2023 ms: Could not connect to server
+* closing connection #0
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2023 ms: Could not connect to server
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:5000...
+* connect to 127.0.0.1 port 5000 from 0.0.0.0 port 50600 failed: Connection refused
+* Failed to connect to 127.0.0.1 port 5000 after 2028 ms: Could not connect to server
+* closing connection #0
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2028 ms: Could not connect to server
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:5173/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 75
+>
+* upload completely sent off: 75 bytes
+< HTTP/1.1 404 Not Found
+< Vary: Origin
+< Date: Sun, 11 Jan 2026 10:58:32 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< Content-Length: 0
+<
+* Connection #0 to host 127.0.0.1:5173 left intact
+PS D:\Github\KLTN> curl.exe -N -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> curl.exe -N -X POST "http://127.0.0.1:5173/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:5173/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 75
+>
+* upload completely sent off: 75 bytes
+< HTTP/1.1 404 Not Found
+< Vary: Origin
+< Date: Sun, 11 Jan 2026 10:59:38 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< Content-Length: 0
+<
+* Connection #0 to host 127.0.0.1:5173 left intact
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:5000/stream"
+
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:5173/stream"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:5000...
+* connect to 127.0.0.1 port 5000 from 0.0.0.0 port 59642 failed: Connection refused
+* Failed to connect to 127.0.0.1 port 5000 after 2034 ms: Could not connect to server
+* closing connection #0
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2034 ms: Could not connect to server
+PS D:\Github\KLTN> curl.exe -N -X POST "http://127.0.0.1:5000/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2033 ms: Could not connect to server
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:5000/stream"
+* closing connection #0
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2030 ms: Could not connect to server
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> netstat -ano | findstr LISTENING | findstr ":5000"
+
+PS D:\Github\KLTN> netstat -ano | findstr LISTENING | findstr ":5173"
+  TCP    0.0.0.0:5173           0.0.0.0:0              LISTENING       14464
+  TCP    [::]:5173              [::]:0                 LISTENING       14464
+  TCP    [::1]:5173             [::]:0                 LISTENING       20120
+PS D:\Github\KLTN> netstat -ano | findstr LISTENING | findstr ":"
+  TCP    [::]:49672             [::]:0                 LISTENING       1788
+  TCP    [::1]:5173             [::]:0                 LISTENING       20120
+  TCP    [::1]:6379             [::]:0                 LISTENING       20120
+  TCP    [::1]:7091             [::]:0                 LISTENING       20120
+  TCP    [::1]:7474             [::]:0                 LISTENING       20120
+  TCP    [::1]:7687             [::]:0                 LISTENING       20120
+  TCP    [::1]:27017            [::]:0                 LISTENING       20120
+  TCP    [::1]:33533            [::]:0                 LISTENING       5332
+  TCP    [::1]:49670            [::]:0                 LISTENING       5492
+  TCP    [::1]:56238            [::]:0                 LISTENING       25400
+PS D:\Github\KLTN> docker ps
+
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\",\"save_conversation\":false}"
+curl: (6) Could not resolve host: Äiá»u
+*   Trying 0.0.0.8:80...
+* connect to 0.0.0.8 port 80 from 0.0.0.0 port 51230 failed: Network unreachable
+* Failed to connect to 0.0.0.8 port 80 after 2 ms: Could not connect to server
+* closing connection #3
+curl: (7) Failed to connect to 0.0.0.8 port 80 after 2 ms: Could not connect to server
+* Could not resolve host: nÃ³i
+* Store negative name resolve for xn--ni-5ja:80
+* shutting down connection #4
+curl: (6) Could not resolve host: nÃ³i
+curl: (3) unmatched close brace/bracket in URL position 19:
+gÃ¬?\,\history\:\[]\,\save_conversation\:false}
+                  ^
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary $payload
+< Access-Control-Allow-Headers: Content-Type, Authorization
+< Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+<
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -N -v -X POST "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}'
+< Server: gunicorn
+< Date: Sun, 11 Jan 2026 11:04:02 GMT
+< Connection: keep-alive
+< Content-Type: application/json
+< Content-Length: 127
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Headers: Content-Type, Authorization
+< Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+<
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary $payload
+< Access-Control-Allow-Headers: Content-Type, Authorization
+< Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+<
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload
+{"history":"[]","question":"Khoản 1 Điều 8 nói gì?","save_conversation":false}
+PS D:\Github\KLTN> $payload.GetType().FullName
+System.String
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> # Lưu file UTF-8 không BOM (tránh BOM làm parser khó chịu ở vài hệ)
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> # Lưu file UTF-8 không BOM (tránh BOM làm parser khó chịu ở vài hệ)
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -N -v "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload.json"
+
+data: {"type": "end"}
+
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -s -X POST "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]"}'
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -s -X POST "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-raw "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\"}"
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -s -X POST "http://127.0.0.1:7091/api/answer" `
+  --json "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\"}"
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -v --trace-ascii ".\trace.txt" "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "{\"question\":\"Khoản 1 Điều 8 nói gì?\",\"history\":\"[]\"}"
+Warning: --trace-ascii overrides an earlier trace/verbose option
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+curl: (3) URL rejected: Port number was not a decimal number between 0 and 65535
+curl: (7) Failed to connect to 0.0.0.1 port 80 after 0 ms: Could not connect to server
+curl: (6) Could not resolve host: Äiá»u
+curl: (7) Failed to connect to 0.0.0.8 port 80 after 0 ms: Could not connect to server
+curl: (6) Could not resolve host: nÃ³i
+curl: (3) unmatched close brace/bracket in URL position 19:
+gÃ¬?\,\history\:\[]\}
+                  ^
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> @'
+{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}
+'@ | curl.exe -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary @-
+At line:5 char:17
++   --data-binary @-
++                 ~
+Unrecognized token in source text.
+At line:5 char:17
++   --data-binary @-
++                 ~
+Unrecognized token in source text.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnrecognizedToken
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> @'
+{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}
+'@ | Set-Content -Path .\payload.json -Encoding utf8
+PS D:\Github\KLTN> curl.exe -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload.json"
+<
+{
+  "answer": "C\u00e2u h\u1ecfi c\u1ee7a b\u1ea1n c\u00f3 d\u1ea1ng \u0110i\u1ec1u/Kho\u1ea3n/\u0110i\u1ec3m nh\u01b0ng ch\u01b0a x\u00e1c \u0111\u1ecbnh \u0111\u01b0\u1ee3c v\u0103n b\u1ea3n lu\u1eadt c\u1ee5 th\u1ec3 trong h\u1ec7 th\u1ed1ng. Vui l\u00f2ng n\
+u00eau r\u00f5 t\u00ean v\u0103n b\u1ea3n (v\u00ed d\u1ee5: B\u1ed9 lu\u1eadt H\u00ecnh s\u1ef1 100/2015/QH13) ho\u1eb7c cung c\u1ea5p s\u1ed1/k\u00fd hi\u1ec7u \u0111\u1ec3 tra c\u1ee9u ch\u00ednh x\u00e1c.",
+  "conversation_id": "6964ea2dfa09fc2991033b93",
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> Get-Content .\payload.json
+{"question":"Khoản 1 Điều 8 nói gì?","history":"[]","save_conversation":false}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -s -X POST "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  -d '{"question":"Khoản 1 Điều 8 nói gì?","history":"[]"}'
+{
+    "message": "Failed to decode JSON object: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+}
+PS D:\Github\KLTN> curl.exe -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload.json"
+u00eau r\u00f5 t\u00ean v\u0103n b\u1ea3n (v\u00ed d\u1ee5: B\u1ed9 lu\u1eadt H\u00ecnh s\u1ef1 100/2015/QH13) ho\u1eb7c cung c\u1ea5p s\u1ed1/k\u00fd hi\u1ec7u \u0111\u1ec3 tra c\u1ee9u ch\u00ednh x\u00e1c.",
+  "conversation_id": "6964ea50fa09fc2991033b94",
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> curl.exe -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload.json"
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Headers: Content-Type, Authorization
+< Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+<
+{
+  "answer": "C\u00e2u h\u1ecfi c\u1ee7a b\u1ea1n c\u00f3 d\u1ea1ng \u0110i\u1ec1u/Kho\u1ea3n/\u0110i\u1ec3m nh\u01b0ng ch\u01b0a x\u00e1c \u0111\u1ecbnh \u0111\u01b0\u1ee3c v\u0103n b\u1ea3n lu\u1eadt c\u1ee5 th\u1ec3 trong h\u1ec7 th\u1ed1ng. Vui l\u00f2ng n\
+u00eau r\u00f5 t\u00ean v\u0103n b\u1ea3n (v\u00ed d\u1ee5: B\u1ed9 lu\u1eadt H\u00ecnh s\u1ef1 100/2015/QH13) ho\u1eb7c cung c\u1ea5p s\u1ed1/k\u00fd hi\u1ec7u \u0111\u1ec3 tra c\u1ee9u ch\u00ednh x\u00e1c.",
+  "conversation_id": "6964ea55fa09fc2991033b95",
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_answer_block.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_answer_block.json"
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> $payload = @{
+  question = "Bộ luật Hình sự 100/2015/QH13 - Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_answer_pass.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_answer_pass.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_answer_block.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_answer_block.json"
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> $payload = @{
+  question = "Bộ luật Hình sự 100/2015/QH13 - Khoản 1 Điều 8 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_answer_pass.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_answer_pass.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case A3-OK: Điều chắc chắn không tồn tại trong luật đã ingest
+PS D:\Github\KLTN> # "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case_A3_OK.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case_A3_OK.json"
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case A3-OK2: Điều có nhưng Khoản không có
+PS D:\Github\KLTN> # "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case_A3_OK2.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case_A3_OK2.json"
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case A3-OK: Điều chắc chắn không tồn tại trong luật đã ingest
+PS D:\Github\KLTN> # "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case_A3_OK.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case_A3_OK.json"
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case A3-OK2: Điều có nhưng Khoản không có
+PS D:\Github\KLTN> # "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case_A3_OK2.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case_A3_OK2.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Điều 3 luật doanh nghiệp nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case_A3_OK.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case_A3_OK.json"
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_case1.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_case1.json"
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Trọng tài thương mại 54/2010/QH12 - Khoản 2 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_case2.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_case2.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_case1.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_case1.json"
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_case1.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_case1.json"
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+* Connection #0 to host 127.0.0.1:7091 left intact
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Trọng tài thương mại 54/2010/QH12 - Khoản 2 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_case2.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_case2.json"
+
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_pass.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_pass.json"
+
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Trọng tài thương mại 54/2010/QH12 - Khoản 2 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_block.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_block.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_test_id.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_test_id.json"
+    }
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_pass.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_pass.json"
+    }
+  ],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Trọng tài thương mại 54/2010/QH12 - Khoản 2 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_block.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_A3_block.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # Điều không tồn tại
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_guard1.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" -H "Content-Type: application/json" --data-binary "@payload_A3_guard1.json"
+{
+  "answer": "Trong d\u1eef li\u1ec7u ph\u00e1p lu\u1eadt hi\u1ec7n c\u00f3, kh\u00f4ng t\u1ed3n t\u1ea1i \u0110i\u1ec1u 9999 c\u1ee7a v\u0103n b\u1ea3n n\u00e0y.",
+  "conversation_id": "6966285576c5a7f6b6b4cd9b",
+  "sources": [],
+  "thought": "",
+  "tool_calls": []
+}
+PS D:\Github\KLTN> # Khoản không tồn tại
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_A3_guard2.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -s "http://127.0.0.1:7091/api/answer" -H "Content-Type: application/json" --data-binary "@payload_A3_guard2.json"
+
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_stream_ok.json" -Encoding utf8
+PS D:\Github\KLTN> curl.exe -N "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_stream_ok.json"
+
+PS D:\Github\KLTN> use docsgpt
+use : The term 'use' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ use docsgpt
++ ~~~
+    + CategoryInfo          : ObjectNotFound: (use:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+use : The term 'use' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ use docsgpt
++ ~~~
+    + CategoryInfo          : ObjectNotFound: (use:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS D:\Github\KLTN> db.conversations.find({_id: ObjectId("696626f576c5a7f6b6b4cd91")}).pretty()
+Method invocation failed because [System.Management.Automation.ScriptBlock] does not contain a method named 'pretty'.
+At line:1 char:1
++ db.conversations.find({_id: ObjectId("696626f576c5a7f6b6b4cd91")}).pr ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
+    + FullyQualifiedErrorId : MethodNotFound
+Method invocation failed because [System.Management.Automation.ScriptBlock] does not contain a method named 'pretty'.
+At line:1 char:1
++ db.conversations.find({_id: ObjectId("696626f576c5a7f6b6b4cd91")}).pr ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
+    + FullyQualifiedErrorId : MethodNotFound
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # CONFIG
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $BASE = "http://127.0.0.1:7091"
+PS D:\Github\KLTN> $OUTDIR = Join-Path (Get-Location) "tmp_api_tests"
+PS D:\Github\KLTN> New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # HELPERS
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> function Write-JsonFile {
+  param(
+    [Parameter(Mandatory=$true)][string]$Path,
+    [Parameter(Mandatory=$true)][hashtable]$Obj
+  )
+  ($Obj | ConvertTo-Json -Compress) | Set-Content -Path $Path -Encoding utf8
+}
+PS D:\Github\KLTN> function Invoke-ApiAnswer-File {
+  param(
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][string]$Name
+  )
+
+  $payloadPath = Join-Path $OUTDIR ("payload_api_" + $Name + ".json")
+  $respPath    = Join-Path $OUTDIR ("resp_api_" + $Name + ".json")
+
+  $payload = @{
+    question = $Question
+    history = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  # Gọi API, lưu body ra file
+  curl.exe -s "$BASE/api/answer" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$respPath" | Out-Null
+
+  # Parse JSON response
+  $raw = Get-Content $respPath -Raw
+  try {
+    $obj = $raw | ConvertFrom-Json
+  } catch {
+    throw "API /api/answer response is not valid JSON. File=$respPath Raw=`n$raw"
+  }
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    resp_path = $respPath
+    raw = $raw
+    obj = $obj
+    answer = $obj.answer
+    sources = @($obj.sources)
+    conversation_id = $obj.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Parse-SSE-FromFile {
+  param(
+    [Parameter(Mandatory=$true)][string]$SsePath
+  )
+
+  # Parse kiểu "data: <json>" theo SSE
+  $lines = Get-Content $SsePath
+
+  $allJsonObjects = New-Object System.Collections.Generic.List[object]
+  foreach ($ln in $lines) {
+    if ($ln -match '^\s*data:\s*(.+)\s*$') {
+      $data = $Matches[1]
+
+      # SSE có thể gửi "data: [DONE]" hoặc plain text -> bỏ qua nếu không phải JSON
+      if ($data -match '^\s*\{') {
+        try {
+          $obj = $data | ConvertFrom-Json
+          $allJsonObjects.Add($obj) | Out-Null
+        } catch {
+          # ignore broken chunk
+        }
+      }
+    }
+  }
+
+  # Heuristic lấy answer:
+  # 1) ưu tiên object có field "answer"
+  # 2) hoặc field "content" + type/event là "answer"/"message"
+  $answer = $null
+  foreach ($o in $allJsonObjects) {
+    if ($o.PSObject.Properties.Name -contains "answer") {
+      $answer = $o.answer
+    }
+  }
+  if (-not $answer) {
+    foreach ($o in $allJsonObjects) {
+      $ptype = $null
+      if ($o.PSObject.Properties.Name -contains "type") { $ptype = $o.type }
+      if ($o.PSObject.Properties.Name -contains "event") { $ptype = $o.event }
+      if (($ptype -eq "answer" -or $ptype -eq "message") -and ($o.PSObject.Properties.Name -contains "content")) {
+        $answer = $o.content
+      }
+    }
+  }
+
+  # Collect sources from SSE:
+  # SSE kỳ vọng có event type/source; ta gom mọi object có type/event == "source"
+  $sources = @()
+  foreach ($o in $allJsonObjects) {
+    $t = $null
+    if ($o.PSObject.Properties.Name -contains "type") { $t = $o.type }
+    elseif ($o.PSObject.Properties.Name -contains "event") { $t = $o.event }
+
+    if ($t -eq "source") {
+      # source payload có thể là o.source, o.data, hoặc cả object là source
+      if ($o.PSObject.Properties.Name -contains "source") {
+        $sources += $o.source
+      } elseif ($o.PSObject.Properties.Name -contains "data") {
+        $sources += $o.data
+      } else {
+        $sources += $o
+      }
+    }
+  }
+
+  return @{
+    events = $allJsonObjects
+    answer = $answer
+    sources = @($sources)
+  }
+}
+PS D:\Github\KLTN> function Invoke-Stream-File {
+  param(
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][string]$Name
+  )
+
+  $payloadPath = Join-Path $OUTDIR ("payload_stream_" + $Name + ".json")
+  $ssePath     = Join-Path $OUTDIR ("resp_stream_" + $Name + ".sse.txt")
+
+  $payload = @{
+    question = $Question
+    history = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  # Gọi /stream, lưu toàn bộ SSE ra file (curl -N để không buffer)
+  curl.exe -s -N "$BASE/stream" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$ssePath" | Out-Null
+
+  $parsed = Parse-SSE-FromFile -SsePath $ssePath
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    sse_path = $ssePath
+    answer = $parsed.answer
+    sources = @($parsed.sources)
+    events_count = @($parsed.events).Count
+  }
+}
+PS D:\Github\KLTN> function Compare-Case {
+  param(
+    [Parameter(Mandatory=$true)][string]$Name,
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][int]$ExpectSourcesApiMin,
+    [Parameter(Mandatory=$true)][int]$ExpectSourcesStreamMin,
+    [Parameter(Mandatory=$true)][bool]$ExpectSourcesEmpty
+  )
+
+  Write-Host ""
+  Write-Host "=============================="
+  Write-Host "CASE: $Name"
+  Write-Host "Q: $Question"
+  Write-Host "=============================="
+
+  $api = Invoke-ApiAnswer-File -Question $Question -Name $Name
+  $st  = Invoke-Stream-File    -Question $Question -Name $Name
+
+  Write-Host ""
+  Write-Host "[/api/answer]"
+  Write-Host "conversation_id: $($api.conversation_id)"
+  Write-Host "sources_count:   $($api.sources.Count)"
+  Write-Host "answer:          $($api.answer)"
+
+  Write-Host ""
+  Write-Host "[/stream]"
+  Write-Host "events_count:    $($st.events_count)"
+  Write-Host "sources_count:   $($st.sources.Count)"
+  Write-Host "answer:          $($st.answer)"
+
+  # Basic compare (answer + sources)
+  $sameAnswer = ($api.answer -eq $st.answer)
+  $sameSourcesCount = ($api.sources.Count -eq $st.sources.Count)
+
+  Write-Host ""
+  Write-Host "[Compare]"
+  Write-Host "Same answer:       $sameAnswer"
+  Write-Host "Same sources count:$sameSourcesCount"
+
+  if ($ExpectSourcesEmpty) {
+    if ($api.sources.Count -ne 0) { throw "$Name FAILED: /api/answer sources must be []" }
+    if ($st.sources.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
+  } else {
+    if ($api.sources.Count -lt $ExpectSourcesApiMin)    { throw "$Name FAILED: /api/answer sources count < $ExpectSourcesApiMin" }
+    if ($st.sources.Count -lt $ExpectSourcesStreamMin)  { throw "$Name FAILED: /stream sources count < $ExpectSourcesStreamMin" }
+  }
+
+  if (-not $sameAnswer) {
+    Write-Host ""
+    Write-Host "Note: answer differs between endpoints. Check files:"
+    Write-Host "  API resp:    $($api.resp_path)"
+    Write-Host "  Stream SSE:  $($st.sse_path)"
+    throw "$Name FAILED: answer not identical."
+  }
+
+  Write-Host "$Name OK"
+}
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # 4 CASES (as requested)
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 1 — Điều tồn tại (PASS + có sources)
+PS D:\Github\KLTN> Compare-Case `
+  -Name "case1_dieu_ton_tai" `
+  -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?" `
+  -ExpectSourcesApiMin 1 `
+  -ExpectSourcesStreamMin 1 `
+  -ExpectSourcesEmpty $false
+
+==============================
+CASE: case1_dieu_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966459977238c51104a0a67
+sources_count:   1
+answer:          Chào bạn, tôi là DocsGPT, rất sẵn lòng hỗ trợ bạn về các quy định pháp luật.
+
+Theo Luật Doanh nghiệp số 59/2020/QH14, **Điều 3** quy định về **"Áp dụng Luật Doanh nghiệp và luật khác"** như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+**Nội dung này có nghĩa là:**
+
+Luật Doanh nghiệp là luật chung điều chỉnh các loại hình doanh nghiệp. Tuy nhiên, nếu có một luật chuyên ngành khác (ví dụ: Luật Các tổ chức tín dụng, Luật Chứng khoán) có các quy định **đặc thù** riêng biệt về việc thành lập, quản lý, tổ chức lại, giải thể hoặc hoạt động của một loại hình doanh nghiệp cụ thể, thì các quy định đặc thù của luật chuyên ngành đó sẽ được ưu tiên áp dụng.
+
+[/stream]
+events_count:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:False
+PS D:\Github\KLTN> TerminatingError(): "case1_dieu_ton_tai FAILED: /stream sources count < 1"
+>> TerminatingError(): "case1_dieu_ton_tai FAILED: /stream sources count < 1"
+case1_dieu_ton_tai FAILED: /stream sources count < 1
+case1_dieu_ton_tai FAILED: /stream sources count < 1
+At line:45 char:59
++ ... reamMin)  { throw "$Name FAILED: /stream sources count < $ExpectSourc ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case1_dieu_ton_...urces count < 1:String) [], RuntimeException
+    + FullyQualifiedErrorId : case1_dieu_ton_tai FAILED: /stream sources count < 1
+
+PS D:\Github\KLTN> # Case 2 — Điều không tồn tại (BLOCK + sources rỗng) - message chặn theo pre_fetch_docs
+PS D:\Github\KLTN> Compare-Case `
+  -Name "case2_dieu_khong_ton_tai" `
+  -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?" `
+  -ExpectSourcesApiMin 0 `
+  -ExpectSourcesStreamMin 0 `
+  -ExpectSourcesEmpty $true
+
+==============================
+CASE: case2_dieu_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+==============================
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966459c77238c51104a0a6d
+sources_count:   0
+answer:          Không tìm thấy Điều 9999 trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu.
+
+[/stream]
+events_count:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:True
+
+Note: answer differs between endpoints. Check files:
+  API resp:    D:\Github\KLTN\tmp_api_tests\resp_api_case2_dieu_khong_ton_tai.json
+  Stream SSE:
+PS D:\Github\KLTN> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: answer not identical."
+case2_dieu_khong_ton_tai FAILED: answer not identical.
+case2_dieu_khong_ton_tai FAILED: answer not identical.
+At line:53 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case2_dieu_khon... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case2_dieu_khong_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> # Case 3 — Khoản không tồn tại (BLOCK + sources rỗng) - message: “Không tìm thấy Khoản ...”
+PS D:\Github\KLTN> Compare-Case `
+  -Name "case3_khoan_khong_ton_tai" `
+  -Question "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?" `
+  -ExpectSourcesApiMin 0 `
+  -ExpectSourcesStreamMin 0 `
+  -ExpectSourcesEmpty $true
+
+==============================
+CASE: case3_khoan_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966459c77238c51104a0a6f
+sources_count:   0
+answer:          Không tìm thấy Khoản 99 của Điều 3 trong văn bản bạn nêu trong hệ thống hiện tại. Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng.
+
+[/stream]
+events_count:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:True
+
+Note: answer differs between endpoints. Check files:
+  API resp:    D:\Github\KLTN\tmp_api_tests\resp_api_case3_khoan_khong_ton_tai.json
+  Stream SSE:
+PS D:\Github\KLTN> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: answer not identical."
+case3_khoan_khong_ton_tai FAILED: answer not identical.
+case3_khoan_khong_ton_tai FAILED: answer not identical.
+At line:53 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case3_khoan_kho... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case3_khoan_khong_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> # Case 4 — Có Điều/Khoản nhưng không nêu luật (BLOCK giống nhau) - safe_msg yêu cầu nêu rõ luật
+PS D:\Github\KLTN> Compare-Case `
+  -Name "case4_khong_neu_luat" `
+  -Question "Khoản 2 Điều 3 nói gì?" `
+  -ExpectSourcesApiMin 0 `
+  -ExpectSourcesStreamMin 0 `
+  -ExpectSourcesEmpty $true
+
+==============================
+CASE: case4_khong_neu_luat
+Q: Khoản 2 Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:26 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966459c77238c51104a0a71
+sources_count:   0
+answer:          Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật.
+
+[/stream]
+events_count:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:True
+
+Note: answer differs between endpoints. Check files:
+  API resp:    D:\Github\KLTN\tmp_api_tests\resp_api_case4_khong_neu_luat.json
+  Stream SSE:
+PS D:\Github\KLTN> TerminatingError(): "case4_khong_neu_luat FAILED: answer not identical."
+>> TerminatingError(): "case4_khong_neu_luat FAILED: answer not identical."
+case4_khong_neu_luat FAILED: answer not identical.
+case4_khong_neu_luat FAILED: answer not identical.
+At line:53 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case4_khong_neu... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case4_khong_neu_luat FAILED: answer not identical.
+
+PS D:\Github\KLTN> Write-Host ""
+
+PS D:\Github\KLTN> Write-Host "ALL 4 CASES PASSED"
+ALL 4 CASES PASSED
+PS D:\Github\KLTN> Write-Host "Artifacts saved in: $OUTDIR"
+Artifacts saved in: D:\Github\KLTN\tmp_api_tests
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # CONFIG
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $BASE = "http://127.0.0.1:7091"
+PS D:\Github\KLTN> $OUTDIR = Join-Path (Get-Location) "tmp_api_tests"
+PS D:\Github\KLTN> New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # HELPERS
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> function Write-JsonFile {
+  param(
+    [Parameter(Mandatory=$true)][string]$Path,
+    [Parameter(Mandatory=$true)][hashtable]$Obj
+  )
+  ($Obj | ConvertTo-Json -Compress) | Set-Content -Path $Path -Encoding utf8
+}
+PS D:\Github\KLTN> function Invoke-ApiAnswer-File {
+  param(
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][string]$Name
+  )
+
+  $payloadPath = Join-Path $OUTDIR ("payload_api_" + $Name + ".json")
+  $respPath    = Join-Path $OUTDIR ("resp_api_" + $Name + ".json")
+
+  $payload = @{
+    question = $Question
+    history = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  curl.exe -s "$BASE/api/answer" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$respPath" | Out-Null
+
+  $raw = Get-Content $respPath -Raw
+  $obj = $raw | ConvertFrom-Json
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    resp_path = $respPath
+    raw = $raw
+    answer = [string]$obj.answer
+    sources = @($obj.sources)
+    conversation_id = [string]$obj.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Parse-SSE-FromFile {
+  param(
+    [Parameter(Mandatory=$true)][string]$SsePath
+  )
+
+  $lines = Get-Content $SsePath
+
+  $answerParts = New-Object System.Collections.Generic.List[string]
+  $sourcesList = New-Object System.Collections.Generic.List[object]
+  $conversationId = $null
+
+  foreach ($ln in $lines) {
+    if ($ln -match '^\s*data:\s*(.+)\s*$') {
+      $data = $Matches[1].Trim()
+
+      # Ignore non-JSON data like "ok"
+      if (-not ($data.StartsWith("{") -and $data.EndsWith("}"))) { continue }
+
+      try {
+        $obj = $data | ConvertFrom-Json
+      } catch {
+        continue
+      }
+
+      $t = $null
+      if ($obj.PSObject.Properties.Name -contains "type") { $t = $obj.type }
+
+      if ($t -eq "answer") {
+        # SSE chunk: {"type":"answer","answer":"..."}
+        if ($obj.PSObject.Properties.Name -contains "answer") {
+          $answerParts.Add([string]$obj.answer) | Out-Null
+        }
+      }
+      elseif ($t -eq "source") {
+        # SSE source: {"type":"source","source":[...]}
+        if ($obj.PSObject.Properties.Name -contains "source") {
+          $src = $obj.source
+          if ($src -is [System.Collections.IEnumerable] -and -not ($src -is [string])) {
+            foreach ($s in $src) { $sourcesList.Add($s) | Out-Null }
+          } else {
+            $sourcesList.Add($src) | Out-Null
+          }
+        }
+      }
+      elseif ($t -eq "id") {
+        # SSE id: {"type":"id","id":"..."}
+        if ($obj.PSObject.Properties.Name -contains "id") {
+          $conversationId = [string]$obj.id
+        }
+      }
+    }
+  }
+
+  $answer = ($answerParts -join "")
+  return @{
+    answer = $answer
+    sources = @($sourcesList)
+    conversation_id = $conversationId
+  }
+}
+PS D:\Github\KLTN> function Invoke-Stream-File {
+  param(
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][string]$Name
+  )
+
+  $payloadPath = Join-Path $OUTDIR ("payload_stream_" + $Name + ".json")
+  $ssePath     = Join-Path $OUTDIR ("resp_stream_" + $Name + ".sse.txt")
+
+  $payload = @{
+    question = $Question
+    history = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  curl.exe -s -N "$BASE/stream" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$ssePath" | Out-Null
+
+  $parsed = Parse-SSE-FromFile -SsePath $ssePath
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    sse_path = $ssePath
+    answer = $parsed.answer
+    sources = @($parsed.sources)
+    conversation_id = $parsed.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Compare-Case {
+  param(
+    [Parameter(Mandatory=$true)][string]$Name,
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][int]$ExpectSourcesApiMin,
+    [Parameter(Mandatory=$true)][int]$ExpectSourcesStreamMin,
+    [Parameter(Mandatory=$true)][bool]$ExpectSourcesEmpty
+  )
+
+  Write-Host ""
+  Write-Host "=============================="
+  Write-Host "CASE: $Name"
+  Write-Host "Q: $Question"
+  Write-Host "=============================="
+
+  $api = Invoke-ApiAnswer-File -Question $Question -Name $Name
+  $st  = Invoke-Stream-File    -Question $Question -Name $Name
+
+  $apiAnswer = ($api.answer ?? "").Trim()
+At line:19 char:29
++   $apiAnswer = ($api.answer ?? "").Trim()
++                             ~~
+Unexpected token '??' in expression or statement.
+
+At line:19 char:28
++   $apiAnswer = ($api.answer ?? "").Trim()
++                            ~
+Missing closing ')' in expression.
+
+At line:1 char:23
++ function Compare-Case {
++                       ~
+Missing closing '}' in statement block or type definition.
+
+At line:19 char:34
++   $apiAnswer = ($api.answer ?? "").Trim()
++                                  ~
+Unexpected token ')' in expression or statement.
+
+At line:19 char:41
++   $apiAnswer = ($api.answer ?? "").Trim()
++                                         ~
+An expression was expected after '('.
+At line:19 char:29
++   $apiAnswer = ($api.answer ?? "").Trim()
++                             ~~
+Unexpected token '??' in expression or statement.
+
+At line:19 char:28
++   $apiAnswer = ($api.answer ?? "").Trim()
++                            ~
+Missing closing ')' in expression.
+
+At line:1 char:23
++ function Compare-Case {
++                       ~
+Missing closing '}' in statement block or type definition.
+
+At line:19 char:34
++   $apiAnswer = ($api.answer ?? "").Trim()
++                                  ~
+Unexpected token ')' in expression or statement.
+
+At line:19 char:41
++   $apiAnswer = ($api.answer ?? "").Trim()
++                                         ~
+An expression was expected after '('.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+
+PS D:\Github\KLTN>   $stAnswer  = ($st.answer  ?? "").Trim()
+At line:1 char:29
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                             ~~
+Unexpected token '??' in expression or statement.
+
+At line:1 char:27
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                           ~
+Missing closing ')' in expression.
+
+At line:1 char:34
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                                  ~
+Unexpected token ')' in expression or statement.
+
+At line:1 char:41
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                                         ~
+An expression was expected after '('.
+At line:1 char:29
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                             ~~
+Unexpected token '??' in expression or statement.
+
+At line:1 char:27
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                           ~
+Missing closing ')' in expression.
+
+At line:1 char:34
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                                  ~
+Unexpected token ')' in expression or statement.
+
+At line:1 char:41
++   $stAnswer  = ($st.answer  ?? "").Trim()
++                                         ~
+An expression was expected after '('.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+
+PS D:\Github\KLTN>   Write-Host ""
+
+PS D:\Github\KLTN>   Write-Host "[/api/answer]"
+[/api/answer]
+PS D:\Github\KLTN>   Write-Host "conversation_id: $($api.conversation_id)"
+conversation_id:
+PS D:\Github\KLTN>   Write-Host "sources_count:   $($api.sources.Count)"
+sources_count:   0
+PS D:\Github\KLTN>   Write-Host "answer:          $apiAnswer"
+answer:
+PS D:\Github\KLTN>   Write-Host ""
+
+PS D:\Github\KLTN>   Write-Host "[/stream]"
+[/stream]
+PS D:\Github\KLTN>   Write-Host "conversation_id: $($st.conversation_id)"
+conversation_id:
+PS D:\Github\KLTN>   Write-Host "sources_count:   $($st.sources.Count)"
+sources_count:   0
+PS D:\Github\KLTN>   Write-Host "answer:          $stAnswer"
+answer:
+PS D:\Github\KLTN>   $sameAnswer = ($apiAnswer -eq $stAnswer)
+PS D:\Github\KLTN>   Write-Host ""
+
+PS D:\Github\KLTN>   Write-Host "[Compare]"
+[Compare]
+PS D:\Github\KLTN>   Write-Host "Same answer: $sameAnswer"
+Same answer: True
+PS D:\Github\KLTN>   if ($ExpectSourcesEmpty) {
+    if ($api.sources.Count -ne 0) { throw "$Name FAILED: /api/answer sources must be []" }
+    if ($st.sources.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
+  } else {
+    if ($api.sources.Count -lt $ExpectSourcesApiMin)    { throw "$Name FAILED: /api/answer sources count < $ExpectSourcesApiMin" }
+    if ($st.sources.Count -lt $ExpectSourcesStreamMin)  { throw "$Name FAILED: /stream sources count < $ExpectSourcesStreamMin" }
+  }
+PS D:\Github\KLTN>   if (-not $sameAnswer) {
+    Write-Host ""
+    Write-Host "Note: answer differs. Check files:"
+    Write-Host "  API resp:   $($api.resp_path)"
+    Write-Host "  Stream SSE: $($st.sse_path)"
+    throw "$Name FAILED: answer not identical."
+  }
+PS D:\Github\KLTN>   Write-Host "$Name OK"
+ OK
+PS D:\Github\KLTN> }
+At line:1 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+At line:1 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # 4 CASES
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> Compare-Case -Name "case1_dieu_ton_tai" -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?" -ExpectSourcesApiMin 1 -ExpectSourcesStreamMin 1 -ExpectSourcesEmpty $false
+
+==============================
+CASE: case1_dieu_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 696647d477238c51104a0a75
+sources_count:   1
+answer:          Chào bạn, tôi là DocsGPT, rất sẵn lòng hỗ trợ bạn về các quy định pháp luật.
+
+Theo Luật Doanh nghiệp số 59/2020/QH14, **Điều 3** quy định về **"Áp dụng Luật Doanh nghiệp và luật khác"** như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+**Nội dung này có nghĩa là:**
+
+Luật Doanh nghiệp là luật chung điều chỉnh các loại hình doanh nghiệp. Tuy nhiên, nếu có một luật chuyên ngành khác (ví dụ: Luật Các tổ chức tín dụng, Luật Chứng khoán) có các quy định **đặc thù** riêng biệt về việc thành lập, quản lý, tổ chức lại, giải thể hoặc hoạt động của một loại hình doanh nghiệp cụ thể, thì các quy định đặc thù của luật chuyên ngành đó sẽ được ưu tiên áp dụng.
+
+[/stream]
+events_count:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:True
+
+Note: answer differs between endpoints. Check files:
+  API resp:    D:\Github\KLTN\tmp_api_tests\resp_api_case1_dieu_ton_tai.json
+  Stream SSE:  D:\Github\KLTN\tmp_api_tests\resp_stream_case1_dieu_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case1_dieu_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case1_dieu_ton_tai FAILED: answer not identical."
+case1_dieu_ton_tai FAILED: answer not identical.
+case1_dieu_ton_tai FAILED: answer not identical.
+At line:53 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case1_dieu_ton_... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case1_dieu_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case2_dieu_khong_ton_tai" -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?" -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case2_dieu_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+==============================
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 696647d677238c51104a0a7b
+sources_count:   0
+answer:          Không tìm thấy Điều 9999 trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu.
+
+[/stream]
+events_count:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:False
+PS D:\Github\KLTN> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: /stream sources must be []"
+>> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: /stream sources must be []"
+case2_dieu_khong_ton_tai FAILED: /stream sources must be []
+case2_dieu_khong_ton_tai FAILED: /stream sources must be []
+At line:42 char:37
++ ... es.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case2_dieu_khon...rces must be []:String) [], RuntimeException
+    + FullyQualifiedErrorId : case2_dieu_khong_ton_tai FAILED: /stream sources must be []
+
+PS D:\Github\KLTN> Compare-Case -Name "case3_khoan_khong_ton_tai" -Question "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?" -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case3_khoan_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 696647d777238c51104a0a7d
+sources_count:   0
+answer:          Không tìm thấy Khoản 99 của Điều 3 trong văn bản bạn nêu trong hệ thống hiện tại. Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng.
+
+[/stream]
+events_count:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:False
+PS D:\Github\KLTN> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: /stream sources must be []"
+>> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: /stream sources must be []"
+case3_khoan_khong_ton_tai FAILED: /stream sources must be []
+case3_khoan_khong_ton_tai FAILED: /stream sources must be []
+At line:42 char:37
++ ... es.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case3_khoan_kho...rces must be []:String) [], RuntimeException
+    + FullyQualifiedErrorId : case3_khoan_khong_ton_tai FAILED: /stream sources must be []
+
+PS D:\Github\KLTN> Compare-Case -Name "case4_khong_neu_luat" -Question "Khoản 2 Điều 3 nói gì?" -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case4_khong_neu_luat
+Q: Khoản 2 Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:55 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 696647d777238c51104a0a7f
+sources_count:   0
+answer:          Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật.
+
+[/stream]
+events_count:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer:       False
+Same sources count:False
+PS D:\Github\KLTN> TerminatingError(): "case4_khong_neu_luat FAILED: /stream sources must be []"
+>> TerminatingError(): "case4_khong_neu_luat FAILED: /stream sources must be []"
+case4_khong_neu_luat FAILED: /stream sources must be []
+case4_khong_neu_luat FAILED: /stream sources must be []
+At line:42 char:37
++ ... es.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case4_khong_neu...rces must be []:String) [], RuntimeException
+    + FullyQualifiedErrorId : case4_khong_neu_luat FAILED: /stream sources must be []
+
+PS D:\Github\KLTN> Write-Host ""
+
+PS D:\Github\KLTN> Write-Host "ALL 4 CASES PASSED"
+ALL 4 CASES PASSED
+PS D:\Github\KLTN> Write-Host "Artifacts saved in: $OUTDIR"
+Artifacts saved in: D:\Github\KLTN\tmp_api_tests
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # CONFIG
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $BASE = "http://127.0.0.1:7091"
+PS D:\Github\KLTN> $OUTDIR = Join-Path (Get-Location) "tmp_api_tests"
+PS D:\Github\KLTN> New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # HELPERS
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> function Write-JsonFile {
+  param(
+    [Parameter(Mandatory=$true)][string]$Path,
+    [Parameter(Mandatory=$true)][hashtable]$Obj
+  )
+  ($Obj | ConvertTo-Json -Compress) | Set-Content -Path $Path -Encoding utf8
+}
+PS D:\Github\KLTN> function Invoke-ApiAnswer-File {
+  param(
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][string]$Name
+  )
+
+  $payloadPath = Join-Path $OUTDIR ("payload_api_" + $Name + ".json")
+  $respPath    = Join-Path $OUTDIR ("resp_api_" + $Name + ".json")
+
+  $payload = @{
+    question = $Question
+    history  = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  curl.exe -s "$BASE/api/answer" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$respPath" | Out-Null
+
+  $raw = Get-Content $respPath -Raw
+  $obj = $raw | ConvertFrom-Json
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    resp_path = $respPath
+    answer = [string]$obj.answer
+    sources = @($obj.sources)
+    conversation_id = [string]$obj.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Parse-SSE-FromFile {
+  param(
+    [Parameter(Mandatory=$true)][string]$SsePath
+  )
+
+  $lines = Get-Content $SsePath
+
+  $answerParts = New-Object System.Collections.Generic.List[string]
+  $sourcesList = New-Object System.Collections.Generic.List[object]
+  $conversationId = $null
+
+  $started = $false
+
+  foreach ($ln in $lines) {
+    if ($ln -match '^\s*data:\s*(.+)\s*$') {
+      $data = $Matches[1].Trim()
+
+      # Bỏ qua ping: "ok" hay thứ không phải JSON object
+      if (-not ($data.StartsWith("{") -and $data.EndsWith("}"))) { continue }
+
+      try { $obj = $data | ConvertFrom-Json } catch { continue }
+
+      $t = $null
+      if ($obj.PSObject.Properties.Name -contains "type") { $t = [string]$obj.type }
+
+      if ($t -eq "start") {
+        $started = $true
+        continue
+      }
+
+      # Chỉ bắt đầu gom sau khi đã thấy start (đúng 1 phiên)
+      if (-not $started) { continue }
+
+      if ($t -eq "answer") {
+        if ($obj.PSObject.Properties.Name -contains "answer") {
+          $answerParts.Add([string]$obj.answer) | Out-Null
+        }
+      }
+      elseif ($t -eq "source") {
+        if ($obj.PSObject.Properties.Name -contains "source") {
+          $src = $obj.source
+          # flatten nếu là list
+          if ($src -is [System.Collections.IEnumerable] -and -not ($src -is [string])) {
+            foreach ($s in $src) { $sourcesList.Add($s) | Out-Null }
+          } else {
+            $sourcesList.Add($src) | Out-Null
+          }
+        }
+      }
+      elseif ($t -eq "id") {
+        if ($obj.PSObject.Properties.Name -contains "id") {
+          $conversationId = [string]$obj.id
+        }
+      }
+      elseif ($t -eq "end") {
+        # DỪNG NGAY: đảm bảo không “ăn” sang phiên khác
+        break
+      }
+    }
+  }
+
+  return @{
+    answer = ($answerParts -join "")
+    sources = @($sourcesList)
+    conversation_id = $conversationId
+  }
+}
+PS D:\Github\KLTN> function Invoke-Stream-File {
+  param(
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][string]$Name
+  )
+
+  $payloadPath = Join-Path $OUTDIR ("payload_stream_" + $Name + ".json")
+  $ssePath     = Join-Path $OUTDIR ("resp_stream_" + $Name + ".sse.txt")
+
+  $payload = @{
+    question = $Question
+    history  = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  # Luôn overwrite file (tránh append)
+  if (Test-Path $ssePath) { Remove-Item $ssePath -Force }
+
+  curl.exe -s -N "$BASE/stream" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$ssePath" | Out-Null
+
+  $parsed = Parse-SSE-FromFile -SsePath $ssePath
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    sse_path = $ssePath
+    answer = $parsed.answer
+    sources = @($parsed.sources)
+    conversation_id = $parsed.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Compare-Case {
+  param(
+    [Parameter(Mandatory=$true)][string]$Name,
+    [Parameter(Mandatory=$true)][string]$Question,
+    [Parameter(Mandatory=$true)][int]$ExpectSourcesApiMin,
+    [Parameter(Mandatory=$true)][int]$ExpectSourcesStreamMin,
+    [Parameter(Mandatory=$true)][bool]$ExpectSourcesEmpty
+  )
+
+  Write-Host ""
+  Write-Host "=============================="
+  Write-Host "CASE: $Name"
+  Write-Host "Q: $Question"
+  Write-Host "=============================="
+
+  $api = Invoke-ApiAnswer-File -Question $Question -Name $Name
+  $st  = Invoke-Stream-File    -Question $Question -Name $Name
+
+  $apiAnswer = ""
+  if ($api.answer) { $apiAnswer = $api.answer.Trim() }
+
+  $stAnswer = ""
+  if ($st.answer) { $stAnswer = $st.answer.Trim() }
+
+  Write-Host ""
+  Write-Host "[/api/answer]"
+  Write-Host "conversation_id: $($api.conversation_id)"
+  Write-Host "sources_count:   $($api.sources.Count)"
+  Write-Host "answer:          $apiAnswer"
+
+  Write-Host ""
+  Write-Host "[/stream]"
+  Write-Host "conversation_id: $($st.conversation_id)"
+  Write-Host "sources_count:   $($st.sources.Count)"
+  Write-Host "answer:          $stAnswer"
+
+  $sameAnswer = ($apiAnswer -eq $stAnswer)
+
+  Write-Host ""
+  Write-Host "[Compare]"
+  Write-Host "Same answer: $sameAnswer"
+
+  if ($ExpectSourcesEmpty) {
+    if ($api.sources.Count -ne 0) { throw "$Name FAILED: /api/answer sources must be []" }
+    if ($st.sources.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
+  } else {
+    if ($api.sources.Count -lt $ExpectSourcesApiMin)   { throw "$Name FAILED: /api/answer sources count < $ExpectSourcesApiMin" }
+    if ($st.sources.Count -lt $ExpectSourcesStreamMin) { throw "$Name FAILED: /stream sources count < $ExpectSourcesStreamMin" }
+  }
+
+  if (-not $sameAnswer) {
+    Write-Host ""
+    Write-Host "Note: answer differs. Check files:"
+    Write-Host "  API resp:   $($api.resp_path)"
+    Write-Host "  Stream SSE: $($st.sse_path)"
+    throw "$Name FAILED: answer not identical."
+  }
+
+  Write-Host "$Name OK"
+}
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # RUN 4 CASES
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> Compare-Case -Name "case1_dieu_ton_tai"        -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"              -ExpectSourcesApiMin 1 -ExpectSourcesStreamMin 1 -ExpectSourcesEmpty $false
+
+==============================
+CASE: case1_dieu_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966495377238c51104a0a83
+sources_count:   1
+answer:          Chào bạn, tôi là DocsGPT, rất sẵn lòng hỗ trợ bạn về các quy định pháp luật.
+
+Theo Luật Doanh nghiệp số 59/2020/QH14, **Điều 3** quy định về **"Áp dụng Luật Doanh nghiệp và luật khác"** như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+**Nội dung này có nghĩa là:**
+
+Luật Doanh nghiệp là luật chung điều chỉnh các loại hình doanh nghiệp. Tuy nhiên, nếu có một luật chuyên ngành khác (ví dụ: Luật Các tổ chức tín dụng, Luật Chứng khoán) có các quy định **đặc thù** riêng biệt về việc thành lập, quản lý, tổ chức lại, giải thể hoặc hoạt động của một loại hình doanh nghiệp cụ thể, thì các quy định đặc thù của luật chuyên ngành đó sẽ được ưu tiên áp dụng.
+
+[/stream]
+conversation_id:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case1_dieu_ton_tai.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case1_dieu_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case1_dieu_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case1_dieu_ton_tai FAILED: answer not identical."
+case1_dieu_ton_tai FAILED: answer not identical.
+case1_dieu_ton_tai FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case1_dieu_ton_... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case1_dieu_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case2_dieu_khong_ton_tai"  -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"          -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case2_dieu_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+==============================
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966495577238c51104a0a89
+sources_count:   0
+answer:          Không tìm thấy Điều 9999 trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu.
+
+[/stream]
+conversation_id:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer: False
+PS D:\Github\KLTN> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: /stream sources must be []"
+>> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: /stream sources must be []"
+case2_dieu_khong_ton_tai FAILED: /stream sources must be []
+case2_dieu_khong_ton_tai FAILED: /stream sources must be []
+At line:45 char:37
++ ... es.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case2_dieu_khon...rces must be []:String) [], RuntimeException
+    + FullyQualifiedErrorId : case2_dieu_khong_ton_tai FAILED: /stream sources must be []
+
+PS D:\Github\KLTN> Compare-Case -Name "case3_khoan_khong_ton_tai" -Question "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"    -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case3_khoan_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966495677238c51104a0a8b
+sources_count:   0
+answer:          Không tìm thấy Khoản 99 của Điều 3 trong văn bản bạn nêu trong hệ thống hiện tại. Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng.
+
+[/stream]
+conversation_id:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer: False
+PS D:\Github\KLTN> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: /stream sources must be []"
+>> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: /stream sources must be []"
+case3_khoan_khong_ton_tai FAILED: /stream sources must be []
+case3_khoan_khong_ton_tai FAILED: /stream sources must be []
+At line:45 char:37
++ ... es.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case3_khoan_kho...rces must be []:String) [], RuntimeException
+    + FullyQualifiedErrorId : case3_khoan_khong_ton_tai FAILED: /stream sources must be []
+
+PS D:\Github\KLTN> Compare-Case -Name "case4_khong_neu_luat"      -Question "Khoản 2 Điều 3 nói gì?"                                      -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case4_khong_neu_luat
+Q: Khoản 2 Điều 3 nói gì?
+==============================
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+Argument types do not match
+At line:62 char:10
++   return @{
++          ~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+
+
+[/api/answer]
+conversation_id: 6966495677238c51104a0a8d
+sources_count:   0
+answer:          Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật.
+
+[/stream]
+conversation_id:
+sources_count:   1
+answer:
+
+[Compare]
+Same answer: False
+PS D:\Github\KLTN> TerminatingError(): "case4_khong_neu_luat FAILED: /stream sources must be []"
+>> TerminatingError(): "case4_khong_neu_luat FAILED: /stream sources must be []"
+case4_khong_neu_luat FAILED: /stream sources must be []
+case4_khong_neu_luat FAILED: /stream sources must be []
+At line:45 char:37
++ ... es.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case4_khong_neu...rces must be []:String) [], RuntimeException
+    + FullyQualifiedErrorId : case4_khong_neu_luat FAILED: /stream sources must be []
+
+PS D:\Github\KLTN> Write-Host ""
+
+PS D:\Github\KLTN> Write-Host "ALL 4 CASES PASSED"
+ALL 4 CASES PASSED
+PS D:\Github\KLTN> Write-Host "Artifacts saved in: $OUTDIR"
+Artifacts saved in: D:\Github\KLTN\tmp_api_tests
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # CONFIG
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $BASE = "http://127.0.0.1:7091"
+PS D:\Github\KLTN> $OUTDIR = Join-Path (Get-Location) "tmp_api_tests"
+PS D:\Github\KLTN> New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
+PS D:\Github\KLTN> function Write-JsonFile {
+  param([string]$Path, [hashtable]$Obj)
+  ($Obj | ConvertTo-Json -Compress) | Set-Content -Path $Path -Encoding utf8
+}
+PS D:\Github\KLTN> function Invoke-ApiAnswer-File {
+  param([string]$Question, [string]$Name)
+
+  $payloadPath = Join-Path $OUTDIR ("payload_api_" + $Name + ".json")
+  $respPath    = Join-Path $OUTDIR ("resp_api_" + $Name + ".json")
+
+  $payload = @{
+    question = $Question
+    history  = "[]"
+    save_conversation = $false
+  }
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  curl.exe -s "$BASE/api/answer" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$respPath" | Out-Null
+
+  $raw = Get-Content $respPath -Raw
+  $obj = $raw | ConvertFrom-Json
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    resp_path = $respPath
+    answer = [string]$obj.answer
+    sources = @($obj.sources)
+    conversation_id = [string]$obj.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Parse-SSE-FromFile {
+  param([string]$SsePath)
+
+  $answerParts = @()
+  $sources = @()
+  $conversationId = $null
+  $started = $false
+
+  foreach ($ln in Get-Content $SsePath) {
+    if ($ln -notmatch '^\s*data:\s*(.+)\s*$') { continue }
+
+    $data = $Matches[1].Trim()
+
+    # Bỏ ping / ok / DONE / non-json
+    if (-not ($data.StartsWith("{") -and $data.EndsWith("}"))) { continue }
+
+    try { $obj = $data | ConvertFrom-Json } catch { continue }
+
+    if (-not ($obj.PSObject.Properties.Name -contains "type")) { continue }
+    $t = [string]$obj.type
+
+    if ($t -eq "start") {
+      $started = $true
+      continue
+    }
+
+    if (-not $started) { continue }
+
+    if ($t -eq "answer") {
+      if ($obj.PSObject.Properties.Name -contains "answer") {
+        $answerParts += [string]$obj.answer
+      }
+    }
+    elseif ($t -eq "source") {
+      if ($obj.PSObject.Properties.Name -contains "source") {
+        $src = $obj.source
+
+        # src thường là array: [ {...}, {...} ]
+        if ($src -is [System.Array]) {
+          foreach ($s in $src) { $sources += $s }
+        }
+        # đôi khi src là 1 object
+        elseif ($null -ne $src) {
+          $sources += $src
+        }
+      }
+    }
+    elseif ($t -eq "id") {
+      if ($obj.PSObject.Properties.Name -contains "id") {
+        $conversationId = [string]$obj.id
+      }
+    }
+    elseif ($t -eq "end") {
+      break
+    }
+  }
+
+  return @{
+    answer = ($answerParts -join "")
+    sources = @($sources)
+    conversation_id = $conversationId
+  }
+}
+PS D:\Github\KLTN> function Invoke-Stream-File {
+  param([string]$Question, [string]$Name)
+
+  $payloadPath = Join-Path $OUTDIR ("payload_stream_" + $Name + ".json")
+  $ssePath     = Join-Path $OUTDIR ("resp_stream_" + $Name + ".sse.txt")
+
+  $payload = @{
+    question = $Question
+    history  = "[]"
+    save_conversation = $false
+  }
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  if (Test-Path $ssePath) { Remove-Item $ssePath -Force }
+
+  curl.exe -s -N "$BASE/stream" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$ssePath" | Out-Null
+
+  $parsed = Parse-SSE-FromFile -SsePath $ssePath
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    sse_path = $ssePath
+    answer = [string]$parsed.answer
+    sources = @($parsed.sources)
+    conversation_id = [string]$parsed.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Compare-Case {
+  param(
+    [string]$Name,
+    [string]$Question,
+    [int]$ExpectSourcesApiMin,
+    [int]$ExpectSourcesStreamMin,
+    [bool]$ExpectSourcesEmpty
+  )
+
+  Write-Host ""
+  Write-Host "=============================="
+  Write-Host "CASE: $Name"
+  Write-Host "Q: $Question"
+  Write-Host "=============================="
+
+  $api = Invoke-ApiAnswer-File -Question $Question -Name $Name
+  $st  = Invoke-Stream-File    -Question $Question -Name $Name
+
+  $apiAnswer = ""
+  if ($api.answer) { $apiAnswer = $api.answer.Trim() }
+
+  $stAnswer = ""
+  if ($st.answer) { $stAnswer = $st.answer.Trim() }
+
+  Write-Host ""
+  Write-Host "[/api/answer]"
+  Write-Host "conversation_id: $($api.conversation_id)"
+  Write-Host "sources_count:   $($api.sources.Count)"
+  Write-Host "answer:          $apiAnswer"
+
+  Write-Host ""
+  Write-Host "[/stream]"
+  Write-Host "conversation_id: $($st.conversation_id)"
+  Write-Host "sources_count:   $($st.sources.Count)"
+  Write-Host "answer:          $stAnswer"
+
+  $sameAnswer = ($apiAnswer -eq $stAnswer)
+
+  Write-Host ""
+  Write-Host "[Compare]"
+  Write-Host "Same answer: $sameAnswer"
+
+  if ($ExpectSourcesEmpty) {
+    if ($api.sources.Count -ne 0) { throw "$Name FAILED: /api/answer sources must be []" }
+    if ($st.sources.Count -ne 0)  { throw "$Name FAILED: /stream sources must be []" }
+  } else {
+    if ($api.sources.Count -lt $ExpectSourcesApiMin)   { throw "$Name FAILED: /api/answer sources count < $ExpectSourcesApiMin" }
+    if ($st.sources.Count -lt $ExpectSourcesStreamMin) { throw "$Name FAILED: /stream sources count < $ExpectSourcesStreamMin" }
+  }
+
+  if (-not $sameAnswer) {
+    Write-Host ""
+    Write-Host "Note: answer differs. Check files:"
+    Write-Host "  API resp:   $($api.resp_path)"
+    Write-Host "  Stream SSE: $($st.sse_path)"
+    throw "$Name FAILED: answer not identical."
+  }
+
+  if (-not $st.conversation_id) {
+    Write-Host ""
+    Write-Host "Note: /stream conversation_id is empty. Check SSE file:"
+    Write-Host "  $($st.sse_path)"
+    throw "$Name FAILED: /stream missing conversation_id."
+  }
+
+  Write-Host "$Name OK"
+}
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # RUN 4 CASES
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> Compare-Case -Name "case1_dieu_ton_tai"        -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"              -ExpectSourcesApiMin 1 -ExpectSourcesStreamMin 1 -ExpectSourcesEmpty $false
+
+==============================
+CASE: case1_dieu_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664b5977238c51104a0a91
+sources_count:   1
+answer:          Chào bạn, tôi là DocsGPT, rất sẵn lòng hỗ trợ bạn về các quy định pháp luật.
+
+Theo Luật Doanh nghiệp số 59/2020/QH14, **Điều 3** quy định về **"Áp dụng Luật Doanh nghiệp và luật khác"** như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+**Nội dung này có nghĩa là:**
+
+Luật Doanh nghiệp là luật chung điều chỉnh các loại hình doanh nghiệp. Tuy nhiên, nếu có một luật chuyên ngành khác (ví dụ: Luật Các tổ chức tín dụng, Luật Chứng khoán) có các quy định **đặc thù** riêng biệt về việc thành lập, quản lý, tổ chức lại, giải thể hoặc hoạt động của một loại hình doanh nghiệp cụ thể, thì các quy định đặc thù của luật chuyên ngành đó sẽ được ưu tiên áp dụng.
+
+[/stream]
+conversation_id: 69664b5b77238c51104a0a95
+sources_count:   1
+answer:          Chào bạn, tôi là DocsGPT, rất sẵn lòng hỗ trợ bạn về các quy định pháp luật.
+
+Theo Luật Doanh nghiệp số 59/2020/QH14, **Điều 3** quy định về **"Áp dụng Luật Doanh nghiệp và luật khác"** như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+**Nội dung này có nghĩa là:**
+
+Luật Doanh nghiệp là luật chung điều chỉnh các loại hình doanh nghiệp. Tuy nhiên, nếu có một luật chuyên ngành khác (ví dụ: Luật Các tổ chức tín dụng, Luật Chứng khoán) có các quy định **đặc thù** riêng biệt về việc thành lập, quản lý, tổ chức lại, giải thể hoặc hoạt động của một loại hình doanh nghiệp cụ thể, thì các quy định đặc thù của luật chuyên ngành đó sẽ được ưu tiên áp dụng.
+
+[Compare]
+Same answer: True
+case1_dieu_ton_tai OK
+PS D:\Github\KLTN> Compare-Case -Name "case2_dieu_khong_ton_tai"  -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"          -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case2_dieu_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664b5b77238c51104a0a97
+sources_count:   0
+answer:          Không tìm thấy Điều 9999 trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu.
+
+[/stream]
+conversation_id:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case2_dieu_khong_ton_tai.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case2_dieu_khong_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: answer not identical."
+case2_dieu_khong_ton_tai FAILED: answer not identical.
+case2_dieu_khong_ton_tai FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case2_dieu_khon... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case2_dieu_khong_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case3_khoan_khong_ton_tai" -Question "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"    -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case3_khoan_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664b5b77238c51104a0a99
+sources_count:   0
+answer:          Không tìm thấy Khoản 99 của Điều 3 trong văn bản bạn nêu trong hệ thống hiện tại. Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng.
+
+[/stream]
+conversation_id:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case3_khoan_khong_ton_tai.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case3_khoan_khong_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: answer not identical."
+case3_khoan_khong_ton_tai FAILED: answer not identical.
+case3_khoan_khong_ton_tai FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case3_khoan_kho... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case3_khoan_khong_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case4_khong_neu_luat"      -Question "Khoản 2 Điều 3 nói gì?"                                      -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case4_khong_neu_luat
+Q: Khoản 2 Điều 3 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664b5b77238c51104a0a9b
+sources_count:   0
+answer:          Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật.
+
+[/stream]
+conversation_id:
+sources_count:   0
+answer:
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case4_khong_neu_luat.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case4_khong_neu_luat.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case4_khong_neu_luat FAILED: answer not identical."
+>> TerminatingError(): "case4_khong_neu_luat FAILED: answer not identical."
+case4_khong_neu_luat FAILED: answer not identical.
+case4_khong_neu_luat FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case4_khong_neu... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case4_khong_neu_luat FAILED: answer not identical.
+
+PS D:\Github\KLTN> Write-Host ""
+
+PS D:\Github\KLTN> Write-Host "ALL 4 CASES PASSED"
+ALL 4 CASES PASSED
+PS D:\Github\KLTN> Write-Host "Artifacts saved in: $OUTDIR"
+Artifacts saved in: D:\Github\KLTN\tmp_api_tests
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # CONFIG
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $BASE = "http://127.0.0.1:7091"
+PS D:\Github\KLTN> $OUTDIR = Join-Path (Get-Location) "tmp_api_tests"
+PS D:\Github\KLTN> New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # HELPERS
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> function Write-JsonFile {
+  param([string]$Path, [hashtable]$Obj)
+  ($Obj | ConvertTo-Json -Compress) | Set-Content -Path $Path -Encoding utf8
+}
+PS D:\Github\KLTN> function Invoke-ApiAnswer-File {
+  param([string]$Question, [string]$Name)
+
+  $payloadPath = Join-Path $OUTDIR ("payload_api_" + $Name + ".json")
+  $respPath    = Join-Path $OUTDIR ("resp_api_" + $Name + ".json")
+
+  $payload = @{
+    question = $Question
+    history  = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  curl.exe -s "$BASE/api/answer" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$respPath" | Out-Null
+
+  $raw = Get-Content $respPath -Raw
+  $obj = $raw | ConvertFrom-Json
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    resp_path = $respPath
+    answer = [string]$obj.answer
+    sources = @($obj.sources)
+    conversation_id = [string]$obj.conversation_id
+  }
+}
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # SSE PARSER (FIXED)
+PS D:\Github\KLTN> # - Không phụ thuộc type=start
+PS D:\Github\KLTN> # - Parse đến type=end
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> function Parse-SSE-FromFile {
+  param([string]$SsePath)
+
+  $answerParts = @()
+  $sources = @()
+  $conversationId = $null
+
+  foreach ($ln in Get-Content $SsePath) {
+    if ($ln -notmatch '^\s*data:\s*(.+)\s*$') { continue }
+    $data = $Matches[1].Trim()
+
+    # Bỏ ping/ok/DONE/non-json
+    if (-not ($data.StartsWith("{") -and $data.EndsWith("}"))) { continue }
+
+    try { $obj = $data | ConvertFrom-Json } catch { continue }
+
+    if (-not ($obj.PSObject.Properties.Name -contains "type")) { continue }
+    $t = [string]$obj.type
+
+    if ($t -eq "answer") {
+      if ($obj.PSObject.Properties.Name -contains "answer") {
+        $answerParts += [string]$obj.answer
+      }
+    }
+    elseif ($t -eq "source") {
+      if ($obj.PSObject.Properties.Name -contains "source") {
+        $src = $obj.source
+        if ($src -is [System.Array]) {
+          foreach ($s in $src) { $sources += $s }
+        } elseif ($null -ne $src) {
+          $sources += $src
+        }
+      }
+    }
+    elseif ($t -eq "id") {
+      if ($obj.PSObject.Properties.Name -contains "id") {
+        $conversationId = [string]$obj.id
+      }
+    }
+    elseif ($t -eq "end") {
+      break
+    }
+  }
+
+  return @{
+    answer = ($answerParts -join "")
+    sources = @($sources)
+    conversation_id = $conversationId
+  }
+}
+PS D:\Github\KLTN> function Invoke-Stream-File {
+  param([string]$Question, [string]$Name)
+
+  $payloadPath = Join-Path $OUTDIR ("payload_stream_" + $Name + ".json")
+  $ssePath     = Join-Path $OUTDIR ("resp_stream_" + $Name + ".sse.txt")
+
+  $payload = @{
+    question = $Question
+    history  = "[]"
+    save_conversation = $false
+  }
+
+  Write-JsonFile -Path $payloadPath -Obj $payload
+
+  # đảm bảo không append
+  if (Test-Path $ssePath) { Remove-Item $ssePath -Force }
+
+  curl.exe -s -N "$BASE/stream" `
+    -H "Content-Type: application/json" `
+    --data-binary "@$payloadPath" `
+    -o "$ssePath" | Out-Null
+
+  $parsed = Parse-SSE-FromFile -SsePath $ssePath
+
+  return @{
+    question = $Question
+    payload_path = $payloadPath
+    sse_path = $ssePath
+    answer = [string]$parsed.answer
+    sources = @($parsed.sources)
+    conversation_id = [string]$parsed.conversation_id
+  }
+}
+PS D:\Github\KLTN> function Compare-Case {
+  param(
+    [string]$Name,
+    [string]$Question,
+    [int]$ExpectSourcesApiMin,
+    [int]$ExpectSourcesStreamMin,
+    [bool]$ExpectSourcesEmpty
+  )
+
+  Write-Host ""
+  Write-Host "=============================="
+  Write-Host "CASE: $Name"
+  Write-Host "Q: $Question"
+  Write-Host "=============================="
+
+  $api = Invoke-ApiAnswer-File -Question $Question -Name $Name
+  $st  = Invoke-Stream-File    -Question $Question -Name $Name
+
+  $apiAnswer = ""
+  if ($api.answer) { $apiAnswer = $api.answer.Trim() }
+
+  $stAnswer = ""
+  if ($st.answer) { $stAnswer = $st.answer.Trim() }
+
+  Write-Host ""
+  Write-Host "[/api/answer]"
+  Write-Host "conversation_id: $($api.conversation_id)"
+  Write-Host "sources_count:   $($api.sources.Count)"
+  Write-Host "answer:          $apiAnswer"
+
+  Write-Host ""
+  Write-Host "[/stream]"
+  Write-Host "conversation_id: $($st.conversation_id)"
+  Write-Host "sources_count:   $($st.sources.Count)"
+  Write-Host "answer:          $stAnswer"
+
+  $sameAnswer = ($apiAnswer -eq $stAnswer)
+
+  Write-Host ""
+  Write-Host "[Compare]"
+  Write-Host "Same answer: $sameAnswer"
+
+  if ($ExpectSourcesEmpty) {
+    if ($api.sources.Count -ne 0) { throw "$Name FAILED: /api/answer sources must be []" }
+    if ($st.sources.Count  -ne 0) { throw "$Name FAILED: /stream sources must be []" }
+  } else {
+    if ($api.sources.Count -lt $ExpectSourcesApiMin)   { throw "$Name FAILED: /api/answer sources count < $ExpectSourcesApiMin" }
+    if ($st.sources.Count  -lt $ExpectSourcesStreamMin){ throw "$Name FAILED: /stream sources count < $ExpectSourcesStreamMin" }
+  }
+
+  if (-not $sameAnswer) {
+    Write-Host ""
+    Write-Host "Note: answer differs. Check files:"
+    Write-Host "  API resp:   $($api.resp_path)"
+    Write-Host "  Stream SSE: $($st.sse_path)"
+    throw "$Name FAILED: answer not identical."
+  }
+
+  if (-not $st.conversation_id) {
+    Write-Host ""
+    Write-Host "Note: /stream conversation_id is empty. Check SSE file:"
+    Write-Host "  $($st.sse_path)"
+    throw "$Name FAILED: /stream missing conversation_id."
+  }
+
+  Write-Host "$Name OK"
+}
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # RUN 4 CASES
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> Compare-Case -Name "case1_dieu_ton_tai"        -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"           -ExpectSourcesApiMin 1 -ExpectSourcesStreamMin 1 -ExpectSourcesEmpty $false
+
+==============================
+CASE: case1_dieu_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664ca177238c51104a0a9f
+sources_count:   1
+answer:          Chào bạn, tôi là DocsGPT, rất sẵn lòng hỗ trợ bạn về các quy định pháp luật.
+
+Theo Luật Doanh nghiệp số 59/2020/QH14, **Điều 3** quy định về **"Áp dụng Luật Doanh nghiệp và luật khác"** như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+**Nội dung này có nghĩa là:**
+
+Luật Doanh nghiệp là luật chung điều chỉnh các loại hình doanh nghiệp. Tuy nhiên, nếu có một luật chuyên ngành khác (ví dụ: Luật Các tổ chức tín dụng, Luật Chứng khoán) có các quy định **đặc thù** riêng biệt về việc thành lập, quản lý, tổ chức lại, giải thể hoặc hoạt động của một loại hình doanh nghiệp cụ thể, thì các quy định đặc thù của luật chuyên ngành đó sẽ được ưu tiên áp dụng.
+
+[/stream]
+conversation_id: 69664ca677238c51104a0aa3
+sources_count:   1
+answer:          Chào bạn,
+
+Dựa trên ngữ cảnh được cung cấp, **Điều 3** của Luật Doanh nghiệp 59/2020/QH14 quy định về nguyên tắc áp dụng Luật Doanh nghiệp và các luật khác.
+
+Cụ thể, Điều 3 có nội dung như sau:
+
+> **Điều 3. Áp dụng Luật Doanh nghiệp và luật khác**
+>
+> Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.
+
+Nói cách khác, Điều này quy định nguyên tắc ưu tiên áp dụng: nếu có luật chuyên ngành khác (ví dụ: Luật các tổ chức tín dụng, Luật Chứng khoán) có quy định đặc thù khác với Luật Doanh nghiệp về các vấn đề như thành lập, quản lý, giải thể doanh nghiệp, thì các quy định của luật chuyên ngành đó sẽ được áp dụng.
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case1_dieu_ton_tai.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case1_dieu_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case1_dieu_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case1_dieu_ton_tai FAILED: answer not identical."
+case1_dieu_ton_tai FAILED: answer not identical.
+case1_dieu_ton_tai FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case1_dieu_ton_... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case1_dieu_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case2_dieu_khong_ton_tai"  -Question "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"       -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case2_dieu_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664ca677238c51104a0aa5
+sources_count:   0
+answer:          Không tìm thấy Điều 9999 trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu.
+
+[/stream]
+conversation_id: 69664ca677238c51104a0aa6
+sources_count:   0
+answer:          KhÃ´ng tÃ¬m tháº¥y Äiá»u 9999 trong Luáº­t Doanh nghiá»‡p (59/2020/QH14, 76/2025/QH15) theo dá»¯ liá»‡u hiá»‡n cÃ³. Vui lÃ²ng kiá»ƒm tra láº¡i sá»‘ Ä‘iá»u hoáº·c quÃ¡ trÃ¬nh náº¡p dá»¯ liá»‡u.
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case2_dieu_khong_ton_tai.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case2_dieu_khong_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case2_dieu_khong_ton_tai FAILED: answer not identical."
+case2_dieu_khong_ton_tai FAILED: answer not identical.
+case2_dieu_khong_ton_tai FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case2_dieu_khon... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case2_dieu_khong_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case3_khoan_khong_ton_tai" -Question "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?" -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case3_khoan_khong_ton_tai
+Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664ca777238c51104a0aa7
+sources_count:   0
+answer:          Không tìm thấy Khoản 99 của Điều 3 trong văn bản bạn nêu trong hệ thống hiện tại. Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng.
+
+[/stream]
+conversation_id: 69664ca777238c51104a0aa8
+sources_count:   0
+answer:          KhÃ´ng tÃ¬m tháº¥y Khoáº£n 99 cá»§a Äiá»u 3 trong vÄƒn báº£n báº¡n nÃªu trong há»‡ thá»‘ng hiá»‡n táº¡i. Vui lÃ²ng kiá»ƒm tra láº¡i khoáº£n hoáº·c Ä‘áº£m báº£o dá»¯ liá»‡u Ä‘Ã£ Ä‘Æ°á»£c náº¡p Ä‘Ãºng.
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case3_khoan_khong_ton_tai.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case3_khoan_khong_ton_tai.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: answer not identical."
+>> TerminatingError(): "case3_khoan_khong_ton_tai FAILED: answer not identical."
+case3_khoan_khong_ton_tai FAILED: answer not identical.
+case3_khoan_khong_ton_tai FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case3_khoan_kho... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case3_khoan_khong_ton_tai FAILED: answer not identical.
+
+PS D:\Github\KLTN> Compare-Case -Name "case4_khong_neu_luat"      -Question "Khoản 2 Điều 3 nói gì?"                                   -ExpectSourcesApiMin 0 -ExpectSourcesStreamMin 0 -ExpectSourcesEmpty $true
+
+==============================
+CASE: case4_khong_neu_luat
+Q: Khoản 2 Điều 3 nói gì?
+==============================
+
+[/api/answer]
+conversation_id: 69664ca777238c51104a0aa9
+sources_count:   0
+answer:          Bạn đang hỏi theo cấu trúc Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. Vui lòng cung cấp tên văn bản (ví dụ: số/ký hiệu như 100/2015/QH13) hoặc tên chính xác của luật/bộ luật.
+
+[/stream]
+conversation_id: 69664ca777238c51104a0aaa
+sources_count:   0
+answer:          Báº¡n Ä‘ang há»i theo cáº¥u trÃºc Äiá»u/Khoáº£n/Äiá»ƒm nhÆ°ng chÆ°a xÃ¡c Ä‘á»‹nh Ä‘Æ°á»£c vÄƒn báº£n luáº­t cá»¥ thá»ƒ trong há»‡ thá»‘ng. Vui lÃ²ng cung cáº¥p tÃªn vÄƒn báº£n (vÃ­ dá»¥: sá»‘/kÃ½ hiá»‡u nhÆ° 100/2015/QH13) hoáº·c tÃªn chÃ­nh xÃ¡c cá»§a luáº­t/bá»™ luáº­t.
+
+[Compare]
+Same answer: False
+
+Note: answer differs. Check files:
+  API resp:   D:\Github\KLTN\tmp_api_tests\resp_api_case4_khong_neu_luat.json
+  Stream SSE: D:\Github\KLTN\tmp_api_tests\resp_stream_case4_khong_neu_luat.sse.txt
+PS D:\Github\KLTN> TerminatingError(): "case4_khong_neu_luat FAILED: answer not identical."
+>> TerminatingError(): "case4_khong_neu_luat FAILED: answer not identical."
+case4_khong_neu_luat FAILED: answer not identical.
+case4_khong_neu_luat FAILED: answer not identical.
+At line:56 char:5
++     throw "$Name FAILED: answer not identical."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (case4_khong_neu... not identical.:String) [], RuntimeException
+    + FullyQualifiedErrorId : case4_khong_neu_luat FAILED: answer not identical.
+
+PS D:\Github\KLTN> Write-Host ""
+
+PS D:\Github\KLTN> Write-Host "ALL 4 CASES PASSED"
+ALL 4 CASES PASSED
+PS D:\Github\KLTN> Write-Host "Artifacts saved in: $OUTDIR"
+Artifacts saved in: D:\Github\KLTN\tmp_api_tests
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 1 — Điều tồn tại (PASS + có sources)
+PS D:\Github\KLTN> # Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: /api/answer có sources (1 doc neo4j), /stream có SSE type: source
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case1.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case1.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case1.json"
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 2 — Điều không tồn tại (BLOCK + sources phải rỗng)
+PS D:\Github\KLTN> # Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: 2 endpoint trả cùng message chặn theo pre_fetch_docs; sources: []
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case2.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case2.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case2.json"
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 3 — Khoản không tồn tại (BLOCK + sources rỗng)
+PS D:\Github\KLTN> # Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: 2 endpoint trả cùng message (pre_fetch_docs: "Không tìm thấy Khoản ..."); sources: []
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case3.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case3.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case3.json"
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 4 — Có Điều/Khoản nhưng không nêu luật (BLOCK giống nhau)
+PS D:\Github\KLTN> # Q: Khoản 2 Điều 3 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: 2 endpoint trả safe_msg yêu cầu nêu rõ luật; sources: []
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 2 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case4.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case4.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case4.json"
+
+PS D:\Github\KLTN> clear
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 1 — Điều tồn tại (PASS + có sources)
+PS D:\Github\KLTN> # Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: /api/answer có sources (1 doc neo4j), /stream có SSE type: source
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case1.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case1.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case1.json"
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 2 — Điều không tồn tại (BLOCK + sources phải rỗng)
+PS D:\Github\KLTN> # Q: Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: 2 endpoint trả cùng message chặn theo pre_fetch_docs; sources: []
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Điều 9999 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case2.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case2.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case2.json"
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 3 — Khoản không tồn tại (BLOCK + sources rỗng)
+PS D:\Github\KLTN> # Q: Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: 2 endpoint trả cùng message (pre_fetch_docs: "Không tìm thấy Khoản ..."); sources: []
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Luật Doanh nghiệp 59/2020/QH14 - Khoản 99 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case3.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case3.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case3.json"
+
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> # Case 4 — Có Điều/Khoản nhưng không nêu luật (BLOCK giống nhau)
+PS D:\Github\KLTN> # Q: Khoản 2 Điều 3 nói gì?
+PS D:\Github\KLTN> # Kỳ vọng: 2 endpoint trả safe_msg yêu cầu nêu rõ luật; sources: []
+PS D:\Github\KLTN> # =========================
+PS D:\Github\KLTN> $payload = @{
+  question = "Khoản 2 Điều 3 nói gì?"
+  history = "[]"
+  save_conversation = $false
+} | ConvertTo-Json -Compress
+PS D:\Github\KLTN> $payload | Set-Content -Path ".\payload_case4.json" -Encoding utf8
+PS D:\Github\KLTN> # /api/answer
+PS D:\Github\KLTN> curl.exe -s -v "http://127.0.0.1:7091/api/answer" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case4.json"
+
+PS D:\Github\KLTN> # /stream
+PS D:\Github\KLTN> curl.exe -N -s "http://127.0.0.1:7091/stream" `
+  -H "Content-Type: application/json" `
+  --data-binary "@payload_case4.json"
+

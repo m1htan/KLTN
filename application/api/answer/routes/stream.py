@@ -6,8 +6,6 @@ from flask_restx import fields, Resource
 
 from application.api import api
 from application.api.answer.routes.base import answer_ns, BaseAnswerResource
-from application.retriever.legal_structure_validator import validate_legal_structure
-from application.knowledge_graph.neo4j_client import load_neo4j_config_from_env, Neo4jClient
 from application.api.answer.services.stream_processor import StreamProcessor
 
 logger = logging.getLogger(__name__)
@@ -32,10 +30,9 @@ class StreamResource(Resource, BaseAnswerResource):
             "question": fields.String(
                 required=True, description="Question to be asked"
             ),
-            "history": fields.List(
-                fields.String,
+            "history": fields.Raw(
                 required=False,
-                description="Conversation history (only for new conversations)",
+                description="Conversation history. Accepts either a JSON array (preferred) or a JSON-stringified array (backward compatible).",
             ),
             "conversation_id": fields.String(
                 required=False,
@@ -99,21 +96,23 @@ class StreamResource(Resource, BaseAnswerResource):
 
                 logger.info("[STREAM] returning override_answer SSE")
 
-                return Response(
-                    self.complete_stream(
-                        question=data["question"],
-                        agent=None,
-                        conversation_id=processor.conversation_id,
-                        user_api_key=processor.agent_config.get("user_api_key"),
-                        decoded_token=processor.decoded_token,
-                        isNoneDoc=True,
-                        index=data.get("index"),
-                        should_save_conversation=False,
-                        model_id=processor.model_id,
-                        override_answer=docs_together,
-                    ),
-                    mimetype="text/event-stream",
+                gen = self.complete_stream(
+                    question=data["question"],
+                    agent=None,
+                    conversation_id=processor.conversation_id,
+                    user_api_key=processor.agent_config.get("user_api_key"),
+                    decoded_token=processor.decoded_token,
+                    isNoneDoc=True,
+                    index=data.get("index"),
+                    should_save_conversation=False,
+                    model_id=processor.model_id,
+                    override_answer=docs_together,
                 )
+
+                resp = Response(_wrap_sse(gen), mimetype="text/event-stream")
+                resp.headers["Cache-Control"] = "no-cache"
+                resp.headers["X-Accel-Buffering"] = "no"
+                return resp
 
             logger.info("[STREAM] pre_fetch_tools start")
             tools_data = processor.pre_fetch_tools()

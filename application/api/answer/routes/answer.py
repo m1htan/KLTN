@@ -6,8 +6,6 @@ from flask_restx import fields, Resource
 
 from application.api import api
 from application.api.answer.routes.base import answer_ns, BaseAnswerResource
-from application.retriever.legal_structure_validator import validate_legal_structure
-from application.knowledge_graph.neo4j_client import load_neo4j_config_from_env, Neo4jClient
 
 from application.api.answer.services.stream_processor import StreamProcessor
 
@@ -26,10 +24,9 @@ class AnswerResource(Resource, BaseAnswerResource):
             "question": fields.String(
                 required=True, description="Question to be asked"
             ),
-            "history": fields.List(
-                fields.String,
+            "history": fields.Raw(
                 required=False,
-                description="Conversation history (only for new conversations)",
+                description="Conversation history. Accepts either a JSON array (preferred) or a JSON-stringified array (backward compatible).",
             ),
             "conversation_id": fields.String(
                 required=False,
@@ -80,31 +77,50 @@ class AnswerResource(Resource, BaseAnswerResource):
         try:
             processor.initialize()
 
-            neo4j = Neo4jClient(load_neo4j_config_from_env())
-            error_msg = validate_legal_structure(
-                neo4j=neo4j,
-                question=data["question"],
-            )
-            neo4j.close()
-
-            if error_msg:
-                return make_response(
-                    {
-                        "answer": error_msg,
-                        "sources": [],
-                        "tool_calls": [],
-                    },
-                    200,
-                )
-
             if not processor.decoded_token:
                 return make_response({"error": "Unauthorized"}, 401)
 
-            docs_together, docs_list = processor.pre_fetch_docs(
-                data.get("question", "")
-            )
-            tools_data = processor.pre_fetch_tools()
+            docs_together, docs_list = processor.pre_fetch_docs(data.get("question", ""))
 
+            # Nếu pre_fetch_docs trả về safe_msg (string) và docs_list=None => short-circuit như /stream
+            if docs_list is None and isinstance(docs_together, str) and docs_together.strip():
+                stream = self.complete_stream(
+                    question=data["question"],
+                    agent=None,
+                    conversation_id=processor.conversation_id,
+                    user_api_key=processor.agent_config.get("user_api_key"),
+                    decoded_token=processor.decoded_token,
+                    isNoneDoc=True,
+                    index=None,
+                    should_save_conversation=False,  # tránh save normal conversation, early_end/A1 sẽ lo id tối thiểu
+                    model_id=processor.model_id,
+                    override_answer=docs_together,
+                )
+                stream_result = self.process_response_stream(stream)
+
+                if len(stream_result) == 7:
+                    conversation_id, response, sources, tool_calls, thought, error, structured_info = stream_result
+                else:
+                    conversation_id, response, sources, tool_calls, thought, error = stream_result
+                    structured_info = None
+
+                if error:
+                    return make_response({"error": error}, 400)
+
+                result = {
+                    "conversation_id": conversation_id,
+                    "answer": response,
+                    "sources": sources or [],
+                    "tool_calls": tool_calls or [],
+                    "thought": thought or "",
+                }
+                if structured_info:
+                    result.update(structured_info)
+
+                return make_response(result, 200)
+
+            # bình thường mới fetch tools + create_agent
+            tools_data = processor.pre_fetch_tools()
             agent = processor.create_agent(
                 docs_together=docs_together,
                 docs=docs_list,

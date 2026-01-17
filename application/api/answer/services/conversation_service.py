@@ -280,3 +280,66 @@ class ConversationService:
                 f"Error getting compression metadata: {str(e)}", exc_info=True
             )
             return None
+
+    def create_conversation_minimal(
+        self,
+        question: str,
+        response: str,
+        decoded_token: Dict[str, Any],
+        model_id: str,
+        sources: Optional[List[Dict[str, Any]]] = None,
+        tool_calls: Optional[List[Dict[str, Any]]] = None,
+        thought: str = "",
+        api_key: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        is_shared_usage: bool = False,
+        shared_token: Optional[str] = None,
+        attachment_ids: Optional[List[str]] = None,
+        name: str = "Blocked/Guarded",
+    ) -> str:
+        user_id = decoded_token.get("sub") if decoded_token else None
+        if not user_id:
+            raise ValueError("User ID not found in token")
+
+        current_time = datetime.now(timezone.utc)
+
+        sources = sources or []
+        tool_calls = tool_calls or []
+        attachment_ids = attachment_ids or []
+
+        # clean up in sources array such that we save max 1k characters for text part
+        for source in sources:
+            if "text" in source and isinstance(source["text"], str):
+                source["text"] = source["text"][:1000]
+
+        conversation_data = {
+            "user": user_id,
+            "date": current_time,
+            "name": name,
+            "queries": [
+                {
+                    "prompt": question,
+                    "response": response,
+                    "thought": thought,
+                    "sources": sources,
+                    "tool_calls": tool_calls,
+                    "timestamp": current_time,
+                    "attachments": attachment_ids,
+                    "model_id": model_id,
+                }
+            ],
+        }
+
+        if api_key:
+            if agent_id:
+                conversation_data["agent_id"] = agent_id
+                if is_shared_usage:
+                    conversation_data["is_shared_usage"] = is_shared_usage
+                    conversation_data["shared_token"] = shared_token
+            agent = self.agents_collection.find_one({"key": api_key})
+            if agent:
+                conversation_data["api_key"] = agent["key"]
+
+        result = self.conversations_collection.insert_one(conversation_data)
+        return str(result.inserted_id)
+

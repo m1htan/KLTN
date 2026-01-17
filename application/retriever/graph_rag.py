@@ -64,6 +64,15 @@ class GraphRAG(BaseRetriever):
         except Exception:
             pass
 
+    def _rows_to_dicts(self, rows):
+        out = []
+        for r in (rows or []):
+            if hasattr(r, "data") and callable(getattr(r, "data")):
+                out.append(r.data())
+            else:
+                out.append(r)
+        return out
+
     def _query_graph_clause_first(self, query: str, law_id: Optional[str] = None) -> list[dict]:
         """
         Clause-first graph retrieval (chuẩn cho luật VN)
@@ -103,12 +112,13 @@ class GraphRAG(BaseRetriever):
             rows = self.neo4j.run_read(
                 cypher,
                 {
-                    "article_no": article_no,  # Đã thêm tham số này
+                    "law_id": law_id,
+                    "article_no": article_no,
                     "clause_no": clause_no,
                     "point_label": point_label,
                 },
             )
-            return [r.data() for r in rows]
+            return self._rows_to_dicts(rows)
 
         # ===== Case 2: Không có Khoản → fallback Article =====
         if article_no is not None:
@@ -133,7 +143,7 @@ class GraphRAG(BaseRetriever):
                 },
             )
 
-            return [r.data() for r in rows]
+            return self._rows_to_dicts(rows)
 
         return []
 
@@ -166,7 +176,7 @@ class GraphRAG(BaseRetriever):
             return []
 
         # resolve law_id
-        law_meta = resolve_law_meta(query)
+        law_meta = resolve_law_meta(qtext)
         law_id = law_meta.law_id if law_meta else None
 
         # validate nếu có law_id (tránh hỏi Điều/Khoản/Điểm không tồn tại)
@@ -190,13 +200,13 @@ class GraphRAG(BaseRetriever):
         # 2) Nếu Graph không có dữ liệu -> Fallback Vector
         if not graph_hits:
             logging.info("[GraphRAG] Graph returned 0 nodes → fallback vector")
-            return self._fallback_vector_only(analysis)
+            return self._fallback_vector_only(analysis, law_id=law_id)
 
         # 3) Tổng hợp context từ Graph
         context = self._assemble_context(analysis, graph_hits)
 
-        # 4) (Tuỳ chọn) Kèm article text từ Vector
-        article_text = self._fetch_article_text_from_vector(analysis)
+        # 4) Kèm article text từ Vector
+        article_text = self._fetch_article_text_from_vector(analysis, law_id=law_id)
         if article_text:
             context = f"{article_text}\n\n---\n\n{context}"
 
@@ -236,7 +246,7 @@ class GraphRAG(BaseRetriever):
             cypher,
             {"clause_no": analysis["clause_no"]},
         )
-        return [r.data() for r in rows]
+        return self._rows_to_dicts(rows)
 
     # -------------------------
     # CONTEXT ASSEMBLY
@@ -295,7 +305,7 @@ class GraphRAG(BaseRetriever):
     # -------------------------
     # VECTOR SUPPORT (OPTIONAL)
     # -------------------------
-    def _fetch_article_text_from_vector(self, q: dict) -> Optional[str]:
+    def _fetch_article_text_from_vector(self, q: dict, law_id: Optional[str] = None) -> Optional[str]:
         """
         Lấy full text Điều từ vector (k=1). Chỉ dùng để bổ sung context.
         """
@@ -319,6 +329,8 @@ class GraphRAG(BaseRetriever):
                 "chunk_type": "article",
                 "article_no": article_no,
             }
+            if law_id:
+                f["law_id"] = law_id
 
             docs = store.search(f"Điều {article_no}", k=1, filter=f)
             for d in docs:
@@ -327,7 +339,7 @@ class GraphRAG(BaseRetriever):
                     return f"[ARTICLE_TEXT]\n{txt.strip()}"
         return None
 
-    def _fallback_vector_only(self, q: dict) -> List[Dict[str, Any]]:
+    def _fallback_vector_only(self, q: dict, law_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Fallback trong trường hợp graph không có node (tránh trả rỗng).
         """
@@ -345,6 +357,9 @@ class GraphRAG(BaseRetriever):
                 settings.EMBEDDINGS_KEY,
             )
             f = {"doc_type": "law", "chunk_type": "article", "article_no": article_no}
+            if law_id:
+                f["law_id"] = law_id
+
             docs = store.search(f"Điều {article_no}", k=1, filter=f)
             for d in docs:
                 results.append({

@@ -3,6 +3,7 @@ import json
 import logging
 from typing import Any, Dict, Generator, List, Optional
 import time
+import re
 
 from flask import jsonify, make_response, Response
 from flask_restx import Namespace
@@ -146,13 +147,61 @@ class BaseAnswerResource:
     def _sse(self, payload: Dict[str, Any]) -> str:
         return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
+    def _ensure_conversation_id_for_early_end(
+        self,
+        conversation_id: Optional[str],
+        question: str,
+        message: str,
+        decoded_token: Dict[str, Any],
+        user_api_key: Optional[str],
+        model_id: Optional[str],
+        attachment_ids: Optional[List[str]] = None,
+        agent_id: Optional[str] = None,
+        is_shared_usage: bool = False,
+        shared_token: Optional[str] = None,
+    ) -> str:
+        if conversation_id:
+            return str(conversation_id)
+
+        # Always create minimal conversation record (per policy A)
+        cid = self.conversation_service.create_conversation_minimal(
+            question=question,
+            response=message,
+            decoded_token=decoded_token or {},
+            model_id=model_id or self.default_model_id,
+            sources=[],
+            tool_calls=[],
+            thought="",
+            api_key=user_api_key,
+            agent_id=agent_id,
+            is_shared_usage=is_shared_usage,
+            shared_token=shared_token,
+            attachment_ids=attachment_ids or [],
+            name="Blocked/Guarded",
+        )
+        return str(cid)
+
     def _early_end(self, message: str, conversation_id: Optional[str] = None) -> Generator[str, None, None]:
         # Always emit id then answer then end (to keep /api/answer stable)
         logger.info("[SSE] early_end start")
+        yield self._sse({"type": "start"})
         yield self._sse({"type": "id", "id": str(conversation_id or "")})
         yield self._sse({"type": "answer", "answer": message})
         yield self._sse({"type": "end"})
         logger.info("[SSE] early_end end")
+
+    def _looks_like_specific_legal_quote(self, text: str) -> bool:
+        if not text:
+            return False
+        has_struct = bool(
+            re.search(
+                r"\b(Điều|Khoản)\s+\d+|\bĐiểm\s+[a-zđ]\b",
+                text,
+                flags=re.IGNORECASE,
+            )
+        )
+        has_quote = ("\"" in text) or ("“" in text) or ("”" in text) or ("\n>" in text)
+        return has_struct and has_quote
 
     def complete_stream(
         self,
@@ -197,16 +246,162 @@ class BaseAnswerResource:
 
         # OVERRIDE ANSWER (LEGAL VALIDATION BLOCK)
         if override_answer:
-            yield from self._early_end(str(override_answer), conversation_id=None)
+            ensured_id = self._ensure_conversation_id_for_early_end(
+                conversation_id=conversation_id,
+                question=question,
+                message=str(override_answer),
+                decoded_token=decoded_token,
+                user_api_key=user_api_key,
+                model_id=model_id,
+                attachment_ids=attachment_ids,
+                agent_id=agent_id,
+                is_shared_usage=is_shared_usage,
+                shared_token=shared_token,
+            )
+            yield from self._early_end(str(override_answer), conversation_id=ensured_id)
             return
 
         yield self._sse({"type": "start"})
+
+        if agent is None:
+            msg = "Internal error: agent not initialized."
+            ensured_id = self._ensure_conversation_id_for_early_end(
+                conversation_id=conversation_id,
+                question=question,
+                message=msg,
+                decoded_token=decoded_token,
+                user_api_key=user_api_key,
+                model_id=model_id,
+                attachment_ids=attachment_ids,
+                agent_id=agent_id,
+                is_shared_usage=is_shared_usage,
+                shared_token=shared_token,
+            )
+            yield from self._early_end(msg, conversation_id=ensured_id)
+            return
+
+        if not conversation_id:
+            conversation_id = self._ensure_conversation_id_for_early_end(
+                conversation_id=None,
+                question=question,
+                message="(streaming)",
+                decoded_token=decoded_token,
+                user_api_key=user_api_key,
+                model_id=model_id,
+                attachment_ids=attachment_ids,
+                agent_id=agent_id,
+                is_shared_usage=is_shared_usage,
+                shared_token=shared_token,
+            )
+        yield self._sse({"type": "id", "id": str(conversation_id)})
 
         logger.info("[COMPLETE_STREAM] enter")
         yield self._sse({"type": "debug", "msg": "entered_complete_stream"})
 
         try:
             logger.info("[LEGAL_GUARD] start")
+
+            # If StreamProcessor.pre_fetch_docs already validated legal structure & filtered docs,
+            # skip the second-layer guard to avoid rule divergence / double blocking.
+            if getattr(agent, "legal_guard_prevalidated", False):
+                logger.info("[LEGAL_GUARD] skipped (prevalidated by StreamProcessor)")
+            else:
+                # LEGAL GUARD (NO HALLUCINATION / NO CROSS-LAW MIX)
+                parsed = analyze_legal_query(question)
+                law_meta = resolve_law_meta(question)
+
+                has_structured_ref = bool(parsed.get("has_structured_ref"))
+                article_no = parsed.get("article_no")
+                clause_no = parsed.get("clause_no")
+                point_label = parsed.get("point_label")
+
+                resolved_law_id = getattr(law_meta, "law_id", None)
+
+                if has_structured_ref and not resolved_law_id:
+                    logger.warning("[LEGAL_GUARD] blocked: structured_ref but cannot resolve law_id")
+                    msg = (
+                        "Câu hỏi của bạn có dạng Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
+                        "Vui lòng nêu rõ tên văn bản (ví dụ: Bộ luật Hình sự 100/2015/QH13) hoặc cung cấp số/ký hiệu để tra cứu chính xác."
+                    )
+                    ensured_id = self._ensure_conversation_id_for_early_end(
+                        conversation_id=conversation_id,
+                        question=question,
+                        message=msg,
+                        decoded_token=decoded_token,
+                        user_api_key=user_api_key,
+                        model_id=model_id,
+                        attachment_ids=attachment_ids,
+                        agent_id=agent_id,
+                        is_shared_usage=is_shared_usage,
+                        shared_token=shared_token,
+                    )
+                    yield from self._early_end(msg, conversation_id=ensured_id)
+                    return
+
+                if has_structured_ref and resolved_law_id:
+                    retrieved_docs = getattr(agent, "retrieved_docs", None) or []
+
+                    def _doc_matches(d: Dict[str, Any]) -> bool:
+                        meta = (d.get("metadata") or {})
+                        if meta.get("law_id") != resolved_law_id:
+                            return False
+                        if article_no is not None and meta.get("article_no") is not None:
+                            if int(meta.get("article_no")) != int(article_no):
+                                return False
+                        if clause_no is not None and meta.get("clause_no") is not None:
+                            if int(meta.get("clause_no")) != int(clause_no):
+                                return False
+                        if point_label is not None:
+                            pv = meta.get("point") or meta.get("point_label")
+                            if pv is not None and str(pv).lower() != str(point_label).lower():
+                                return False
+                        return True
+
+                    if not retrieved_docs:
+                        logger.warning("[LEGAL_GUARD] blocked: no retrieved_docs for structured query")
+                        msg = (
+                            "Hệ thống không truy xuất được đoạn luật phù hợp để trả lời chính xác cho Điều/Khoản/Điểm bạn hỏi. "
+                            "Vui lòng kiểm tra dữ liệu đã ingest chưa hoặc thử lại sau khi build lại index/graph."
+                        )
+                        ensured_id = self._ensure_conversation_id_for_early_end(
+                            conversation_id=conversation_id,
+                            question=question,
+                            message=msg,
+                            decoded_token=decoded_token,
+                            user_api_key=user_api_key,
+                            model_id=model_id,
+                            attachment_ids=attachment_ids,
+                            agent_id=agent_id,
+                            is_shared_usage=is_shared_usage,
+                            shared_token=shared_token,
+                        )
+                        yield from self._early_end(msg, conversation_id=ensured_id)
+                        return
+
+                    if retrieved_docs and not any(_doc_matches(d) for d in retrieved_docs):
+                        logger.warning(
+                            "[LEGAL_GUARD] blocked: retrieved_docs mismatch (law_id/article/clause/point). "
+                            f"resolved_law_id={resolved_law_id} article={article_no} clause={clause_no} point={point_label}"
+                        )
+                        msg = (
+                            "Không tìm thấy nội dung khớp đúng Điều/Khoản/Điểm trong văn bản bạn nêu (theo dữ liệu hệ thống hiện tại). "
+                            "Hệ thống sẽ không suy diễn từ luật khác. "
+                            "Vui lòng kiểm tra lại số Điều/Khoản/Điểm hoặc kiểm tra dữ liệu ingest/metadata (law_id, article_no, clause_no, point)."
+                        )
+                        ensured_id = self._ensure_conversation_id_for_early_end(
+                            conversation_id=conversation_id,
+                            question=question,
+                            message=msg,
+                            decoded_token=decoded_token,
+                            user_api_key=user_api_key,
+                            model_id=model_id,
+                            attachment_ids=attachment_ids,
+                            agent_id=agent_id,
+                            is_shared_usage=is_shared_usage,
+                            shared_token=shared_token,
+                        )
+                        yield from self._early_end(msg, conversation_id=ensured_id)
+                        return
 
             # LEGAL GUARD (NO HALLUCINATION / NO CROSS-LAW MIX)
             parsed = analyze_legal_query(question)
@@ -225,7 +420,19 @@ class BaseAnswerResource:
                     "Câu hỏi của bạn có dạng Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
                     "Vui lòng nêu rõ tên văn bản (ví dụ: Bộ luật Hình sự 100/2015/QH13) hoặc cung cấp số/ký hiệu để tra cứu chính xác."
                 )
-                yield from self._early_end(msg, conversation_id=None)
+                ensured_id = self._ensure_conversation_id_for_early_end(
+                    conversation_id=conversation_id,
+                    question=question,
+                    message=msg,
+                    decoded_token=decoded_token,
+                    user_api_key=user_api_key,
+                    model_id=model_id,
+                    attachment_ids=attachment_ids,
+                    agent_id=agent_id,
+                    is_shared_usage=is_shared_usage,
+                    shared_token=shared_token,
+                )
+                yield from self._early_end(msg, conversation_id=ensured_id)
                 return
 
             if has_structured_ref and resolved_law_id:
@@ -256,7 +463,19 @@ class BaseAnswerResource:
                         "Hệ thống không truy xuất được đoạn luật phù hợp để trả lời chính xác cho Điều/Khoản/Điểm bạn hỏi. "
                         "Vui lòng kiểm tra dữ liệu đã ingest chưa hoặc thử lại sau khi build lại index/graph."
                     )
-                    yield from self._early_end(msg, conversation_id=None)
+                    ensured_id = self._ensure_conversation_id_for_early_end(
+                        conversation_id=conversation_id,
+                        question=question,
+                        message=msg,
+                        decoded_token=decoded_token,
+                        user_api_key=user_api_key,
+                        model_id=model_id,
+                        attachment_ids=attachment_ids,
+                        agent_id=agent_id,
+                        is_shared_usage=is_shared_usage,
+                        shared_token=shared_token,
+                    )
+                    yield from self._early_end(msg, conversation_id=ensured_id)
                     return
 
                 # Nếu có docs mà không doc nào match -> chặn
@@ -273,16 +492,19 @@ class BaseAnswerResource:
                         "Hệ thống sẽ không suy diễn từ luật khác. "
                         "Vui lòng kiểm tra lại số Điều/Khoản/Điểm hoặc kiểm tra dữ liệu ingest/metadata (law_id, article_no, clause_no, point)."
                     )
-                    yield from self._early_end(msg, conversation_id=None)
-                    return
-
-                # Nếu không có retrieved_docs thì cũng chặn với structured query (tránh model tự bịa)
-                if not retrieved_docs:
-                    msg = (
-                        "Hệ thống không truy xuất được đoạn luật phù hợp để trả lời chính xác cho Điều/Khoản/Điểm bạn hỏi. "
-                        "Vui lòng kiểm tra dữ liệu đã ingest chưa hoặc thử lại sau khi build lại index/graph."
+                    ensured_id = self._ensure_conversation_id_for_early_end(
+                        conversation_id=conversation_id,
+                        question=question,
+                        message=msg,
+                        decoded_token=decoded_token,
+                        user_api_key=user_api_key,
+                        model_id=model_id,
+                        attachment_ids=attachment_ids,
+                        agent_id=agent_id,
+                        is_shared_usage=is_shared_usage,
+                        shared_token=shared_token,
                     )
-                    yield from self._early_end(msg, conversation_id=None)
+                    yield from self._early_end(msg, conversation_id=ensured_id)
                     return
 
             logger.info("[LEGAL_GUARD] pass")
@@ -349,6 +571,44 @@ class BaseAnswerResource:
                 }
                 data = json.dumps(structured_data)
                 yield f"data: {data}\n\n"
+            # A3 FIX: fallback sources if agent didn't emit any
+            if not source_log_docs:
+                fallback_docs = getattr(agent, "retrieved_docs", None) if agent else None
+                if fallback_docs:
+                    truncated_sources = []
+                    for d in fallback_docs:
+                        if not isinstance(d, dict):
+                            continue
+                        src = d.copy()
+                        if "text" in src and isinstance(src["text"], str):
+                            src["text"] = src["text"][:100].strip() + "..."
+                        truncated_sources.append(src)
+
+                    if truncated_sources:
+                        source_log_docs = fallback_docs  # giữ bản đầy đủ để save/log
+                        yield self._sse({"type": "source", "source": truncated_sources})
+                        logger.info("[A3] fallback sources used, count=%d", len(truncated_sources))
+            # --- A3 HARD STOP: don't allow quoting Điều/Khoản when no sources ---
+            if (not source_log_docs) and self._looks_like_specific_legal_quote(response_full):
+                msg = (
+                    "Mình chưa truy xuất được đoạn văn bản trong kho để đối chiếu nên sẽ không trích nguyên văn Điều/Khoản. "
+                    "Bạn vui lòng cung cấp số hiệu/tên văn bản chính xác (hoặc dán nội dung Điều/Khoản) để mình trả lời có căn cứ."
+                )
+                ensured_id = self._ensure_conversation_id_for_early_end(
+                    conversation_id=conversation_id,
+                    question=question,
+                    message=msg,
+                    decoded_token=decoded_token,
+                    user_api_key=user_api_key,
+                    model_id=model_id,
+                    attachment_ids=attachment_ids,
+                    agent_id=agent_id,
+                    is_shared_usage=is_shared_usage,
+                    shared_token=shared_token,
+                )
+                yield from self._early_end(msg, conversation_id=ensured_id)
+                return
+
             if isNoneDoc:
                 for doc in source_log_docs:
                     doc["source"] = "None"
@@ -406,10 +666,19 @@ class BaseAnswerResource:
                             exc_info=True,
                         )
             else:
-                conversation_id = None
-            id_data = {"type": "id", "id": str(conversation_id)}
-            data = json.dumps(id_data)
-            yield f"data: {data}\n\n"
+                # Không save full conversation nhưng vẫn cần ID thật để UI bind state
+                conversation_id = self._ensure_conversation_id_for_early_end(
+                    conversation_id=conversation_id,
+                    question=question,
+                    message=response_full or "(no_response)",
+                    decoded_token=decoded_token,
+                    user_api_key=user_api_key,
+                    model_id=model_id,
+                    attachment_ids=attachment_ids,
+                    agent_id=agent_id,
+                    is_shared_usage=is_shared_usage,
+                    shared_token=shared_token,
+                )
 
             log_data = {
                 "action": "stream_answer",

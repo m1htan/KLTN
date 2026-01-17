@@ -17,30 +17,27 @@ def call_chatbot_http(
     question: str,
     active_docs: Optional[str] = None,
     timeout: int = 60,
-) -> str:
+) -> Dict[str, Any]:
     """
     Mặc định bám theo format phổ biến bạn từng dùng:
     POST {base_url} với JSON: { "question": "...", "active_docs": "local-folder" }
 
     Nếu hệ thống bạn khác format, sửa chỗ này là xong.
     """
-    payload: Dict[str, Any] = {"question": question}
+    payload = {"question": question}
     if active_docs:
         payload["active_docs"] = active_docs
 
     r = requests.post(base_url, json=payload, timeout=timeout)
     r.raise_for_status()
 
-    # Chấp nhận 2 kiểu:
-    # - { "answer": "..." }
-    # - plain text
     try:
         data = r.json()
-        if isinstance(data, dict) and "answer" in data:
-            return str(data["answer"])
-        return json.dumps(data, ensure_ascii=False)
+        if isinstance(data, dict):
+            return data
+        return {"answer": json.dumps(data, ensure_ascii=False)}
     except Exception:
-        return r.text
+        return {"answer": r.text}
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -56,17 +53,19 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     pass_n = 0
     for c in cases:
-        answer = call_chatbot_http(
+        resp = call_chatbot_http(
             base_url=args.endpoint,
             question=c.question,
             active_docs=c.active_docs,
             timeout=args.timeout,
         )
-        s = score_answer(answer, c.expected)
+        answer = str(resp.get("answer", ""))
+        s = score_answer(resp, c.expected)
         rows.append(
             {
                 "case": asdict(c),
                 "answer": answer,
+                "raw": resp,
                 "score": s.score,
                 "max_score": s.max_score,
                 "passed": s.passed,

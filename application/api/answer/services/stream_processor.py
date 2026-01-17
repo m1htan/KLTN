@@ -113,6 +113,7 @@ class StreamProcessor(BaseAnswerResource):
         self._required_tool_actions: Optional[Dict[str, Set[Optional[str]]]] = None
         self.compressed_summary: Optional[str] = None
         self.compressed_summary_tokens: int = 0
+        self._legal_guard_prevalidated: bool = False
 
     def initialize(self):
         """Initialize all required components for processing"""
@@ -122,6 +123,36 @@ class StreamProcessor(BaseAnswerResource):
         self._configure_retriever()
         self._load_conversation_history()
         self._process_attachments()
+
+    def _normalize_history_payload(self, raw: Any) -> list:
+        """
+        Accept both:
+        - raw is a JSON string like "[]", "[{...}]"
+        - raw is already a list (preferred)
+        Return a list; fallback to [] on any malformed input.
+        """
+        if raw is None:
+            return []
+
+        # Case 1: raw is already a list (frontend sends correct JSON array)
+        if isinstance(raw, list):
+            return raw
+
+        # Case 2: raw is a JSON string (backward compatible with existing clients/tests)
+        if isinstance(raw, str):
+            s = raw.strip()
+            if not s:
+                return []
+            try:
+                parsed = json.loads(s)
+                return parsed if isinstance(parsed, list) else []
+            except Exception:
+                logger.warning("[HISTORY] invalid JSON string history payload, fallback []")
+                return []
+
+        # Unknown type
+        logger.warning("[HISTORY] unsupported history type=%s, fallback []", type(raw).__name__)
+        return []
 
     def _load_conversation_history(self):
         """Load conversation history either from DB or request"""
@@ -142,9 +173,10 @@ class StreamProcessor(BaseAnswerResource):
                     for query in conversation.get("queries", [])
                 ]
         else:
-            self.history = limit_chat_history(
-                json.loads(self.data.get("history", "[]")), model_id=self.model_id
-            )
+            raw_history = self.data.get("history", [])
+            history_list = self._normalize_history_payload(raw_history)
+            self.history = limit_chat_history(history_list, model_id=self.model_id)
+
 
     def _handle_compression(self, conversation: Dict[str, Any]):
         """
@@ -599,6 +631,18 @@ class StreamProcessor(BaseAnswerResource):
 
             docs = retriever.search(question)
 
+            # =====================================================
+            # 4b) If GraphRAG returns a graph_error doc -> short-circuit safely
+            # =====================================================
+            if docs and isinstance(docs, list):
+                first = docs[0] if len(docs) > 0 else None
+                if isinstance(first, dict):
+                    meta0 = first.get("metadata") or {}
+                    if meta0.get("chunk_type") == "graph_error":
+                        safe_msg = first.get("text") or "Không tìm thấy cấu trúc pháp lý tương ứng trong dữ liệu hiện có."
+                        logger.info("[LEGAL-GUARD] graph_error returned by retriever -> override answer")
+                        return safe_msg, None
+
             logger.info(f"[RETRIEVER] docs={docs}")
             logger.info(f"Pre-fetch retrieved {len(docs) if docs else 0} documents")
 
@@ -612,25 +656,57 @@ class StreamProcessor(BaseAnswerResource):
             def _meta(doc):
                 return (doc.get("metadata") or {}) if isinstance(doc, dict) else {}
 
+            def _to_int(v):
+                if v is None:
+                    return None
+                if isinstance(v, int):
+                    return v
+                try:
+                    s = str(v).strip()
+                    if s == "":
+                        return None
+                    return int(s)
+                except Exception:
+                    return None
+
+            def _to_lower(v):
+                if v is None:
+                    return None
+                try:
+                    return str(v).strip().lower()
+                except Exception:
+                    return None
+
+            want_article = _to_int(article_no)
+            want_clause = _to_int(clause_no)
+            want_point = _to_lower(point_label)
+
             filtered = []
             for d in docs:
                 meta = _meta(d)
+
+                got_law_id = meta.get("law_id")
+                got_article = _to_int(meta.get("article_no"))
+                got_clause = _to_int(meta.get("clause_no"))
+                got_point = _to_lower(meta.get("point_label")) or _to_lower(meta.get("point"))
+
                 if resolved_law_id:
-                    if meta.get("law_id") != resolved_law_id:
+                    if got_law_id != resolved_law_id:
                         continue
-                if article_no is not None and meta.get("article_no") != int(article_no):
+
+                if want_article is not None and got_article != want_article:
                     continue
-                if clause_no is not None:
-                    # clause chunk may store clause_no or not; only accept if matches when present
-                    if meta.get("clause_no") is not None and meta.get("clause_no") != int(clause_no):
+
+                if want_clause is not None:
+                    # only enforce if chunk has clause_no, otherwise allow (article-level chunk)
+                    if got_clause is not None and got_clause != want_clause:
                         continue
-                if point_label is not None:
-                    # accept only point chunk or clause chunk containing points;
-                    # if meta has point/point_label, enforce match
-                    if meta.get("point") and str(meta.get("point")).lower() != point_label:
+
+                if want_point is not None:
+                    # only enforce if chunk declares point/point_label
+                    if got_point is not None and got_point != want_point:
                         continue
-                    if meta.get("point_label") and str(meta.get("point_label")).lower() != point_label:
-                        continue
+
                 filtered.append(d)
 
             # Nếu lọc quá gắt mà rỗng -> fail an toàn, KHÔNG trả luật khác
@@ -672,6 +748,9 @@ class StreamProcessor(BaseAnswerResource):
 
             docs_together = "\n\n".join(docs_with_filenames)
             logger.info(f"Pre-fetch docs_together size: {len(docs_together)} chars (capped)")
+
+            # Mark legal guard prevalidated for downstream complete_stream
+            self._legal_guard_prevalidated = True
 
             return docs_together, final_docs
 
@@ -946,5 +1025,8 @@ class StreamProcessor(BaseAnswerResource):
 
         agent.conversation_id = self.conversation_id
         agent.initial_user_id = self.initial_user_id
+
+        # Mark that legal guard already ran in StreamProcessor.pre_fetch_docs()
+        agent.legal_guard_prevalidated = bool(self._legal_guard_prevalidated)
 
         return agent
