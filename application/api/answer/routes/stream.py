@@ -107,6 +107,7 @@ class StreamResource(Resource, BaseAnswerResource):
                     should_save_conversation=False,
                     model_id=processor.model_id,
                     override_answer=docs_together,
+                    block_meta=getattr(processor, "last_block_meta", None),
                 )
 
                 resp = Response(_wrap_sse(gen), mimetype="text/event-stream")

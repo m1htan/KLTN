@@ -114,6 +114,11 @@ class StreamProcessor(BaseAnswerResource):
         self.compressed_summary: Optional[str] = None
         self.compressed_summary_tokens: int = 0
         self._legal_guard_prevalidated: bool = False
+        # For passing block metadata to BaseAnswerResource.complete_stream() (Option B)
+        self.last_block_meta: Optional[Dict[str, Any]] = None
+
+    def _set_block_meta(self, *, stage: str, block_reason: str):
+        self.last_block_meta = {"stage": stage, "block_reason": block_reason}
 
     def initialize(self):
         """Initialize all required components for processing"""
@@ -507,6 +512,7 @@ class StreamProcessor(BaseAnswerResource):
 
     def pre_fetch_docs(self, question: str) -> tuple[Optional[str], Optional[list]]:
         """Pre-fetch documents for template rendering before agent creation"""
+        self.last_block_meta = None
 
         logger.info(
             f"[DEBUG] isNoneDoc={self.data.get('isNoneDoc')} | active_docs={self.source.get('active_docs')}"
@@ -545,6 +551,7 @@ class StreamProcessor(BaseAnswerResource):
             )
             logger.info(
                 f"[LEGAL-GUARD] unresolved law_id, has_structured_ref={has_structured_ref}, q_norm={norm_text(question)}")
+            self._set_block_meta(stage="pre_fetch_docs", block_reason="STRUCTURED_REF_LAW_UNRESOLVED")
             return safe_msg, None
 
         # =====================================================
@@ -574,17 +581,20 @@ class StreamProcessor(BaseAnswerResource):
                     if len(matched) == 1:
                         resolved_law_id = matched[0]
                     elif len(matched) > 1:
+                        self._set_block_meta(stage="pre_fetch_docs", block_reason="AMBIGUOUS_LAW_ID_CANDIDATES")
                         return (
                             f"Có nhiều văn bản Luật Doanh nghiệp trong hệ thống đều có Điều {article_no}. "
                             "Vui lòng nêu số hiệu (ví dụ 59/2020/QH14 hoặc 76/2025/QH15) để xác định đúng văn bản."
                         ), None
                     else:
+                        self._set_block_meta(stage="pre_fetch_docs", block_reason="ARTICLE_NOT_FOUND_IN_CANDIDATES")
                         return (
                             f"Không tìm thấy Điều {article_no} trong Luật Doanh nghiệp (59/2020/QH14, 76/2025/QH15) theo dữ liệu hiện có. "
                             "Vui lòng kiểm tra lại số điều hoặc quá trình nạp dữ liệu."
                         ), None
 
                 # Nếu không phải case đặc biệt, giữ logic cũ hoặc trả về yêu cầu nêu số hiệu
+                self._set_block_meta(stage="pre_fetch_docs", block_reason="ARTICLE_NOT_FOUND")
                 return (
                     f"Không tìm thấy Điều {article_no} trong văn bản đã xác định. "
                     "Bạn vui lòng cung cấp số hiệu (ví dụ 59/2020/QH14) để mình tra đúng văn bản."
@@ -611,6 +621,7 @@ class StreamProcessor(BaseAnswerResource):
                         "Vui lòng kiểm tra lại khoản hoặc đảm bảo dữ liệu đã được nạp đúng."
                     )
                     logger.info("[LEGAL-GUARD] clause not found in graph")
+                    self._set_block_meta(stage="pre_fetch_docs", block_reason="CLAUSE_NOT_FOUND_IN_GRAPH")
                     return safe_msg, None
 
                 logger.info(
@@ -641,6 +652,7 @@ class StreamProcessor(BaseAnswerResource):
                     if meta0.get("chunk_type") == "graph_error":
                         safe_msg = first.get("text") or "Không tìm thấy cấu trúc pháp lý tương ứng trong dữ liệu hiện có."
                         logger.info("[LEGAL-GUARD] graph_error returned by retriever -> override answer")
+                        self._set_block_meta(stage="pre_fetch_docs", block_reason="RETRIEVER_GRAPH_ERROR")
                         return safe_msg, None
 
             logger.info(f"[RETRIEVER] docs={docs}")
@@ -716,6 +728,7 @@ class StreamProcessor(BaseAnswerResource):
                     "Hệ thống sẽ không suy diễn từ luật khác. Vui lòng kiểm tra lại câu hỏi hoặc dữ liệu ingest."
                 )
                 logger.info("[LEGAL-GUARD] retrieval mismatch after filtering")
+                self._set_block_meta(stage="pre_fetch_docs", block_reason="RETRIEVAL_MISMATCH_AFTER_FILTER")
                 return safe_msg, None
 
             # Giữ lại docs đã lọc (nếu có), nếu không thì dùng docs gốc (trường hợp không có structured ref)
@@ -756,6 +769,7 @@ class StreamProcessor(BaseAnswerResource):
 
         except Exception as e:
             logger.error(f"Failed to pre-fetch docs: {str(e)}", exc_info=True)
+            self._set_block_meta(stage="pre_fetch_docs", block_reason="PREFETCH_EXCEPTION")
             return None, None
 
     def pre_fetch_tools(self) -> Optional[Dict[str, Any]]:

@@ -4,6 +4,7 @@ import logging
 from typing import Any, Dict, Generator, List, Optional
 import time
 import re
+import uuid
 
 from flask import jsonify, make_response, Response
 from flask_restx import Namespace
@@ -147,6 +148,27 @@ class BaseAnswerResource:
     def _sse(self, payload: Dict[str, Any]) -> str:
         return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
+    def _new_debug_id(self) -> str:
+        # Stable, searchable id for correlating client-visible failures with backend logs
+        return uuid.uuid4().hex
+
+    def _log_block(self, *, debug_id: str, stage: str, block_reason: str, conversation_id: Optional[str], question: str):
+        # IMPORTANT: Option B => only log reason/stage; client sees only debug_id
+        try:
+            q = (question or "").strip().replace("\n", " ")
+            if len(q) > 200:
+                q = q[:200] + "..."
+        except Exception:
+            q = ""
+        logger.warning(
+            "[BLOCK] debug_id=%s stage=%s reason=%s conversation_id=%s question=%s",
+            debug_id,
+            stage,
+            block_reason,
+            str(conversation_id or ""),
+            q,
+        )
+
     def _ensure_conversation_id_for_early_end(
         self,
         conversation_id: Optional[str],
@@ -181,12 +203,21 @@ class BaseAnswerResource:
         )
         return str(cid)
 
-    def _early_end(self, message: str, conversation_id: Optional[str] = None) -> Generator[str, None, None]:
+    def _early_end(
+        self,
+        message: str,
+        conversation_id: Optional[str] = None,
+        debug_id: Optional[str] = None,
+    ) -> Generator[str, None, None]:
         # Always emit id then answer then end (to keep /api/answer stable)
         logger.info("[SSE] early_end start")
         yield self._sse({"type": "start"})
         yield self._sse({"type": "id", "id": str(conversation_id or "")})
-        yield self._sse({"type": "answer", "answer": message})
+        payload = {"type": "answer", "answer": message}
+        # Option B: only return debug_id to client (no reason/stage)
+        if debug_id:
+            payload["debug_id"] = str(debug_id)
+        yield self._sse(payload)
         yield self._sse({"type": "end"})
         logger.info("[SSE] early_end end")
 
@@ -219,6 +250,7 @@ class BaseAnswerResource:
         shared_token: Optional[str] = None,
         model_id: Optional[str] = None,
         override_answer=None,
+        block_meta: Optional[Dict[str, Any]] = None,
     ) -> Generator[str, None, None]:
         """
         Generator function that streams the complete conversation response.
@@ -246,6 +278,21 @@ class BaseAnswerResource:
 
         # OVERRIDE ANSWER (LEGAL VALIDATION BLOCK)
         if override_answer:
+            # Option B: only expose debug_id to client; log reason/stage in backend
+            debug_id = self._new_debug_id()
+            stage = "override_answer"
+            block_reason = "OVERRIDE_ANSWER"
+            if isinstance(block_meta, dict):
+                stage = str(block_meta.get("stage") or stage)
+                block_reason = str(block_meta.get("block_reason") or block_reason)
+            self._log_block(
+                debug_id=debug_id,
+                stage=stage,
+                block_reason=block_reason,
+                conversation_id=conversation_id,
+                question=question,
+            )
+
             ensured_id = self._ensure_conversation_id_for_early_end(
                 conversation_id=conversation_id,
                 question=question,
@@ -258,13 +305,21 @@ class BaseAnswerResource:
                 is_shared_usage=is_shared_usage,
                 shared_token=shared_token,
             )
-            yield from self._early_end(str(override_answer), conversation_id=ensured_id)
+            yield from self._early_end(str(override_answer), conversation_id=ensured_id, debug_id=debug_id)
             return
 
         yield self._sse({"type": "start"})
 
         if agent is None:
             msg = "Internal error: agent not initialized."
+            debug_id = self._new_debug_id()
+            self._log_block(
+                debug_id=debug_id,
+                stage="complete_stream",
+                block_reason="AGENT_NOT_INITIALIZED",
+                conversation_id=conversation_id,
+                question=question,
+            )
             ensured_id = self._ensure_conversation_id_for_early_end(
                 conversation_id=conversation_id,
                 question=question,
@@ -277,7 +332,7 @@ class BaseAnswerResource:
                 is_shared_usage=is_shared_usage,
                 shared_token=shared_token,
             )
-            yield from self._early_end(msg, conversation_id=ensured_id)
+            yield from self._early_end(msg, conversation_id=ensured_id, debug_id=debug_id)
             return
 
         if not conversation_id:
@@ -323,6 +378,14 @@ class BaseAnswerResource:
                         "Câu hỏi của bạn có dạng Điều/Khoản/Điểm nhưng chưa xác định được văn bản luật cụ thể trong hệ thống. "
                         "Vui lòng nêu rõ tên văn bản (ví dụ: Bộ luật Hình sự 100/2015/QH13) hoặc cung cấp số/ký hiệu để tra cứu chính xác."
                     )
+                    debug_id = self._new_debug_id()
+                    self._log_block(
+                        debug_id=debug_id,
+                        stage="legal_guard",
+                        block_reason="STRUCTURED_REF_LAW_UNRESOLVED",
+                        conversation_id=conversation_id,
+                        question=question,
+                    )
                     ensured_id = self._ensure_conversation_id_for_early_end(
                         conversation_id=conversation_id,
                         question=question,
@@ -335,7 +398,7 @@ class BaseAnswerResource:
                         is_shared_usage=is_shared_usage,
                         shared_token=shared_token,
                     )
-                    yield from self._early_end(msg, conversation_id=ensured_id)
+                    yield from self._early_end(msg, conversation_id=ensured_id, debug_id=debug_id)
                     return
 
                 if has_structured_ref and resolved_law_id:
@@ -363,6 +426,14 @@ class BaseAnswerResource:
                             "Hệ thống không truy xuất được đoạn luật phù hợp để trả lời chính xác cho Điều/Khoản/Điểm bạn hỏi. "
                             "Vui lòng kiểm tra dữ liệu đã ingest chưa hoặc thử lại sau khi build lại index/graph."
                         )
+                        debug_id = self._new_debug_id()
+                        self._log_block(
+                            debug_id=debug_id,
+                            stage="legal_guard",
+                            block_reason="STRUCTURED_REF_NO_RETRIEVED_DOCS",
+                            conversation_id=conversation_id,
+                            question=question,
+                        )
                         ensured_id = self._ensure_conversation_id_for_early_end(
                             conversation_id=conversation_id,
                             question=question,
@@ -375,7 +446,7 @@ class BaseAnswerResource:
                             is_shared_usage=is_shared_usage,
                             shared_token=shared_token,
                         )
-                        yield from self._early_end(msg, conversation_id=ensured_id)
+                        yield from self._early_end(msg, conversation_id=ensured_id, debug_id=debug_id)
                         return
 
                     if retrieved_docs and not any(_doc_matches(d) for d in retrieved_docs):
@@ -388,6 +459,14 @@ class BaseAnswerResource:
                             "Hệ thống sẽ không suy diễn từ luật khác. "
                             "Vui lòng kiểm tra lại số Điều/Khoản/Điểm hoặc kiểm tra dữ liệu ingest/metadata (law_id, article_no, clause_no, point)."
                         )
+                        debug_id = self._new_debug_id()
+                        self._log_block(
+                            debug_id=debug_id,
+                            stage="legal_guard",
+                            block_reason="STRUCTURED_REF_RETRIEVED_DOCS_MISMATCH",
+                            conversation_id=conversation_id,
+                            question=question,
+                        )
                         ensured_id = self._ensure_conversation_id_for_early_end(
                             conversation_id=conversation_id,
                             question=question,
@@ -400,7 +479,7 @@ class BaseAnswerResource:
                             is_shared_usage=is_shared_usage,
                             shared_token=shared_token,
                         )
-                        yield from self._early_end(msg, conversation_id=ensured_id)
+                        yield from self._early_end(msg, conversation_id=ensured_id, debug_id=debug_id)
                         return
 
             # LEGAL GUARD (NO HALLUCINATION / NO CROSS-LAW MIX)
@@ -594,6 +673,14 @@ class BaseAnswerResource:
                     "Mình chưa truy xuất được đoạn văn bản trong kho để đối chiếu nên sẽ không trích nguyên văn Điều/Khoản. "
                     "Bạn vui lòng cung cấp số hiệu/tên văn bản chính xác (hoặc dán nội dung Điều/Khoản) để mình trả lời có căn cứ."
                 )
+                debug_id = self._new_debug_id()
+                self._log_block(
+                    debug_id=debug_id,
+                    stage="answer_postcheck",
+                    block_reason="LEGAL_QUOTE_WITHOUT_SOURCES",
+                    conversation_id=conversation_id,
+                    question=question,
+                )
                 ensured_id = self._ensure_conversation_id_for_early_end(
                     conversation_id=conversation_id,
                     question=question,
@@ -606,7 +693,7 @@ class BaseAnswerResource:
                     is_shared_usage=is_shared_usage,
                     shared_token=shared_token,
                 )
-                yield from self._early_end(msg, conversation_id=ensured_id)
+                yield from self._early_end(msg, conversation_id=ensured_id, debug_id=debug_id)
                 return
 
             if isNoneDoc:
@@ -781,6 +868,7 @@ class BaseAnswerResource:
         stream_ended = False
         is_structured = False
         schema_info = None
+        debug_id = None
 
         for line in stream:
             try:
@@ -791,10 +879,15 @@ class BaseAnswerResource:
                     conversation_id = event["id"]
                 elif event["type"] == "answer":
                     response_full += event["answer"]
+                    # Option B: capture debug_id if present
+                    if isinstance(event, dict) and event.get("debug_id"):
+                        debug_id = event.get("debug_id")
                 elif event["type"] == "structured_answer":
                     response_full = event["answer"]
                     is_structured = True
                     schema_info = event.get("schema")
+                    if isinstance(event, dict) and event.get("debug_id"):
+                        debug_id = event.get("debug_id")
                 elif event["type"] == "source":
                     source_log_docs = event["source"]
                 elif event["type"] == "tool_calls":
@@ -822,7 +915,14 @@ class BaseAnswerResource:
         )
 
         if is_structured:
-            result = result + ({"structured": True, "schema": schema_info},)
+            extra = {"structured": True, "schema": schema_info}
+            if debug_id:
+                extra["debug_id"] = debug_id
+            result = result + (extra,)
+        else:
+            # Keep backward compatibility: only append 7th element when debug_id exists
+            if debug_id:
+                result = result + ({"debug_id": debug_id},)
         return result
 
     def error_stream_generate(self, err_response):

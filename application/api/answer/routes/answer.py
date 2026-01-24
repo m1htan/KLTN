@@ -95,6 +95,7 @@ class AnswerResource(Resource, BaseAnswerResource):
                     should_save_conversation=False,  # tránh save normal conversation, early_end/A1 sẽ lo id tối thiểu
                     model_id=processor.model_id,
                     override_answer=docs_together,
+                    block_meta=getattr(processor, "last_block_meta", None),
                 )
                 stream_result = self.process_response_stream(stream)
 
@@ -114,6 +115,9 @@ class AnswerResource(Resource, BaseAnswerResource):
                     "tool_calls": tool_calls or [],
                     "thought": thought or "",
                 }
+                # Option B: trả debug_id cho client, không trả reason/stage
+                if isinstance(structured_info, dict) and structured_info.get("debug_id"):
+                    result["debug_id"] = structured_info.get("debug_id")
                 if structured_info:
                     result.update(structured_info)
 
