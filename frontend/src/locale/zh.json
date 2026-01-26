@@ -3,8 +3,8 @@
   "chat": "聊天",
   "chats": "聊天",
   "newChat": "新聊天",
-  "inputPlaceholder": "DocsGPT 如何帮助您？",
-  "tagline": "DocsGPT 使用 GenAI, 请使用来源审核关键信息.",
+  "inputPlaceholder": "Custom App 如何帮助您？",
+  "tagline": "Custom App 使用 GenAI, 请使用来源审核关键信息.",
   "sourceDocs": "源",
   "none": "无",
   "cancel": "取消",
@@ -14,8 +14,8 @@
   "manageAgents": "管理代理",
   "demo": [
     {
-      "header": "了解 DocsGPT",
-      "query": "DocsGPT 是什么"
+      "header": "了解 Custom App",
+      "query": "Custom App 是什么"
     },
     {
       "header": "总结文档",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "上传新文档",
-      "select": "选择如何将文档上传到 DocsGPT",
+      "select": "选择如何将文档上传到 Custom App",
       "selectSource": "选择添加源的方式",
       "selectedFiles": "已选择的文件",
       "noFilesSelected": "未选择文件",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "添加提示",
-      "addDescription": "添加自定义提示并保存到 DocsGPT",
+      "addDescription": "添加自定义提示并保存到 Custom App",
       "editPrompt": "编辑提示",
-      "editDescription": "编辑自定义提示并保存到 DocsGPT",
+      "editDescription": "编辑自定义提示并保存到 Custom App",
       "promptName": "提示名称",
       "promptText": "提示文本",
       "save": "保存",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "使用创建",
-    "button": "开始使用 DocsGPT",
-    "meta": "DocsGPT 使用 GenAI，请使用资源查看关键信息。"
+    "button": "开始使用 Custom App",
+    "meta": "Custom App 使用 GenAI，请使用资源查看关键信息。"
   },
   "convTile": {
     "share": "分享",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "代理",
-    "description": "发现并创建结合指令、额外知识和任意技能组合的DocsGPT自定义版本",
+    "description": "发现并创建结合指令、额外知识和任意技能组合的Custom App自定义版本",
     "newAgent": "新建代理",
     "backToAll": "返回所有代理",
     "searchPlaceholder": "搜索...",
@@ -496,14 +496,14 @@
     "tryDifferentSearch": "请尝试不同的搜索词",
     "filters": {
       "all": "全部",
-      "byDocsGPT": "由DocsGPT提供",
       "byMe": "我的",
-      "shared": "与我共享"
+      "shared": "与我共享",
+      "byTemplates": "Templates"
     },
     "sections": {
       "template": {
-        "title": "由DocsGPT提供",
-        "description": "DocsGPT提供的代理",
+        "title": "Templates",
+        "description": "Template agents",
         "emptyState": "未找到模板代理。"
       },
       "user": {

@@ -130,13 +130,13 @@ export const SharedConversation = () => {
   return (
     <>
       <DocumentHead
-        title={`DocsGPT | ${title}`}
-        description="Shared conversations with DocsGPT"
+        title={`Custom App | ${title}`}
+        description="Shared conversations"
         ogTitle={title}
-        ogDescription="Shared conversations with DocsGPT"
+        ogDescription="Shared conversations"
         twitterCard="summary_large_image"
         twitterTitle={title}
-        twitterDescription="Shared conversations with DocsGPT"
+        twitterDescription="Shared conversations"
       />
       <div className="dark:bg-raisin-black flex h-full flex-col items-center justify-between gap-2 overflow-y-hidden">
         <div className="dark:border-b-silver w-full max-w-[1200px] border-b p-2 md:w-9/12 lg:w-8/12 xl:w-8/12 2xl:w-6/12">
@@ -146,7 +146,7 @@ export const SharedConversation = () => {
           <h2 className="font-semi-bold text-chinese-black dark:text-chinese-silver text-base">
             {t('sharedConv.subtitle')}{' '}
             <a href="/" className="text-[#007DFF]">
-              DocsGPT
+              Custom App
             </a>
           </h2>
           <h2 className="font-semi-bold text-chinese-black dark:text-chinese-silver text-base">

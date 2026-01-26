@@ -3,8 +3,8 @@
   "chat": "チャット",
   "chats": "チャット",
   "newChat": "新しいチャット",
-  "inputPlaceholder": "DocsGPTはどのようにお手伝いできますか？",
-  "tagline": "DocsGPTはGenAIを使用しています。重要な情報はソースで確認してください。",
+  "inputPlaceholder": "Custom Appはどのようにお手伝いできますか？",
+  "tagline": "Custom AppはGenAIを使用しています。重要な情報はソースで確認してください。",
   "sourceDocs": "ソース",
   "none": "なし",
   "cancel": "キャンセル",
@@ -14,8 +14,8 @@
   "manageAgents": "エージェント管理",
   "demo": [
     {
-      "header": "DocsGPTについて学ぶ",
-      "query": "DocsGPTとは何ですか?"
+      "header": "Custom Appについて学ぶ",
+      "query": "Custom Appとは何ですか?"
     },
     {
       "header": "ドキュメントを要約する",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "新しい文書をアップロードする",
-      "select": "ドキュメントを DocsGPT にアップロードする方法を選択します",
+      "select": "ドキュメントを Custom App にアップロードする方法を選択します",
       "selectSource": "ソースを追加する方法を選択してください",
       "selectedFiles": "選択されたファイル",
       "noFilesSelected": "ファイルが選択されていません",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "プロンプトを追加",
-      "addDescription": "カスタムプロンプトを追加して DocsGPT に保存します",
+      "addDescription": "カスタムプロンプトを追加して Custom App に保存します",
       "editPrompt": "プロンプトを編集",
-      "editDescription": "カスタムプロンプトを編集して DocsGPT に保存します",
+      "editDescription": "カスタムプロンプトを編集して Custom App に保存します",
       "promptName": "プロンプト名",
       "promptText": "プロンプトのテキスト",
       "save": "保存",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "作成者",
-    "button": "DocsGPT を始める",
-    "meta": "DocsGPT は GenAI を使用しています、情報源を使用して重要情報を確認してください。"
+    "button": "Custom App を始める",
+    "meta": "Custom App は GenAI を使用しています、情報源を使用して重要情報を確認してください。"
   },
   "convTile": {
     "share": "共有",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "エージェント",
-    "description": "指示、追加知識、スキルの組み合わせを含むDocsGPTのカスタムバージョンを発見して作成します",
+    "description": "指示、追加知識、スキルの組み合わせを含むCustom Appのカスタムバージョンを発見して作成します",
     "newAgent": "新しいエージェント",
     "backToAll": "すべてのエージェントに戻る",
     "searchPlaceholder": "検索...",
@@ -496,14 +496,14 @@
     "tryDifferentSearch": "別の検索語をお試しください",
     "filters": {
       "all": "すべて",
-      "byDocsGPT": "DocsGPT提供",
       "byMe": "自分の",
-      "shared": "共有された"
+      "shared": "共有された",
+      "byTemplates": "Templates"
     },
     "sections": {
       "template": {
-        "title": "DocsGPT提供",
-        "description": "DocsGPTが提供するエージェント",
+        "title": "Templates",
+        "description": "Template agents",
         "emptyState": "テンプレートエージェントが見つかりません。"
       },
       "user": {

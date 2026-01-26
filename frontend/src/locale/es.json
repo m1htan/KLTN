@@ -3,8 +3,8 @@
   "chat": "Chat",
   "chats": "Chats",
   "newChat": "Nuevo Chat",
-  "inputPlaceholder": "¿Cómo puede DocsGPT ayudarte?",
-  "tagline": "DocsGPT utiliza GenAI, por favor revisa información crítica utilizando fuentes.",
+  "inputPlaceholder": "¿Cómo puede Custom App ayudarte?",
+  "tagline": "Custom App utiliza GenAI, por favor revisa información crítica utilizando fuentes.",
   "sourceDocs": "Fuente",
   "none": "Ninguno",
   "cancel": "Cancelar",
@@ -14,8 +14,8 @@
   "manageAgents": "Administrar Agentes",
   "demo": [
     {
-      "header": "Aprende sobre DocsGPT",
-      "query": "¿Qué es DocsGPT?"
+      "header": "Aprende sobre Custom App",
+      "query": "¿Qué es Custom App?"
     },
     {
       "header": "Resumir documentación",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "Subir nuevo documento",
-      "select": "Elige cómo cargar tu documento en DocsGPT",
+      "select": "Elige cómo cargar tu documento en Custom App",
       "selectSource": "Selecciona la forma de agregar tu fuente",
       "selectedFiles": "Archivos Seleccionados",
       "noFilesSelected": "No hay archivos seleccionados",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "Agregar Prompt",
-      "addDescription": "Agrega tu prompt personalizado y guárdalo en DocsGPT",
+      "addDescription": "Agrega tu prompt personalizado y guárdalo en Custom App",
       "editPrompt": "Editar Prompt",
-      "editDescription": "Edita tu prompt personalizado y guárdalo en DocsGPT",
+      "editDescription": "Edita tu prompt personalizado y guárdalo en Custom App",
       "promptName": "Nombre del Prompt",
       "promptText": "Texto del Prompt",
       "save": "Guardar",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "Creado con",
-    "button": "Comienza con DocsGPT",
-    "meta": "DocsGPT utiliza GenAI, por favor revisa la información crítica utilizando fuentes."
+    "button": "Comienza con Custom App",
+    "meta": "Custom App utiliza GenAI, por favor revisa la información crítica utilizando fuentes."
   },
   "convTile": {
     "share": "Compartir",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "Agentes",
-    "description": "Descubre y crea versiones personalizadas de DocsGPT que combinan instrucciones, conocimiento adicional y cualquier combinación de habilidades",
+    "description": "Descubre y crea versiones personalizadas de Custom App que combinan instrucciones, conocimiento adicional y cualquier combinación de habilidades",
     "newAgent": "Nuevo Agente",
     "backToAll": "Volver a todos los agentes",
     "searchPlaceholder": "Buscar...",
@@ -496,14 +496,14 @@
     "tryDifferentSearch": "Prueba con un término de búsqueda diferente",
     "filters": {
       "all": "Todos",
-      "byDocsGPT": "Por DocsGPT",
       "byMe": "Por mí",
-      "shared": "Compartidos conmigo"
+      "shared": "Compartidos conmigo",
+      "byTemplates": "Templates"
     },
     "sections": {
       "template": {
-        "title": "Por DocsGPT",
-        "description": "Agentes proporcionados por DocsGPT",
+        "title": "Templates",
+        "description": "Template agents",
         "emptyState": "No se encontraron agentes de plantilla."
       },
       "user": {

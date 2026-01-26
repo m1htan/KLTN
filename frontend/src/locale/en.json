@@ -3,8 +3,8 @@
   "chat": "Chat",
   "chats": "Chats",
   "newChat": "New Chat",
-  "inputPlaceholder": "How can DocsGPT help you?",
-  "tagline": "DocsGPT uses GenAI, please review critical information using sources.",
+  "inputPlaceholder": "How can Custom App help you?",
+  "tagline": "Custom App uses GenAI, please review critical information using sources.",
   "sourceDocs": "Source",
   "none": "None",
   "cancel": "Cancel",
@@ -14,8 +14,8 @@
   "manageAgents": "Manage Agents",
   "demo": [
     {
-      "header": "Learn about DocsGPT",
-      "query": "What is DocsGPT?"
+      "header": "Learn about Custom App",
+      "query": "What is Custom App?"
     },
     {
       "header": "Summarize documentation",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "Upload new document",
-      "select": "Choose how to upload your document to DocsGPT",
+      "select": "Choose how to upload your document to Custom App",
       "selectSource": "Select the way to add your source",
       "selectedFiles": "Selected Files",
       "noFilesSelected": "No files selected",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "Add Prompt",
-      "addDescription": "Add your custom prompt and save it to DocsGPT",
+      "addDescription": "Add your custom prompt and save it to Custom App",
       "editPrompt": "Edit Prompt",
-      "editDescription": "Edit your custom prompt and save it to DocsGPT",
+      "editDescription": "Edit your custom prompt and save it to Custom App",
       "promptName": "Prompt Name",
       "promptText": "Prompt Text",
       "save": "Save",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "Created with",
-    "button": "Get Started with DocsGPT",
-    "meta": "DocsGPT uses GenAI, please review critical information using sources."
+    "button": "Get Started with Custom App",
+    "meta": "Custom App uses GenAI, please review critical information using sources."
   },
   "convTile": {
     "share": "Share",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "Agents",
-    "description": "Discover and create custom versions of DocsGPT that combine instructions, extra knowledge, and any combination of skills",
+    "description": "Discover and create custom versions of Custom App that combine instructions, extra knowledge, and any combination of skills",
     "newAgent": "New Agent",
     "backToAll": "Back to all agents",
     "searchPlaceholder": "Search...",
@@ -496,14 +496,14 @@
     "tryDifferentSearch": "Try a different search term",
     "filters": {
       "all": "All",
-      "byDocsGPT": "By DocsGPT",
       "byMe": "By Me",
-      "shared": "Shared With Me"
+      "shared": "Shared With Me",
+      "byTemplates": "Templates"
     },
     "sections": {
       "template": {
-        "title": "By DocsGPT",
-        "description": "Agents provided by DocsGPT",
+        "title": "Templates",
+        "description": "Template agents",
         "emptyState": "No template agents found."
       },
       "user": {
