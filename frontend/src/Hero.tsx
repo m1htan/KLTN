@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import DocsGPT3 from './assets/cute_docsgpt3.svg';
+import Robot from './assets/robot.svg';
 import DropdownModel from './components/DropdownModel';
 
 export default function Hero({
@@ -25,8 +25,8 @@ export default function Hero({
       {/* Header Section */}
       <div className="flex grow flex-col items-center justify-center pt-8 md:pt-0">
         <div className="mb-4 flex items-center">
-          <span className="text-4xl font-semibold">DocsGPT</span>
-          <img className="mb-1 inline w-14" src={DocsGPT3} alt="docsgpt" />
+          <span className="text-4xl font-semibold">Custom App</span>
+          <img className="mb-1 inline w-14" src={Robot} alt="app logo" />
         </div>
         {/* Model Selector */}
         <div className="relative w-72">

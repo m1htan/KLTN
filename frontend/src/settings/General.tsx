@@ -56,7 +56,7 @@ export default function General() {
     isDarkTheme ? 'Dark' : 'Light',
   );
   const dispatch = useDispatch();
-  const locale = localStorage.getItem('docsgpt-locale');
+  const locale = localStorage.getItem('app-locale');
   const [selectedLanguage, setSelectedLanguage] = React.useState(
     locale
       ? languageOptions.find((option) => option.value === locale)
@@ -81,7 +81,7 @@ export default function General() {
   }, []);
 
   React.useEffect(() => {
-    localStorage.setItem('docsgpt-locale', selectedLanguage?.value as string);
+    localStorage.setItem('app-locale', selectedLanguage?.value as string);
     changeLanguage(selectedLanguage?.value);
   }, [selectedLanguage, changeLanguage]);
   return (

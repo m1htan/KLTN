@@ -21,7 +21,7 @@ import { Agent } from './types';
 
 const FILTER_TABS: { id: AgentFilterTab; labelKey: string }[] = [
   { id: 'all', labelKey: 'agents.filters.all' },
-  { id: 'template', labelKey: 'agents.filters.byDocsGPT' },
+  { id: 'template', labelKey: 'agents.filters.byTemplates' },
   { id: 'user', labelKey: 'agents.filters.byMe' },
   { id: 'shared', labelKey: 'agents.filters.shared' },
 ];

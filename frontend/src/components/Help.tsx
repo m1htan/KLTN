@@ -46,7 +46,7 @@ const Help = () => {
           className={`dark:bg-outer-space absolute z-10 w-48 translate-x-4 -translate-y-28 rounded-xl bg-white shadow-lg`}
         >
           <a
-            href="https://docs.docsgpt.cloud/"
+            href="https://example.com/docs"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:bg-bright-gray flex items-start gap-4 rounded-t-xl px-4 py-2 text-black dark:text-white dark:hover:bg-[#545561]"
@@ -60,7 +60,7 @@ const Help = () => {
             {t('documentation')}
           </a>
           <a
-            href="mailto:support@docsgpt.cloud"
+            href="mailto:support@example.com"
             className="hover:bg-bright-gray flex items-start gap-4 rounded-b-xl px-4 py-2 text-black dark:text-white dark:hover:bg-[#545561]"
           >
             <img

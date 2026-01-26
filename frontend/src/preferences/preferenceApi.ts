@@ -86,12 +86,12 @@ export async function getConversations(
 }
 
 export function getLocalApiKey(): string | null {
-  const key = localStorage.getItem('DocsGPTApiKey');
+  const key = localStorage.getItem('AppApiKey');
   return key;
 }
 
 export function getLocalRecentDocs(sourceDocs?: Doc[] | null): Doc[] | null {
-  const docsString = localStorage.getItem('DocsGPTRecentDocs');
+  const docsString = localStorage.getItem('AppRecentDocs');
   const selectedDocs = docsString ? (JSON.parse(docsString) as Doc[]) : null;
 
   if (!sourceDocs || !selectedDocs || selectedDocs.length === 0) {
@@ -114,22 +114,22 @@ export function getLocalRecentDocs(sourceDocs?: Doc[] | null): Doc[] | null {
 }
 
 export function getLocalPrompt(): string | null {
-  const prompt = localStorage.getItem('DocsGPTPrompt');
+  const prompt = localStorage.getItem('AppPrompt');
   return prompt;
 }
 
 export function setLocalApiKey(key: string): void {
-  localStorage.setItem('DocsGPTApiKey', key);
+  localStorage.setItem('AppApiKey', key);
 }
 
 export function setLocalPrompt(prompt: string): void {
-  localStorage.setItem('DocsGPTPrompt', prompt);
+  localStorage.setItem('AppPrompt', prompt);
 }
 
 export function setLocalRecentDocs(docs: Doc[] | null): void {
   if (docs && docs.length > 0) {
-    localStorage.setItem('DocsGPTRecentDocs', JSON.stringify(docs));
+    localStorage.setItem('AppRecentDocs', JSON.stringify(docs));
   } else {
-    localStorage.removeItem('DocsGPTRecentDocs');
+    localStorage.removeItem('AppRecentDocs');
   }
 }

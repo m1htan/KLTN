@@ -41,7 +41,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'docsgpt-locale',
+      lookupLocalStorage: 'app-locale',
     },
   });
 

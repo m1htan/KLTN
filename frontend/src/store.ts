@@ -10,12 +10,12 @@ import {
 } from './preferences/preferenceSlice';
 import uploadReducer from './upload/uploadSlice';
 
-const key = localStorage.getItem('DocsGPTApiKey');
-const prompt = localStorage.getItem('DocsGPTPrompt');
-const chunks = localStorage.getItem('DocsGPTChunks');
-const token_limit = localStorage.getItem('DocsGPTTokenLimit');
-const doc = localStorage.getItem('DocsGPTRecentDocs');
-const selectedModel = localStorage.getItem('DocsGPTSelectedModel');
+const key = localStorage.getItem('AppApiKey');
+const prompt = localStorage.getItem('AppPrompt');
+const chunks = localStorage.getItem('AppChunks');
+const token_limit = localStorage.getItem('AppTokenLimit');
+const doc = localStorage.getItem('AppRecentDocs');
+const selectedModel = localStorage.getItem('AppSelectedModel');
 
 const preloadedState: { preference: Preference } = {
   preference: {
