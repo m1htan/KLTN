@@ -332,7 +332,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
               </button>
             )}
             <div className="text-gray-4000 text-[20px] font-medium">
-              Custom App
+              Legal K-RAG
             </div>
           </div>
         </div>
@@ -355,8 +355,8 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
             }}
           >
             <a href="/" className="flex gap-1.5">
-              <img className="h-10" src={Robot} alt="App Logo" />
-              <p className="my-auto text-2xl font-semibold">Custom App</p>
+              <img className="h-10" src={Robot} alt="Legal K-RAG logo" />
+              <p className="my-auto text-2xl font-semibold">Legal K-RAG</p>
             </a>
           </div>
           <button
@@ -582,7 +582,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
                 </NavLink>
                 <NavLink
                   target="_blank"
-                  to={'https://example.com'}
+                  to={'https://legal-krag.com'}
                   className={
                     'rounded-full hover:bg-gray-100 dark:hover:bg-[#28292E]'
                   }
@@ -597,7 +597,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
                 </NavLink>
                 <NavLink
                   target="_blank"
-                  to={'https://example.com'}
+                  to={'https://legal-krag.com'}
                   className={
                     'rounded-full hover:bg-gray-100 dark:hover:bg-[#28292E]'
                   }
@@ -628,7 +628,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
             />
           </button>
           <div className="text-gray-4000 text-[20px] font-medium">
-            Custom App
+            Legal K-RAG
           </div>
         </div>
       </div>

@@ -41,7 +41,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'app-locale',
+      lookupLocalStorage: 'legal-krag-locale',
     },
   });
 

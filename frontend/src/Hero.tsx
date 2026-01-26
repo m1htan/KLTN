@@ -25,8 +25,8 @@ export default function Hero({
       {/* Header Section */}
       <div className="flex grow flex-col items-center justify-center pt-8 md:pt-0">
         <div className="mb-4 flex items-center">
-          <span className="text-4xl font-semibold">Custom App</span>
-          <img className="mb-1 inline w-14" src={Robot} alt="app logo" />
+          <span className="text-4xl font-semibold">Legal K-RAG</span>
+          <img className="mb-1 inline w-14" src={Robot} alt="Legal K-RAG logo" />
         </div>
         {/* Model Selector */}
         <div className="relative w-72">

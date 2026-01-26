@@ -10,12 +10,18 @@ import {
 } from './preferences/preferenceSlice';
 import uploadReducer from './upload/uploadSlice';
 
-const key = localStorage.getItem('AppApiKey');
-const prompt = localStorage.getItem('AppPrompt');
-const chunks = localStorage.getItem('AppChunks');
-const token_limit = localStorage.getItem('AppTokenLimit');
-const doc = localStorage.getItem('AppRecentDocs');
-const selectedModel = localStorage.getItem('AppSelectedModel');
+const getStoredValue = (primaryKey: string, legacyKey: string) =>
+  localStorage.getItem(primaryKey) ?? localStorage.getItem(legacyKey);
+
+const key = getStoredValue('LegalKRAGApiKey', 'AppApiKey');
+const prompt = getStoredValue('LegalKRAGPrompt', 'AppPrompt');
+const chunks = getStoredValue('LegalKRAGChunks', 'AppChunks');
+const token_limit = getStoredValue('LegalKRAGTokenLimit', 'AppTokenLimit');
+const doc = getStoredValue('LegalKRAGRecentDocs', 'AppRecentDocs');
+const selectedModel = getStoredValue(
+  'LegalKRAGSelectedModel',
+  'AppSelectedModel',
+);
 
 const preloadedState: { preference: Preference } = {
   preference: {

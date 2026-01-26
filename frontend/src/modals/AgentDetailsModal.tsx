@@ -114,7 +114,7 @@ export default function AgentDetailsModal({
                   />
                 </p>
                 <a
-                  href="https://example.com/docs/agents"
+                  href="https://legal-krag.com/docs/agents"
                   className="text-purple-30 flex w-fit items-center gap-1 hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -161,7 +161,7 @@ export default function AgentDetailsModal({
                   </div>
                   {!apiKey.includes('...') && (
                     <a
-                      href={`https://example.com/widget?api-key=${apiKey}`}
+                      href={`https://legal-krag.com/widget?api-key=${apiKey}`}
                       className="group border-purple-30 text-purple-30 hover:bg-purple-30 ml-8 flex w-[101px] items-center justify-center gap-1 rounded-[62px] border py-1.5 text-sm font-medium transition-colors hover:text-white"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -201,7 +201,7 @@ export default function AgentDetailsModal({
                   />
                 </p>
                 <a
-                  href="https://example.com/docs/agents"
+                  href="https://legal-krag.com/docs/agents"
                   className="text-purple-30 flex w-fit items-center gap-1 hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"

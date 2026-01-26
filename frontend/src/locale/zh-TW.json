@@ -3,8 +3,8 @@
   "chat": "對話",
   "chats": "對話",
   "newChat": "新對話",
-  "inputPlaceholder": "Custom App 如何幫助您？",
-  "tagline": "Custom App 使用生成式 AI，請使用原始資料來源審閱重要資訊。",
+  "inputPlaceholder": "Legal K-RAG 如何幫助您？",
+  "tagline": "Legal K-RAG 使用生成式 AI，請使用原始資料來源審閱重要資訊。",
   "sourceDocs": "原始文件",
   "none": "無",
   "cancel": "取消",
@@ -14,8 +14,8 @@
   "manageAgents": "管理代理",
   "demo": [
     {
-      "header": "了解 Custom App",
-      "query": "什麼是 Custom App？"
+      "header": "了解 Legal K-RAG",
+      "query": "什麼是 Legal K-RAG？"
     },
     {
       "header": "摘要文件",
@@ -211,7 +211,7 @@
           "basic": "Basic Authentication"
         },
         "placeholders": {
-          "serverUrl": "https://api.example.com",
+          "serverUrl": "https://api.legal-krag.com",
           "apiKey": "Your secret API key",
           "bearerToken": "Your secret token",
           "username": "Your username",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "上傳新文件",
-      "select": "選擇如何將文件上傳到 Custom App",
+      "select": "選擇如何將文件上傳到 Legal K-RAG",
       "selectSource": "選擇新增來源的方式",
       "selectedFiles": "已選擇的檔案",
       "noFilesSelected": "未選擇檔案",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "新增提示",
-      "addDescription": "新增自定義提示並儲存到 Custom App",
+      "addDescription": "新增自定義提示並儲存到 Legal K-RAG",
       "editPrompt": "編輯提示",
-      "editDescription": "編輯自定義提示並儲存到 Custom App",
+      "editDescription": "編輯自定義提示並儲存到 Legal K-RAG",
       "promptName": "提示名稱",
       "promptText": "提示文字",
       "save": "儲存",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "使用以下工具建立",
-    "button": "開始使用 Custom App",
-    "meta": "Custom App 使用生成式 AI，請使用原始資料來源審閱重要資訊。"
+    "button": "開始使用 Legal K-RAG",
+    "meta": "Legal K-RAG 使用生成式 AI，請使用原始資料來源審閱重要資訊。"
   },
   "convTile": {
     "share": "分享",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "代理",
-    "description": "探索並創建結合指令、額外知識和任意技能組合的Custom App自訂版本",
+    "description": "探索並創建結合指令、額外知識和任意技能組合的Legal K-RAG自訂版本",
     "newAgent": "新建代理",
     "backToAll": "返回所有代理",
     "searchPlaceholder": "搜尋...",

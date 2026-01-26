@@ -3,8 +3,8 @@
   "chat": "Chat",
   "chats": "Chats",
   "newChat": "Nuevo Chat",
-  "inputPlaceholder": "¿Cómo puede Custom App ayudarte?",
-  "tagline": "Custom App utiliza GenAI, por favor revisa información crítica utilizando fuentes.",
+  "inputPlaceholder": "¿Cómo puede Legal K-RAG ayudarte?",
+  "tagline": "Legal K-RAG utiliza GenAI, por favor revisa información crítica utilizando fuentes.",
   "sourceDocs": "Fuente",
   "none": "Ninguno",
   "cancel": "Cancelar",
@@ -14,8 +14,8 @@
   "manageAgents": "Administrar Agentes",
   "demo": [
     {
-      "header": "Aprende sobre Custom App",
-      "query": "¿Qué es Custom App?"
+      "header": "Aprende sobre Legal K-RAG",
+      "query": "¿Qué es Legal K-RAG?"
     },
     {
       "header": "Resumir documentación",
@@ -211,7 +211,7 @@
           "basic": "Basic Authentication"
         },
         "placeholders": {
-          "serverUrl": "https://api.example.com",
+          "serverUrl": "https://api.legal-krag.com",
           "apiKey": "Your secret API key",
           "bearerToken": "Your secret token",
           "username": "Your username",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "Subir nuevo documento",
-      "select": "Elige cómo cargar tu documento en Custom App",
+      "select": "Elige cómo cargar tu documento en Legal K-RAG",
       "selectSource": "Selecciona la forma de agregar tu fuente",
       "selectedFiles": "Archivos Seleccionados",
       "noFilesSelected": "No hay archivos seleccionados",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "Agregar Prompt",
-      "addDescription": "Agrega tu prompt personalizado y guárdalo en Custom App",
+      "addDescription": "Agrega tu prompt personalizado y guárdalo en Legal K-RAG",
       "editPrompt": "Editar Prompt",
-      "editDescription": "Edita tu prompt personalizado y guárdalo en Custom App",
+      "editDescription": "Edita tu prompt personalizado y guárdalo en Legal K-RAG",
       "promptName": "Nombre del Prompt",
       "promptText": "Texto del Prompt",
       "save": "Guardar",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "Creado con",
-    "button": "Comienza con Custom App",
-    "meta": "Custom App utiliza GenAI, por favor revisa la información crítica utilizando fuentes."
+    "button": "Comienza con Legal K-RAG",
+    "meta": "Legal K-RAG utiliza GenAI, por favor revisa la información crítica utilizando fuentes."
   },
   "convTile": {
     "share": "Compartir",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "Agentes",
-    "description": "Descubre y crea versiones personalizadas de Custom App que combinan instrucciones, conocimiento adicional y cualquier combinación de habilidades",
+    "description": "Descubre y crea versiones personalizadas de Legal K-RAG que combinan instrucciones, conocimiento adicional y cualquier combinación de habilidades",
     "newAgent": "Nuevo Agente",
     "backToAll": "Volver a todos los agentes",
     "searchPlaceholder": "Buscar...",

@@ -173,7 +173,7 @@ prefListenerMiddleware.startListening({
   matcher: isAnyOf(setPrompt),
   effect: (action, listenerApi) => {
     localStorage.setItem(
-      'AppPrompt',
+      'LegalKRAGPrompt',
       JSON.stringify((listenerApi.getState() as RootState).preference.prompt),
     );
   },
@@ -183,7 +183,7 @@ prefListenerMiddleware.startListening({
   matcher: isAnyOf(setChunks),
   effect: (action, listenerApi) => {
     localStorage.setItem(
-      'AppChunks',
+      'LegalKRAGChunks',
       JSON.stringify((listenerApi.getState() as RootState).preference.chunks),
     );
   },
@@ -193,7 +193,7 @@ prefListenerMiddleware.startListening({
   matcher: isAnyOf(setTokenLimit),
   effect: (action, listenerApi) => {
     localStorage.setItem(
-      'AppTokenLimit',
+      'LegalKRAGTokenLimit',
       JSON.stringify(
         (listenerApi.getState() as RootState).preference.token_limit,
       ),
@@ -223,9 +223,9 @@ prefListenerMiddleware.startListening({
     const model = (listenerApi.getState() as RootState).preference
       .selectedModel;
     if (model) {
-      localStorage.setItem('AppSelectedModel', JSON.stringify(model));
+      localStorage.setItem('LegalKRAGSelectedModel', JSON.stringify(model));
     } else {
-      localStorage.removeItem('AppSelectedModel');
+      localStorage.removeItem('LegalKRAGSelectedModel');
     }
   },
 });

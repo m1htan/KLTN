@@ -86,12 +86,16 @@ export async function getConversations(
 }
 
 export function getLocalApiKey(): string | null {
-  const key = localStorage.getItem('AppApiKey');
-  return key;
+  return (
+    localStorage.getItem('LegalKRAGApiKey') ??
+    localStorage.getItem('AppApiKey')
+  );
 }
 
 export function getLocalRecentDocs(sourceDocs?: Doc[] | null): Doc[] | null {
-  const docsString = localStorage.getItem('AppRecentDocs');
+  const docsString =
+    localStorage.getItem('LegalKRAGRecentDocs') ??
+    localStorage.getItem('AppRecentDocs');
   const selectedDocs = docsString ? (JSON.parse(docsString) as Doc[]) : null;
 
   if (!sourceDocs || !selectedDocs || selectedDocs.length === 0) {
@@ -114,22 +118,24 @@ export function getLocalRecentDocs(sourceDocs?: Doc[] | null): Doc[] | null {
 }
 
 export function getLocalPrompt(): string | null {
-  const prompt = localStorage.getItem('AppPrompt');
-  return prompt;
+  return (
+    localStorage.getItem('LegalKRAGPrompt') ??
+    localStorage.getItem('AppPrompt')
+  );
 }
 
 export function setLocalApiKey(key: string): void {
-  localStorage.setItem('AppApiKey', key);
+  localStorage.setItem('LegalKRAGApiKey', key);
 }
 
 export function setLocalPrompt(prompt: string): void {
-  localStorage.setItem('AppPrompt', prompt);
+  localStorage.setItem('LegalKRAGPrompt', prompt);
 }
 
 export function setLocalRecentDocs(docs: Doc[] | null): void {
   if (docs && docs.length > 0) {
-    localStorage.setItem('AppRecentDocs', JSON.stringify(docs));
+    localStorage.setItem('LegalKRAGRecentDocs', JSON.stringify(docs));
   } else {
-    localStorage.removeItem('AppRecentDocs');
+    localStorage.removeItem('LegalKRAGRecentDocs');
   }
 }

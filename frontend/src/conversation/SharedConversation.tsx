@@ -130,7 +130,7 @@ export const SharedConversation = () => {
   return (
     <>
       <DocumentHead
-        title={`Custom App | ${title}`}
+        title={`Legal K-RAG | ${title}`}
         description="Shared conversations"
         ogTitle={title}
         ogDescription="Shared conversations"
@@ -146,7 +146,7 @@ export const SharedConversation = () => {
           <h2 className="font-semi-bold text-chinese-black dark:text-chinese-silver text-base">
             {t('sharedConv.subtitle')}{' '}
             <a href="/" className="text-[#007DFF]">
-              Custom App
+              Legal K-RAG
             </a>
           </h2>
           <h2 className="font-semi-bold text-chinese-black dark:text-chinese-silver text-base">
