@@ -15,7 +15,7 @@ import remarkMath from 'remark-math';
 
 import ChevronDown from '../assets/chevron-down.svg';
 import Cloud from '../assets/cloud.svg';
-import DocsGPT3 from '../assets/cute_docsgpt3.svg';
+import Robot from '../assets/robot.svg';
 import Dislike from '../assets/dislike.svg?react';
 import Document from '../assets/document.svg';
 import DocumentationDark from '../assets/documentation-dark.svg';
@@ -389,7 +389,7 @@ const ConversationBubble = forwardRef<
                 className="h-[34px] w-[34px] text-2xl"
                 avatar={
                   <img
-                    src={DocsGPT3}
+                    src={Robot}
                     alt={t('conversation.answer')}
                     className="h-full w-full object-cover"
                   />

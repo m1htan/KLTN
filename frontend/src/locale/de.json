@@ -3,8 +3,8 @@
   "chat": "Chat",
   "chats": "Chats",
   "newChat": "Neuer Chat",
-  "inputPlaceholder": "Wie kann DocsGPT dir helfen?",
-  "tagline": "DocsGPT verwendet GenAI, bitte überprüfe kritische Informationen anhand der Quellen.",
+  "inputPlaceholder": "Wie kann Legal K-RAG dir helfen?",
+  "tagline": "Legal K-RAG verwendet GenAI, bitte überprüfe kritische Informationen anhand der Quellen.",
   "sourceDocs": "Quelle",
   "none": "Keine",
   "cancel": "Abbrechen",
@@ -14,8 +14,8 @@
   "manageAgents": "Agenten verwalten",
   "demo": [
     {
-      "header": "Über DocsGPT lernen",
-      "query": "Was ist DocsGPT?"
+      "header": "Über Legal K-RAG lernen",
+      "query": "Was ist Legal K-RAG?"
     },
     {
       "header": "Dokumentation zusammenfassen",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "Neues Dokument hochladen",
-      "select": "Wähle, wie du dein Dokument zu DocsGPT hochladen möchtest",
+      "select": "Wähle, wie du dein Dokument zu Legal K-RAG hochladen möchtest",
       "selectSource": "Wähle die Art, wie du deine Quelle hinzufügen möchtest",
       "selectedFiles": "Ausgewählte Dateien",
       "noFilesSelected": "Keine Dateien ausgewählt",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "Prompt hinzufügen",
-      "addDescription": "Füge deinen benutzerdefinierten Prompt hinzu und speichere ihn in DocsGPT",
+      "addDescription": "Füge deinen benutzerdefinierten Prompt hinzu und speichere ihn in Legal K-RAG",
       "editPrompt": "Prompt bearbeiten",
-      "editDescription": "Bearbeite deinen benutzerdefinierten Prompt und speichere ihn in DocsGPT",
+      "editDescription": "Bearbeite deinen benutzerdefinierten Prompt und speichere ihn in Legal K-RAG",
       "promptName": "Prompt-Name",
       "promptText": "Prompt-Text",
       "save": "Speichern",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "Erstellt mit",
-    "button": "Mit DocsGPT starten",
-    "meta": "DocsGPT verwendet GenAI, bitte überprüfe kritische Informationen anhand der Quellen."
+    "button": "Mit Legal K-RAG starten",
+    "meta": "Legal K-RAG verwendet GenAI, bitte überprüfe kritische Informationen anhand der Quellen."
   },
   "convTile": {
     "share": "Teilen",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "Agenten",
-    "description": "Entdecke und erstelle benutzerdefinierte Versionen von DocsGPT, die Anweisungen, zusätzliches Wissen und beliebige Kombinationen von Fähigkeiten kombinieren",
+    "description": "Entdecke und erstelle benutzerdefinierte Versionen von Legal K-RAG, die Anweisungen, zusätzliches Wissen und beliebige Kombinationen von Fähigkeiten kombinieren",
     "newAgent": "Neuer Agent",
     "backToAll": "Zurück zu allen Agenten",
     "searchPlaceholder": "Suchen...",
@@ -496,14 +496,14 @@
     "tryDifferentSearch": "Versuche einen anderen Suchbegriff",
     "filters": {
       "all": "Alle",
-      "byDocsGPT": "Von DocsGPT",
       "byMe": "Von mir",
-      "shared": "Mit mir geteilt"
+      "shared": "Mit mir geteilt",
+      "byTemplates": "Templates"
     },
     "sections": {
       "template": {
-        "title": "Von DocsGPT",
-        "description": "Von DocsGPT bereitgestellte Agenten",
+        "title": "Templates",
+        "description": "Template agents",
         "emptyState": "Keine Vorlagen-Agenten gefunden."
       },
       "user": {

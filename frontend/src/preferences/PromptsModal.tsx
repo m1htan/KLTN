@@ -381,7 +381,7 @@ function AddPrompt({
       <div className="mt-4 flex flex-col justify-between gap-4 text-[14px] sm:flex-row sm:gap-0">
         <div className="flex justify-start">
           <Link
-            to="https://docs.docsgpt.cloud/Guides/Customising-prompts"
+            to="https://legal-krag.com/docs/prompts"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm font-medium text-[#6A4DF4] hover:underline"
@@ -590,7 +590,7 @@ function EditPrompt({
       <div className="mt-4 flex flex-col justify-between gap-4 text-[14px] sm:flex-row sm:gap-0">
         <div className="flex justify-start">
           <Link
-            to="https://docs.docsgpt.cloud/Guides/Customising-prompts"
+            to="https://legal-krag.com/docs/prompts"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm font-medium text-[#6A4DF4] hover:underline"

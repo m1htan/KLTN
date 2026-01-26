@@ -7,7 +7,7 @@ import { Agent } from './agents/types';
 import conversationService from './api/services/conversationService';
 import userService from './api/services/userService';
 import Add from './assets/add.svg';
-import DocsGPT3 from './assets/cute_docsgpt3.svg';
+import Robot from './assets/robot.svg';
 import Discord from './assets/discord.svg';
 import PanelLeftClose from './assets/panel-left-close.svg';
 import PanelLeftOpen from './assets/panel-left-open.svg';
@@ -332,7 +332,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
               </button>
             )}
             <div className="text-gray-4000 text-[20px] font-medium">
-              DocsGPT
+              Legal K-RAG
             </div>
           </div>
         </div>
@@ -355,8 +355,8 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
             }}
           >
             <a href="/" className="flex gap-1.5">
-              <img className="h-10" src={DocsGPT3} alt="DocsGPT Logo" />
-              <p className="my-auto text-2xl font-semibold">DocsGPT</p>
+              <img className="h-10" src={Robot} alt="Legal K-RAG logo" />
+              <p className="my-auto text-2xl font-semibold">Legal K-RAG</p>
             </a>
           </div>
           <button
@@ -582,7 +582,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
                 </NavLink>
                 <NavLink
                   target="_blank"
-                  to={'https://x.com/docsgptai'}
+                  to={'https://legal-krag.com'}
                   className={
                     'rounded-full hover:bg-gray-100 dark:hover:bg-[#28292E]'
                   }
@@ -597,7 +597,7 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
                 </NavLink>
                 <NavLink
                   target="_blank"
-                  to={'https://github.com/arc53/docsgpt'}
+                  to={'https://legal-krag.com'}
                   className={
                     'rounded-full hover:bg-gray-100 dark:hover:bg-[#28292E]'
                   }
@@ -627,7 +627,9 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
               className="w-7 filter dark:invert"
             />
           </button>
-          <div className="text-gray-4000 text-[20px] font-medium">DocsGPT</div>
+          <div className="text-gray-4000 text-[20px] font-medium">
+            Legal K-RAG
+          </div>
         </div>
       </div>
       <DeleteConvModal

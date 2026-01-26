@@ -13,8 +13,8 @@ export type AgentSectionId = 'template' | 'user' | 'shared';
 export const agentSectionsConfig = [
   {
     id: 'template' as const,
-    title: 'By DocsGPT',
-    description: 'Agents provided by DocsGPT',
+    title: 'Templates',
+    description: 'Template agents',
     showNewAgentButton: false,
     emptyStateDescription: 'No template agents found.',
     fetchAgents: (token: string | null) => userService.getTemplateAgents(token),

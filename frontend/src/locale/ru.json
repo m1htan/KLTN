@@ -3,8 +3,8 @@
   "chat": "Чат",
   "chats": "Чаты",
   "newChat": "Новый чат",
-  "inputPlaceholder": "Как DocsGPT может вам помочь?",
-  "tagline": "DocsGPT использует GenAI, пожалуйста, проверьте важную информацию, используя источники.",
+  "inputPlaceholder": "Как Legal K-RAG может вам помочь?",
+  "tagline": "Legal K-RAG использует GenAI, пожалуйста, проверьте важную информацию, используя источники.",
   "sourceDocs": "Источник",
   "none": "Нет",
   "cancel": "Отмена",
@@ -14,8 +14,8 @@
   "manageAgents": "Управление агентами",
   "demo": [
     {
-      "header": "Узнайте о DocsGPT",
-      "query": "Что такое DocsGPT?"
+      "header": "Узнайте о Legal K-RAG",
+      "query": "Что такое Legal K-RAG?"
     },
     {
       "header": "Обобщить документацию",
@@ -211,7 +211,7 @@
           "basic": "Basic Authentication"
         },
         "placeholders": {
-          "serverUrl": "https://api.example.com",
+          "serverUrl": "https://api.legal-krag.com",
           "apiKey": "Your secret API key",
           "bearerToken": "Your secret token",
           "username": "Your username",
@@ -241,7 +241,7 @@
   "modals": {
     "uploadDoc": {
       "label": "Загрузить новый документ",
-      "select": "Выберите способ загрузки документа в DocsGPT",
+      "select": "Выберите способ загрузки документа в Legal K-RAG",
       "selectSource": "Выберите способ добавления источника",
       "selectedFiles": "Выбранные файлы",
       "noFilesSelected": "Файлы не выбраны",
@@ -380,9 +380,9 @@
     },
     "prompts": {
       "addPrompt": "Добавить промпт",
-      "addDescription": "Добавьте свой собственный промпт и сохраните его в DocsGPT",
+      "addDescription": "Добавьте свой собственный промпт и сохраните его в Legal K-RAG",
       "editPrompt": "Редактировать промпт",
-      "editDescription": "Отредактируйте свой промпт и сохраните его в DocsGPT",
+      "editDescription": "Отредактируйте свой промпт и сохраните его в Legal K-RAG",
       "promptName": "Название промпта",
       "promptText": "Текст промпта",
       "save": "Сохранить",
@@ -445,8 +445,8 @@
   },
   "sharedConv": {
     "subtitle": "Создано с помощью",
-    "button": "Начать работу с DocsGPT",
-    "meta": "DocsGPT использует GenAI, пожалуйста, проверьте важную информацию, используя источники."
+    "button": "Начать работу с Legal K-RAG",
+    "meta": "Legal K-RAG использует GenAI, пожалуйста, проверьте важную информацию, используя источники."
   },
   "convTile": {
     "share": "Поделиться",
@@ -488,7 +488,7 @@
   },
   "agents": {
     "title": "Агенты",
-    "description": "Откройте и создайте пользовательские версии DocsGPT, которые объединяют инструкции, дополнительные знания и любую комбинацию навыков",
+    "description": "Откройте и создайте пользовательские версии Legal K-RAG, которые объединяют инструкции, дополнительные знания и любую комбинацию навыков",
     "newAgent": "Новый Агент",
     "backToAll": "Вернуться ко всем агентам",
     "searchPlaceholder": "Поиск...",
@@ -496,14 +496,14 @@
     "tryDifferentSearch": "Попробуйте другой поисковый запрос",
     "filters": {
       "all": "Все",
-      "byDocsGPT": "От DocsGPT",
       "byMe": "Мои",
-      "shared": "Поделились со мной"
+      "shared": "Поделились со мной",
+      "byTemplates": "Templates"
     },
     "sections": {
       "template": {
-        "title": "От DocsGPT",
-        "description": "Агенты, предоставленные DocsGPT",
+        "title": "Templates",
+        "description": "Template agents",
         "emptyState": "Шаблонные агенты не найдены."
       },
       "user": {
